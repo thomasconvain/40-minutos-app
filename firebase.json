@@ -21,6 +21,7 @@
   ],
   "hosting": {
     "public": "dist",
+    "site": "cuarenta-minutos",
     "ignore": [
       "firebase.json",
       "**/.*",
