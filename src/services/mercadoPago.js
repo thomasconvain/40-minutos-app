@@ -1,17 +1,26 @@
-export const createPaymentLink = async (amount) => {
+export const createPaymentLink = async ({ amount, description, paymentMethodId, email}) => {
   try {
-    const response = await fetch('https://us-central1-tu-proyecto.cloudfunctions.net/createPaymentLink', {
+    const response = await fetch('https://us-central1-minutos-87fe9.cloudfunctions.net/createPaymentLink', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ amount }),
+      body: JSON.stringify({
+        amount,
+        description,
+        paymentMethodId,
+        email
+      }),
     });
+
+    if (!response.ok) {
+      throw new Error('Error al crear el link de pago');
+    }
 
     const data = await response.json();
     return data.init_point;
   } catch (error) {
-    console.error('Error al generar el link de pago:', error);
-    throw error;
+    console.error('Error:', error);
+    throw error;  // Lanza el error para manejarlo en el componente si es necesario
   }
 };

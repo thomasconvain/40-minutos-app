@@ -1,9 +1,13 @@
 <template>
-  <div class="payment-container">
-    <input v-model="amount" placeholder="Ingresa el monto" type="number" />
+  <div>
+    <input v-model="amount" type="number" placeholder="Monto" />
+    <!-- <input v-model="description" type="text" placeholder="Descripción" /> -->
+    <input v-model="email" type="email" placeholder="Email" />
     <button @click="generatePaymentLink">Generar Link de Pago</button>
+    
     <div v-if="paymentLink">
-      <a :href="paymentLink" target="_blank">Pagar con Mercado Pago</a>
+      <p>Link de pago generado:</p>
+      <a :href="paymentLink" target="_blank">Pagar</a>
     </div>
   </div>
 </template>
@@ -14,27 +18,24 @@ import { createPaymentLink } from '@/services/mercadoPago';
 export default {
   data() {
     return {
-      amount: '',
-      paymentLink: null,
+      amount: 0,
+      description: 'Prueba- Paga por tu experienccia 40 Minuto',
+      email: '',
+      paymentLink: '',
     };
   },
   methods: {
     async generatePaymentLink() {
       try {
-        this.paymentLink = await createPaymentLink(this.amount);
+        this.paymentLink = await createPaymentLink({
+          amount: this.amount,
+          description: this.description,
+          email: this.email,
+        });
       } catch (error) {
-        alert('Error al generar el link de pago.');
+        alert('Hubo un problema al generar el link de pago.');
       }
     },
   },
 };
 </script>
-
-<style scoped>
-.payment-container {
-  max-width: 400px;
-  margin: auto;
-  padding: 20px;
-  text-align: center;
-}
-</style>
