@@ -1,19 +1,33 @@
-/**
- * Import function triggers from their respective submodules:
- *
- * const {onCall} = require("firebase-functions/v2/https");
- * const {onDocumentWritten} = require("firebase-functions/v2/firestore");
- *
- * See a full list of supported triggers at https://firebase.google.com/docs/functions
- */
+const functions = require("firebase-functions");
+const mercadopago = require("mercadopago");
 
-const {onRequest} = require("firebase-functions/v2/https");
-const logger = require("firebase-functions/logger");
+// Configurar Mercado Pago con el token almacenado en Firebase Functions
+mercadopago.configurations.setAccessToken(functions.config().mercadopago.token);
 
-// Create and deploy your first functions
-// https://firebase.google.com/docs/functions/get-started
+exports.createPaymentLink = functions.https.onRequest(async (req, res) => {
+  const {amount} = req.body;
 
-// exports.helloWorld = onRequest((request, response) => {
-//   logger.info("Hello logs!", {structuredData: true});
-//   response.send("Hello from Firebase!");
-// });
+  const preference = {
+    items: [
+      {
+        title: "Pago de servicio",
+        quantity: 1,
+        currency_id: "ARS",
+        unit_price: parseFloat(amount),
+      },
+    ],
+    back_urls: {
+      success: "https://tusitio.com/success",
+      failure: "https://tusitio.com/failure",
+      pending: "https://tusitio.com/pending",
+    },
+  };
+
+  try {
+    const response = await mercadopago.preferences.create(preference);
+    res.json({init_point: response.body.init_point});
+  } catch (error) {
+    console.error("Error al crear el link de pago:", error);
+    res.status(500).send("Error al crear el link de pago");
+  }
+});
