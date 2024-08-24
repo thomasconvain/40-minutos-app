@@ -1,33 +1,37 @@
 const functions = require("firebase-functions");
-const mercadopago = require("mercadopago");
+const cors = require("cors")({origin: true}); // Importar y configurar CORS
+const {MercadoPagoConfig, Payment} = require("mercadopago");
 
-// Configurar Mercado Pago con el token almacenado en Firebase Functions
-mercadopago.configurations.setAccessToken(functions.config().mercadopago.token);
+// Inicializar el cliente de Mercado Pago con el access token
+const client = new MercadoPagoConfig({
+  accessToken: functions.config().mercadopago.token,
+  options: {timeout: 5000},
+});
 
-exports.createPaymentLink = functions.https.onRequest(async (req, res) => {
-  const {amount} = req.body;
+exports.createPaymentLink = functions.https.onRequest((req, res) => {
+  cors(req, res, async () => { // Envolver la función con CORS
+    const {amount, description, email, paymentMethodId} = req.body;
 
-  const preference = {
-    items: [
-      {
-        title: "Pago de servicio",
-        quantity: 1,
-        currency_id: "ARS",
-        unit_price: parseFloat(amount),
+    const body = {
+      transaction_amount: parseFloat(amount),
+      description: description || "Pago de servicio",
+      payment_method_id: paymentMethodId || "visa",
+      payer: {
+        email: email || "test@example.com",
       },
-    ],
-    back_urls: {
-      success: "https://tusitio.com/success",
-      failure: "https://tusitio.com/failure",
-      pending: "https://tusitio.com/pending",
-    },
-  };
+    };
 
-  try {
-    const response = await mercadopago.preferences.create(preference);
-    res.json({init_point: response.body.init_point});
-  } catch (error) {
-    console.error("Error al crear el link de pago:", error);
-    res.status(500).send("Error al crear el link de pago");
-  }
+    const requestOptions = {
+      idempotencyKey: "some-unique-key",
+    };
+
+    try {
+      const payment = new Payment(client);
+      const response = await payment.create({body, requestOptions});
+      res.json({init_point: response.body.init_point});
+    } catch (error) {
+      console.error("Error al crear el link de pago:", error);
+      res.status(500).send("Error al crear el link de pago");
+    }
+  });
 });
