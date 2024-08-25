@@ -1,16 +1,17 @@
 <template>
   <div class="flex flex-col items-center gap-10">
-    <ThemesList />
+    <img src="../assets/logo.png" width="200">
+    <GeneratePayment />
   </div>
 </template>
 
 <script>
-import ThemesList from '../components/ThemesList.vue'
+import GeneratePayment from '../components/GeneratePayment.vue'
 
 export default {
   name: 'App',
   components: {
-    ThemesList,
+    GeneratePayment,
   }
 }
 </script>
