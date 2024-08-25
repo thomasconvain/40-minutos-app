@@ -1,11 +1,17 @@
 import { createRouter, createWebHistory } from 'vue-router';
-import Home from '@/views/Home.vue'; // Ejemplo de componente para la ruta Home
+import Home from '@/views/Home.vue';
+import Themes from '@/views/Themes.vue';
 
 const routes = [
   {
     path: '/',
     name: 'Home',
     component: Home,
+  },
+  {
+    path: '/themes',
+    name: 'Temas',
+    component: Themes,
   }
 ];
 
