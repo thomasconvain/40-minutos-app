@@ -35,7 +35,7 @@ import { useRouter } from 'vue-router';
 import { getFirestore, collection, query, where, getDocs } from 'firebase/firestore';
 
 // Variables reactivas
-const phone = ref('');
+const phone = ref('+56');
 const phoneError = ref('');
 const isButtonDisabled = ref(true);
 const router = useRouter(); // Importar el enrutador

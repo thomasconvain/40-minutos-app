@@ -1,8 +1,8 @@
 <template>
   <div>
     <h2 class="text-xl font-semibold">{{ localTheme.name }}</h2>
-    <div class="flex items-center gap-4">
-      <img class="h-full" v-if="imageUrl" :src="imageUrl" alt="cover" width="100" />
+    <div class="flex flex-wrap sm:flex-nowrap items-center justify-center sm:justify-start gap-4">
+      <img class="h-full mt-4 sm:m-0" v-if="imageUrl" :src="imageUrl" alt="cover" width="100" />
       <div class="my-4 flex flex-col gap-2">
         <p><strong>Artista:</strong> {{ localTheme.artist }}</p>
         <p><strong>Descripción:</strong> {{ localTheme.description }}</p>
