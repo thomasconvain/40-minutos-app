@@ -1,13 +1,14 @@
 <template>
   <div>
-    <h1 class="text-2xl font-bold mb-6">Perfil del Usuario</h1>
-    <div v-if="spectator">
-      <p><strong>Nombre:</strong> {{ spectator.name }}</p>
-      <p><strong>Email:</strong> {{ spectator.email }}</p>
-      <p><strong>Teléfono:</strong> {{ spectator.phone }}</p>
-      <p><strong>Estás inscrito para los siguientes eventos. Muestra esa pantalla en el ingreso.</strong></p>
-      <ul v-if="events.length">
-        <li v-for="event in events" :key="event.id" class="mb-4 p-4 border rounded-md">
+    <h1 class="text-2xl font-bold mb-6">Hola {{ spectator?.name }} 👋</h1>
+    <p>Gracias por inscribirte a nuestro concierto.<br>Por favor muestra esa pantalla antes de ingresar al recinto.</p>
+    <div class="mt-4" v-if="spectator">
+      <p><strong>Tus datos:</strong></p>
+      <p class="text-sm"><strong>Email:</strong> {{ spectator.email }}</p>
+      <p class="text-sm"><strong>Teléfono:</strong> {{ spectator.phone }}</p>
+      <p class="mt-4"><strong>Estás inscrito para los siguientes eventos:</strong></p>
+      <ul class="mt-2" v-if="events.length">
+        <li v-for="event in events" :key="event.id" class="mb-4 p-4 border rounded-md bg-white">
           <h2 class="text-lg font-semibold">{{ event.name }}</h2>
           <p><strong>Lugar:</strong> {{ event.place }}</p>
           <p><strong>Fecha:</strong> {{ formatDate(event.date) }}</p>
@@ -15,7 +16,7 @@
             class="mt-2 inline-flex justify-center items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-gray-800 hover:bg-black focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black"
             @click="goToEvent(event)"
           >
-            Ver detalles del evento
+            Entrar al concierto
           </button>
         </li>
       </ul>
