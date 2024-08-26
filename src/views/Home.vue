@@ -18,6 +18,7 @@
       </div>
     </div>
     <p v-if="phoneError" class="text-red-500 text-sm">{{ phoneError }}</p>
+    <div class="flex flex-col items-center">
     <button
       type="button"
       :disabled="isButtonDisabled"
@@ -26,6 +27,15 @@
     >
       <span>Entrar</span>
     </button>
+    <p>- O -</p>
+    <a class="w-full" href="https://wa.me/p/27280514998214599/56989612263" target="_blank">
+    <button
+      type="button"
+      class="mt-2 inline-flex justify-center w-full items-center px-4 py-2 border border-2 border-black shadow-sm text-sm font-medium rounded-md text-black hover:text-white hover:bg-black focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed"
+    >
+      <span>Consigue tu reserva acá</span>
+    </button></a>
+  </div>
   </div>
 </template>
 

@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="w-full">
     <div>
       <label for="amount" class="block text-lg font-medium text-gray-700 mb-2">
         Selecciona el monto que quieras aportar:
