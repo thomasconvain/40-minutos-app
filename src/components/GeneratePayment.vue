@@ -94,7 +94,7 @@ const generatePaymentLink = async () => {
       description: description.value,
       email: email.value,
     });
-    window.open(paymentLink.value, '_blank');
+    window.open(paymentLink.value, '_self');
   } catch (error) {
     alert('Hubo un problema al generar el link de pago.');
   }
