@@ -58,7 +58,7 @@ import { CreditCardIcon } from '@heroicons/vue/24/outline'
 // Variables reactivas
 const isLoading = ref(false);
 const amount = ref(2000);
-const description = ref('Prueba - Paga por tu experiencia 40 Minuto');
+const description = ref('Tu experiencia 40 Minutos');
 const email = ref('');
 const progressWidth = ref('50%');
 const paymentLink = ref('');
