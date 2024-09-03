@@ -7,10 +7,11 @@
         <p><strong>Artista:</strong> {{ localTheme.artist }}</p>
         <p><strong>Descripción:</strong> {{ localTheme.description }}</p>
         <div>
-          <p><strong>¿Cómo lo hemos toccado?:</strong> {{ averageRating }} ({{ localTheme.ratings.length }} votos)</p>
+          <p><strong>¿Cómo lo hemos tocado?</strong><span v-if="userRating !== 0"> Tu nota: {{ userRating }}</span></p>
           <div class="flex items-center">
         <!-- <span v-for="star in 5" :key="star" @click="rateTheme(star)" class="cursor-pointer"> -->
-          <StarIcon v-for="star in 5" :key="star" @click="rateTheme(star)" class="cursor-pointer h-7 w-7" :class="star <= averageRating ? 'text-yellow-500' : 'text-gray-300'"/>
+          <StarIcon  v-for="star in 5" :key="star" @click="userRating === 0 ? rateTheme(star) : alreadyVotedMessage = 'Ya se registró tu voto'" class="cursor-pointer h-7 w-7" :class="star <= userRating ? 'text-yellow-500' : 'text-gray-300'"/>
+          {{ alreadyVotedMessage }}
         <!-- </span> -->
           </div>
         </div>
@@ -20,7 +21,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue';
+import { ref, onMounted } from 'vue';
 import { doc, getDoc, updateDoc, getFirestore } from 'firebase/firestore';
 import { StarIcon } from '@heroicons/vue/24/solid'
 import { storage } from '@/firebase';
@@ -37,11 +38,14 @@ const props = defineProps({
 // Crear una copia local del tema para evitar mutar la prop directamente
 const localTheme = ref({ ...props.theme });
 
+const userRating = ref(0);
+const alreadyVotedMessage = ref('');
+
 // Cálculo de la media de ratings
-const averageRating = computed(() => {
-  if (localTheme.value.ratings.length === 0) return 0;
-  return (localTheme.value.ratings.reduce((a, b) => a + b, 0) / localTheme.value.ratings.length).toFixed(1);
-});
+// const averageRating = computed(() => {
+//   if (localTheme.value.ratings.length === 0) return 0;
+//   return (localTheme.value.ratings.reduce((a, b) => a + b, 0) / localTheme.value.ratings.length).toFixed(1);
+// });
 
 // Método para agregar un nuevo rating
 const rateTheme = async (rating) => {
@@ -49,6 +53,8 @@ const rateTheme = async (rating) => {
   const themeRef = doc(db, 'themes', localTheme.value.id);
 
   try {
+    // Actualizar el valor para el usuario
+    userRating.value = rating;
     // Obtener el documento actual
     const themeDoc = await getDoc(themeRef);
     if (themeDoc.exists()) {
