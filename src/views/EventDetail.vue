@@ -5,7 +5,7 @@
       <h2 class="text-xl font-semibold mb-4">Temas del evento:</h2>
       <ul>
         <li v-for="theme in themes" :key="theme.id" class="mb-4 p-4 border bg-white rounded-md">
-          <ThemeItem :theme="theme" />
+          <ThemeItem :theme="theme" @onRateChange="handleRateChange"/>
         </li>
       </ul>
     </div>
@@ -24,7 +24,7 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import { doc, getDoc } from 'firebase/firestore';
+import { doc, getDoc, updateDoc } from 'firebase/firestore';
 import { db } from '@/firebase';
 import ThemeItem from '@/components/ThemeItem.vue';
 
@@ -37,6 +37,12 @@ const idEvent = route.params.idEvent;
 const idSpectator = route.params.idSpectator;
 
 const themes = ref([]);
+const ratings = ref({}); // Guardar los ratings de cada tema
+
+// Función para capturar el rating de cada tema
+const handleRateChange = (themeId, rating) => {
+  ratings.value[themeId] = rating;
+};
 
 // Función para obtener los themes_id del evento y luego los detalles de los temas
 const fetchEventThemes = async () => {
@@ -63,12 +69,25 @@ const fetchEventThemes = async () => {
   }
 };
 
-// Función para redirigir a la ruta /checkout con los parámetros actuales
-const goToCheckout = () => {
-  router.push({
-    name: 'Checkout',
-    params: { idSpectator, idEvent, nameEvent }
-  });
+// Función para actualizar los ratings al hacer clic en Checkout
+const goToCheckout = async () => {
+  try {
+    for (const [themeId, rating] of Object.entries(ratings.value)) {
+      const themeRef = doc(db, 'themes', themeId);
+      const themeDoc = await getDoc(themeRef);
+      if (themeDoc.exists()) {
+        const currentRatings = themeDoc.data().ratings || [];
+        currentRatings.push(rating);
+        await updateDoc(themeRef, { ratings: currentRatings });
+      }
+    }
+    router.push({
+      name: 'Checkout',
+      params: { idSpectator, idEvent, nameEvent }
+    });
+  } catch (error) {
+    console.error('Error al enviar los ratings:', error);
+  }
 };
 
 // Llamar a la función para obtener los datos cuando el componente se monte

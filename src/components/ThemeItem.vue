@@ -10,8 +10,7 @@
           <p><strong>¿Cómo lo hemos tocado?</strong><span v-if="userRating !== 0"> Tu nota: {{ userRating }}</span></p>
           <div class="flex items-center">
         <!-- <span v-for="star in 5" :key="star" @click="rateTheme(star)" class="cursor-pointer"> -->
-          <StarIcon  v-for="star in 5" :key="star" @click="userRating === 0 ? rateTheme(star) : alreadyVotedMessage = 'Ya se registró tu voto'" class="cursor-pointer h-7 w-7" :class="star <= userRating ? 'text-yellow-500' : 'text-gray-300'"/>
-          {{ alreadyVotedMessage }}
+          <StarIcon  v-for="star in 5" :key="star" @click="rateTheme(star)" class="cursor-pointer h-7 w-7" :class="star <= userRating ? 'text-yellow-500' : 'text-gray-300'"/>
         <!-- </span> -->
           </div>
         </div>
@@ -21,8 +20,8 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
-import { doc, getDoc, updateDoc, getFirestore } from 'firebase/firestore';
+import { ref, onMounted, defineEmits } from 'vue';
+// import { doc, getDoc, updateDoc, getFirestore } from 'firebase/firestore';
 import { StarIcon } from '@heroicons/vue/24/solid'
 import { storage } from '@/firebase';
 import { ref as storageRef, getDownloadURL } from 'firebase/storage';
@@ -39,7 +38,6 @@ const props = defineProps({
 const localTheme = ref({ ...props.theme });
 
 const userRating = ref(0);
-const alreadyVotedMessage = ref('');
 
 // Cálculo de la media de ratings
 // const averageRating = computed(() => {
@@ -47,34 +45,11 @@ const alreadyVotedMessage = ref('');
 //   return (localTheme.value.ratings.reduce((a, b) => a + b, 0) / localTheme.value.ratings.length).toFixed(1);
 // });
 
-// Método para agregar un nuevo rating
-const rateTheme = async (rating) => {
-  const db = getFirestore();
-  const themeRef = doc(db, 'themes', localTheme.value.id);
-
-  try {
-    // Actualizar el valor para el usuario
-    userRating.value = rating;
-    // Obtener el documento actual
-    const themeDoc = await getDoc(themeRef);
-    if (themeDoc.exists()) {
-      // Obtener el array de ratings actual y añadir el nuevo rating
-      const currentRatings = themeDoc.data().ratings || [];
-      currentRatings.push(rating);
-
-      // Actualizar el documento con el nuevo array de ratings
-      await updateDoc(themeRef, {
-        ratings: currentRatings,
-      });
-
-      // Actualizar la copia local del tema para reflejar el nuevo rating
-      localTheme.value.ratings.push(rating);
-    } else {
-      console.error('El documento no existe.');
-    }
-  } catch (error) {
-    console.error('Error al agregar el rating:', error);
-  }
+// Emitir un evento cuando se cambie el rating
+const emit = defineEmits(['onRateChange']);
+const rateTheme = (rating) => {
+  userRating.value = rating;
+  emit('onRateChange', localTheme.value.id, rating); // Emitir evento al padre
 };
 
 // Función para obtener la URL de la imagen
