@@ -16,7 +16,7 @@
       class="mt-2 inline-flex justify-center w-full items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-gray-800 hover:bg-black focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed"
       @click="goToCheckout"
     >
-      <span>Checkout</span>
+      <span><span v-if="!isLoading">Checkout</span><span v-else>Cargando...</span></span>
     </button>
   </div>
 </template>
@@ -38,6 +38,8 @@ const idSpectator = route.params.idSpectator;
 
 const themes = ref([]);
 const ratings = ref({}); // Guardar los ratings de cada tema
+
+const isLoading = ref(false);
 
 // Función para capturar el rating de cada tema
 const handleRateChange = (themeId, rating) => {
@@ -71,6 +73,7 @@ const fetchEventThemes = async () => {
 
 // Función para actualizar los ratings al hacer clic en Checkout
 const goToCheckout = async () => {
+  isLoading.value = true;
   try {
     for (const [themeId, rating] of Object.entries(ratings.value)) {
       const themeRef = doc(db, 'themes', themeId);
@@ -88,6 +91,7 @@ const goToCheckout = async () => {
   } catch (error) {
     console.error('Error al enviar los ratings:', error);
   }
+  isLoading.value = false;
 };
 
 // Llamar a la función para obtener los datos cuando el componente se monte
