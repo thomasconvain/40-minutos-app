@@ -72,7 +72,8 @@ const fetchEventThemes = async () => {
 
       themes.value = themeDocs
         .filter(themeDoc => themeDoc.exists())
-        .map(themeDoc => ({ id: themeDoc.id, ...themeDoc.data() }));
+        .map(themeDoc => ({ id: themeDoc.id, ...themeDoc.data() }))
+        .sort((a, b) => a.order - b.order);
     } else {
       console.error('No se encontró el evento con el ID proporcionado');
     }

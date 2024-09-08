@@ -4,8 +4,8 @@
     <div class="flex flex-wrap sm:flex-nowrap items-center justify-center sm:justify-start gap-4">
       <img class="h-full mt-4 sm:m-0" v-if="imageUrl" :src="imageUrl" alt="cover" width="100" />
       <div class="my-4 flex flex-col gap-2">
-        <p><strong>Artista:</strong> {{ localTheme.artist }}</p>
-        <p><strong>Descripción:</strong> {{ localTheme.description }}</p>
+        <p><strong>{{ localTheme.artist }}</strong></p>
+        <p>{{ localTheme.description }}</p>
         <div>
           <p><strong>¿Cómo lo hemos tocado?</strong><span v-if="userRating !== 0"> Tu nota: {{ userRating }}</span></p>
           <div class="flex items-center">
