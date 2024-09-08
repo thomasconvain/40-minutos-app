@@ -6,3 +6,7 @@
 body {
   @apply font-sans; /* Aplica la fuente Ubuntu globalmente */
 }
+
+.alert {
+  border-radius: none;
+}

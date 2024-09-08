@@ -10,6 +10,7 @@
       </ul>
     </div>
     <p v-else class="text-red-500">Cargando detalles del evento y temas...</p>
+    <div v-if="ratings.length !== themes.length" class="alert">Parece que no evaluaste todas las obras que hemos tocado. Nos encantaría conocer tu opinión antes de continuar. 🤓</div>
     <button
       type="button"
       :disabled="isButtonDisabled"
@@ -37,13 +38,22 @@ const idEvent = route.params.idEvent;
 const idSpectator = route.params.idSpectator;
 
 const themes = ref([]);
-const ratings = ref({}); // Guardar los ratings de cada tema
+const ratings = ref([]); // Usar un arreglo para los ratings
 
 const isLoading = ref(false);
 
 // Función para capturar el rating de cada tema
 const handleRateChange = (themeId, rating) => {
-  ratings.value[themeId] = rating;
+  // Buscar si ya existe un rating para este tema
+  const index = ratings.value.findIndex(item => item.themeId === themeId);
+
+  if (index !== -1) {
+    // Si ya existe, actualizar el rating
+    ratings.value[index].rating = rating;
+  } else {
+    // Si no existe, agregar el nuevo rating
+    ratings.value.push({ themeId, rating });
+  }
 };
 
 // Función para obtener los themes_id del evento y luego los detalles de los temas
@@ -75,15 +85,24 @@ const fetchEventThemes = async () => {
 const goToCheckout = async () => {
   isLoading.value = true;
   try {
-    for (const [themeId, rating] of Object.entries(ratings.value)) {
+    // Recorrer cada rating y actualizar el documento correspondiente en Firebase
+    for (const { themeId, rating } of ratings.value) {
       const themeRef = doc(db, 'themes', themeId);
       const themeDoc = await getDoc(themeRef);
+      
       if (themeDoc.exists()) {
+        // Obtener el array de ratings actual y añadir el nuevo rating
         const currentRatings = themeDoc.data().ratings || [];
         currentRatings.push(rating);
-        await updateDoc(themeRef, { ratings: currentRatings });
+        
+        // Actualizar el documento con el nuevo array de ratings
+        await updateDoc(themeRef, {
+          ratings: currentRatings
+        });
       }
     }
+
+    // Una vez que se actualizan los ratings, redirigir al checkout
     router.push({
       name: 'Checkout',
       params: { idSpectator, idEvent, nameEvent }
