@@ -7,7 +7,7 @@
         <p><strong>{{ localTheme.artist }}</strong></p>
         <p>{{ localTheme.description }}</p>
         <div>
-          <p><strong>¿Cómo lo hemos tocado?</strong><span v-if="userRating !== 0"> Tu nota: {{ userRating }}</span></p>
+          <p class="text-xs"><strong>¿Cómo lo hemos tocado?</strong><span v-if="userRating !== 0"> Tu nota: {{ userRating }}</span></p>
           <div class="flex items-center">
         <!-- <span v-for="star in 5" :key="star" @click="rateTheme(star)" class="cursor-pointer"> -->
           <StarIcon  v-for="star in 5" :key="star" @click="rateTheme(star)" class="cursor-pointer h-7 w-7" :class="star <= userRating ? 'text-yellow-500' : 'text-gray-300'"/>
