@@ -9,7 +9,23 @@
         </li>
       </ul>
     </div>
-    <p v-else class="text-red-500">Cargando detalles del evento y temas...</p>
+    <div v-else class="mb-4 p-4 border bg-white rounded-md">
+    <div class="skeleton h-6 w-32"></div>
+    <div class="flex flex-wrap sm:flex-nowrap items-center justify-center sm:justify-start gap-4">
+      <div class="skeleton h-20 w-20 shrink-0 rounded-full"></div>
+      <div class="my-4 flex flex-col grow gap-2">
+        <div class="skeleton h-4 w-20"></div>
+        <div class="skeleton h-32 w-full"></div>
+        <div>
+          <div class="skeleton h-4 w-20 mb-2"></div>
+          <div class="flex items-center">
+          <div class="skeleton h-4 w-32"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+    <!-- <p v-else class="text-red-500">Cargando detalles del evento y temas...</p> -->
     <div v-if="ratings.length !== themes.length" class="alert">
       <InformationCircleIcon class="-ml-1 mr-3 h-5 w-5" aria-hidden="true" />
       <span class="text-xs">Parece que no evaluaste todas las obras que hemos tocado. Nos encantaría conocer tu opinión antes de continuar. 🤓</span></div>
@@ -19,7 +35,8 @@
       class="mt-2 inline-flex justify-center w-full items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-gray-800 hover:bg-black focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed"
       @click="goToCheckout"
     >
-      <span><span v-if="!isLoading">Checkout</span><span v-else>Cargando...</span></span>
+      <span v-if="!isLoading">Checkout</span>
+      <span v-else class="loading loading-dots loading-sm"></span>
     </button>
   </div>
 </template>
