@@ -10,16 +10,16 @@
       </ul>
     </div>
     <div v-else class="mb-4 p-4 border bg-white rounded-md">
-    <div class="skeleton h-6 w-32"></div>
+    <div class="skeleton h-6 w-32 rounded-none"></div>
     <div class="flex flex-wrap sm:flex-nowrap items-center justify-center sm:justify-start gap-4">
       <div class="skeleton h-20 w-20 shrink-0 rounded-full"></div>
       <div class="my-4 flex flex-col grow gap-2">
-        <div class="skeleton h-4 w-20"></div>
-        <div class="skeleton h-32 w-full"></div>
+        <div class="skeleton h-4 w-20 rounded-none "></div>
+        <div class="skeleton h-32 w-full rounded-none"></div>
         <div>
-          <div class="skeleton h-4 w-20 mb-2"></div>
+          <div class="skeleton h-4 w-20 mb-2 rounded-none"></div>
           <div class="flex items-center">
-          <div class="skeleton h-4 w-32"></div>
+          <div class="skeleton h-4 w-32 rounded-none"></div>
           </div>
         </div>
       </div>

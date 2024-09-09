@@ -23,7 +23,9 @@ module.exports = {
            "secondary": "#f6d860",
            "accent": "#37cdbe",
            "neutral": "#1f2937",
+          //  "--fallback-in": "#f7f7f7",
            "--fallback-in": "#ebebeb",
+           "--fallback-b3": "#ebebeb",
 
           "--rounded-box": "10rem", // border radius rounded-box utility class, used in card and other large boxes
           "--rounded-btn": "0.5rem", // border radius rounded-btn utility class, used in buttons and similar element
