@@ -10,3 +10,7 @@ body {
 .rounded-none {
   border-radius: 0.375rem;
 }
+
+.btn {
+  font-weight: 400;
+}

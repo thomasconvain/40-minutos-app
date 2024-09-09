@@ -46,6 +46,7 @@
       <span v-if="!isLoading">Pagar</span>
       <span v-if="isLoading">Te estamos redirigiendo...</span>
     </button>
+    <button class="btn btn-active btn-link w-full text-gray-400" @click="goToThankYouPage">Prefiero no aportar</button>
   </div>
 </template>
 
@@ -53,6 +54,9 @@
 import { ref, computed, onMounted } from 'vue';
 import { createPaymentLink } from '@/services/mercadoPago';
 import { CreditCardIcon } from '@heroicons/vue/24/outline'
+import { useRouter } from 'vue-router';
+
+const router = useRouter();
 
 // Variables reactivas
 const isLoading = ref(false);
@@ -107,6 +111,12 @@ const formattedAmount = computed(() => {
     minimumFractionDigits: 0,
   }).format(amount.value);
 });
+
+const goToThankYouPage = () => {
+  router.push({
+    name: 'ThankYou',
+  });
+};
 </script>
 
 <style>
