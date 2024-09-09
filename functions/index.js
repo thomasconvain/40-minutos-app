@@ -25,7 +25,7 @@ exports.createPaymentLink = functions.https.onRequest((req, res) => {
         email: email,
       },
       back_urls: {
-        success: "https://cuarenta-minutos.web.app/",
+        success: "https://cuarenta-minutos.web.app/thankyou",
         failure: "https://cuarenta-minutos.web.app/",
         pending: "https://cuarenta-minutos.web.app/",
       },
