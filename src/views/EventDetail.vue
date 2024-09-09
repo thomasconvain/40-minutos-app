@@ -26,7 +26,7 @@
     </div>
   </div>
     <!-- <p v-else class="text-red-500">Cargando detalles del evento y temas...</p> -->
-    <div v-if="ratings.length !== themes.length" class="alert">
+    <div v-if="ratings.length !== themes.length" class="alert alert-info rounded-none">
       <InformationCircleIcon class="-ml-1 mr-3 h-5 w-5" aria-hidden="true" />
       <span class="text-xs">Parece que no evaluaste todas las obras que hemos tocado. Nos encantaría conocer tu opinión antes de continuar. 🤓</span></div>
     <button

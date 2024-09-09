@@ -13,9 +13,8 @@
           step="500"
           v-model="amount"
           @input="updateProgress"
-          class="w-full h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-gray-500 accent-black"
+          class="range range-primary bg-gray-200"
         />
-        <div class="absolute top-0 h-2 bg-black rounded-lg" :style="{ width: progressWidth }"></div>
       </div>
       <div class="mt-4 text-center text-xl font-semibold text-gray-800">
         {{ formattedAmount }}
