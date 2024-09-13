@@ -103,9 +103,9 @@ const generatePaymentLink = async () => {
       description: description.value,
       email: email.value,
       backUrls: {
-        success: `${baseUrl.value}/thankyou?${params.value}`,
-        failure: `${baseUrl.value}/thankyou?${params.value}`,
-        pending: `${baseUrl.value}/thankyou?${params.value}`,
+        success: `${baseUrl.value}/thankyou?idSpectator=${params.value}`,
+        failure: `${baseUrl.value}/thankyou?idSpectator=${params.value}`,
+        pending: `${baseUrl.value}/thankyou?idSpectator=${params.value}`,
       },
     });
     window.open(paymentLink.value, '_self');
