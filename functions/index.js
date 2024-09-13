@@ -10,7 +10,8 @@ const client = new MercadoPagoConfig({
 
 exports.createPaymentLink = functions.https.onRequest((req, res) => {
   cors(req, res, async () => {
-    const {amount, description, email} = req.body;
+    const {amount, description, email, backUrls} = req.body;
+
 
     const preference = {
       items: [
@@ -24,11 +25,7 @@ exports.createPaymentLink = functions.https.onRequest((req, res) => {
       payer: {
         email: email,
       },
-      back_urls: {
-        success: "https://cuarenta-minutos.web.app/thankyou",
-        failure: "https://cuarenta-minutos.web.app/",
-        pending: "https://cuarenta-minutos.web.app/",
-      },
+      back_urls: backUrls,
       auto_return: "approved",
     };
 
@@ -44,19 +41,22 @@ exports.createPaymentLink = functions.https.onRequest((req, res) => {
 });
 
 exports.getPaymentDetails = functions.https.onRequest(async (req, res) => {
-  const paymentId = req.query.payment_id;
+  cors(req, res, async () => {
+    const paymentId = req.query.payment_id;
 
-  try {
-    const payment = new Payment(client);
-    const paymentResponse = await payment.get({paymentId});
-    // eslint-disable-next-line max-len
-    const amountPaid = paymentResponse.body.transaction_details.total_paid_amount;
+    try {
+      const payment = new Payment(client);
+      const paymentResponse = await payment.get({id: paymentId});
+      // eslint-disable-next-line max-len
+      const amountPaid = paymentResponse.transaction_details.total_paid_amount;
 
-    // Aquí puedes devolver la información que necesites
-    res.status(200).send({amount: amountPaid, payment: paymentResponse.body});
-  } catch (error) {
-    console.error("Error al obtener el pago:", error);
-    res.status(500).send({error: "No se pudo obtener la información del pago"});
-  }
+      // Aquí puedes devolver la información que necesites
+      res.status(200).send({amount: amountPaid, payment: paymentResponse.body});
+    } catch (error) {
+      console.error("Error al obtener el pago:", error);
+      // eslint-disable-next-line max-len
+      res.status(500).send({error: "No se pudo obtener la información del pago"});
+    }
+  });
 });
 

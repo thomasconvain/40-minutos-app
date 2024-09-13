@@ -47,6 +47,8 @@
       <span v-if="isLoading">Te estamos redirigiendo...</span>
     </button>
     <button class="btn btn-active btn-link w-full text-gray-400" @click="goToThankYouPage">Prefiero no aportar</button>
+    {{ baseUrl }}
+    {{ params }}
   </div>
 </template>
 
@@ -54,7 +56,7 @@
 import { ref, computed, onMounted } from 'vue';
 import { createPaymentLink } from '@/services/mercadoPago';
 import { CreditCardIcon } from '@heroicons/vue/24/outline'
-import { useRouter } from 'vue-router';
+import { useRouter, useRoute } from 'vue-router';
 
 const router = useRouter();
 
@@ -66,9 +68,15 @@ const email = ref('');
 const progressWidth = ref('50%');
 const paymentLink = ref('');
 const emailError = ref('');
+const baseUrl = ref('');
+const params = ref('');
+const route = useRoute();
 
 onMounted(() => {
   updateProgress();
+      // Captura los parámetros actuales de la URL
+    baseUrl.value = window.location.origin; // Obtiene la URL base actual (dominio)
+    params.value = route.params.idSpectator;
 });
 
 const updateProgress = () => {
@@ -96,6 +104,11 @@ const generatePaymentLink = async () => {
       amount: amount.value,
       description: description.value,
       email: email.value,
+      backUrls: {
+        success: `${baseUrl.value}/thankyou?${params.value}`,
+        failure: `${baseUrl.value}/thankyou?${params.value}`,
+        pending: `${baseUrl.value}/thankyou?${params.value}`,
+      },
     });
     window.open(paymentLink.value, '_self');
   } catch (error) {

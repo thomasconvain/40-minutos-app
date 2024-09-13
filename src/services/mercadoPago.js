@@ -1,4 +1,4 @@
-export const createPaymentLink = async ({ amount, description, paymentMethodId, email}) => {
+export const createPaymentLink = async ({ amount, description, paymentMethodId, email, backUrls}) => {
   try {
     const response = await fetch('https://us-central1-minutos-87fe9.cloudfunctions.net/createPaymentLink', {
       method: 'POST',
@@ -9,7 +9,8 @@ export const createPaymentLink = async ({ amount, description, paymentMethodId, 
         amount,
         description,
         paymentMethodId,
-        email
+        email,
+        backUrls
       }),
     });
 
