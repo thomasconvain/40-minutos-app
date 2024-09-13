@@ -1,6 +1,6 @@
 const functions = require("firebase-functions");
 const cors = require("cors")({origin: true});
-const {MercadoPagoConfig, Preference} = require("mercadopago");
+const {MercadoPagoConfig, Preference, Payment} = require("mercadopago");
 
 // Inicializa el cliente de Mercado Pago con el access token
 const client = new MercadoPagoConfig({
@@ -42,3 +42,21 @@ exports.createPaymentLink = functions.https.onRequest((req, res) => {
     }
   });
 });
+
+exports.getPaymentDetails = functions.https.onRequest(async (req, res) => {
+  const paymentId = req.query.payment_id;
+
+  try {
+    const payment = new Payment(client);
+    const paymentResponse = await payment.get({paymentId});
+    // eslint-disable-next-line max-len
+    const amountPaid = paymentResponse.body.transaction_details.total_paid_amount;
+
+    // Aquí puedes devolver la información que necesites
+    res.status(200).send({amount: amountPaid, payment: paymentResponse.body});
+  } catch (error) {
+    console.error("Error al obtener el pago:", error);
+    res.status(500).send({error: "No se pudo obtener la información del pago"});
+  }
+});
+
