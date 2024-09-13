@@ -57,6 +57,7 @@ import { CreditCardIcon } from '@heroicons/vue/24/outline'
 import { useRouter, useRoute } from 'vue-router';
 
 const router = useRouter();
+const route = useRoute();
 
 // Variables reactivas
 const isLoading = ref(false);
@@ -68,7 +69,6 @@ const paymentLink = ref('');
 const emailError = ref('');
 const baseUrl = ref('');
 const params = ref('');
-const route = useRoute();
 
 onMounted(() => {
   updateProgress();
@@ -126,6 +126,7 @@ const formattedAmount = computed(() => {
 const goToThankYouPage = () => {
   router.push({
     name: 'ThankYou',
+    query: { idSpectator: route.params.idSpectator}
   });
 };
 </script>

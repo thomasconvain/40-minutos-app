@@ -36,4 +36,20 @@ const router = createRouter({
   routes,
 });
 
+router.beforeEach((to, from, next) => {
+  // Detectar si estamos refrescando la página después de la redirección de Mercado Pago
+  const redirectedFromMercadoPago = sessionStorage.getItem('redirectedFromMercadoPago');
+
+  // Si estamos refrescando después de la redirección
+  if (redirectedFromMercadoPago && !from.name) {
+    // Limpiamos la bandera de sessionStorage para evitar bucles
+    sessionStorage.removeItem('redirectedFromMercadoPago');
+    // Redirigir a la raíz
+    next({ name: 'Home' });
+  } else {
+    // Continuar normalmente
+    next();
+  }
+});
+
 export default router;
