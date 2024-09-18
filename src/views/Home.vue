@@ -4,7 +4,25 @@
     <div class="flex flex-col items-center mb-10">
       <img src="../assets/logo.png" width="200">
     </div>
-    <h1 class="text-lg mb-4">Ingresa con el número de teléfono que usaste para inscribirte al evento:</h1>
+    <section class="py-8">
+  <div class="mx-auto grid max-w-screen-xl rounded-lg bg-black p-8 md:p-8 lg:grid-cols-12 lg:gap-8 lg:p-16 xl:gap-16 background-circle">
+    <div class="me-auto place-self-center lg:col-span-7">
+      <h1 class="mb-3 text-2xl font-bold leading-tight tracking-tight text-white md:text-4xl">
+        Próximo evento:<br />
+        Lunes 30 de septiembre | 19.30 hrs
+      </h1>
+      <p class="mb-6 text-gray-100">Colegio Santa Úrsula, VITACURA</p>
+      <a class="w-full" href="https://wa.me/p/27280514998214599/56989612263" target="_blank">
+    <button
+      type="button"
+      class="mt-2 inline-flex justify-center items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-black hover:text-white bg-white hover:bg-black focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed"
+    >
+      <span>Consigue tu reserva acá</span>
+    </button></a>
+    </div>
+  </div>
+</section>
+    <h1 class="text-lg mb-4">El día del evento, ingresa con el número de teléfono que usaste para registrarte:</h1>
     <div>
       <div class="mt-1 flex rounded-md shadow-sm">
         <input
@@ -85,5 +103,7 @@ const checkSpectatorSubscriptions = async () => {
 </script>
 
 <style scoped>
-/* Estilos adicionales si es necesario */
+.background-circle {
+  background-image: url('../assets/gradient_bg.png');
+}
 </style>
