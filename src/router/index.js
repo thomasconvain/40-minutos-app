@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import Home from '@/views/Home.vue';
+import SignIn from '@/views/SignIn.vue';
 import SpectatorProfile from '@/views/SpectatorProfile.vue';
 import EventDetail from '@/views/EventDetail.vue';
 import Checkout from '@/views/Checkout.vue';
@@ -10,6 +11,11 @@ const routes = [
     path: '/',
     name: 'Home',
     component: Home,
+  },
+  {
+    path: '/signin',
+    name: 'SignIn',
+    component: SignIn,
   },
   {
     path: '/profile/:id',
