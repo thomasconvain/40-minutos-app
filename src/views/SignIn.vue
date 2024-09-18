@@ -1,9 +1,10 @@
 <template>
   <div>
+    <button class="btn btn-link" @click="router.push({name:'Home'})">Volver</button>
     <div class="flex flex-col items-center mb-10">
       <img src="../assets/logo.png" width="200">
     </div>
-    <h1 class="text-lg mb-4">El día del evento, ingresa con el número de teléfono que usaste para registrarte:</h1>
+    <h1 class="text-lg mb-4">Ingresa con el número de teléfono que indicaste para obtener tus tickets</h1>
     <div>
       <div class="mt-1 flex rounded-md shadow-sm">
         <input
