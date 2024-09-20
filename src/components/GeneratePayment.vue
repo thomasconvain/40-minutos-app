@@ -102,7 +102,7 @@
       <span v-if="isLoading">Te estamos redirigiendo...</span>
     </button>
     <button class="btn btn-active btn-link w-full text-gray-400" @click="goToThankYouPage">Prefiero no aportar</button>
-  </div>
+  </div>{{ totalAmountToPay }}
   </div>
 </template>
 
@@ -149,7 +149,7 @@ const setDefaultUniqueSpectator = (number) => {
   spectatorArray.value = getNumberArray(number);
   const items = spectatorArray.value;
   items.forEach((item, index) => {
-    amount[index] = uniquePaymentOfGroup.value == true ?  totalAmountToPay.value : (amount.length = 1, amount[0]); // Inicializamos el valor de cada input
+    amount[index] = uniquePaymentOfGroup.value == true ?  amount[0] : (amount.length = 1, amount[0]); // Inicializamos el valor de cada input
   });
 }
 // Función para obtener los datos del espectador desde Firestore
