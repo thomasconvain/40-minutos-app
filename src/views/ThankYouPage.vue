@@ -3,7 +3,6 @@
     <img src="../assets/logo.png" width="200">
     <p class="text-xl">Gracias por asistir!</p>
     <p>Tu aporte: {{ paymentDetails ? formattedAmount : formattedAmount = '$0' }}</p>
-    {{ route.query }}
   </div>
 </template>
 

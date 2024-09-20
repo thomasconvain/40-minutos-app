@@ -1,8 +1,32 @@
 <template>
   <div class="w-full">
-    <div>
+  <div v-if="isViewLoading" class="flex justify-center w-full">
+    <span class="loading loading-spinner loading-md"></span>
+  </div>
+  <div v-else>
+  <p>Selecciona el monto que quieres aportar <span v-if="spectatorArray?.length > 1">para cada integrante de tu grupo</span></p>
+  <div v-if="spectatorArray?.length > 1" class="alert alert-info rounded-none my-6">
+      <InformationCircleIcon class="-ml-1 mr-3 h-5 w-5" aria-hidden="true" />
+      <span class="text-xs">Tambien puedes compartir el link de pago a algunos integrantes de tu grupo o pagar solamente tu aporte.</span>
+      <a :href='`https://wa.me/?text=https://https://cuarenta-minutos.web.app/checkout/${params}?referenceLink=true`'><button class="btn btn-sm">Compartir link de pago</button></a>
+      <button class="btn btn-link" @click="setDefaultUniqueSpectator(1), uniquePaymentOfGroup = true">Prefiero pagar solo mi aporte personal</button>
+    </div>
+    <div v-if="uniquePaymentOfGroup" class="alert alert-info rounded-none my-6">
+      <InformationCircleIcon class="-ml-1 mr-3 h-5 w-5" aria-hidden="true" />
+      <span class="text-xs">Recuerda que estás seleccionando solamente tu aporte personal.</span>
+      <a :href='`https://wa.me/?text=https://https://cuarenta-minutos.web.app/checkout/${params}?referenceLink=true`'><button class="btn btn-sm">Compartir link de pago</button></a>
+      <button class="btn btn-link" @click="setDefaultUniqueSpectator(spectator.number_of_people), uniquePaymentOfGroup = false">Prefiero pagar para todo el grupo</button>
+    </div>
+  <div v-for="(item, index) in spectatorArray" :key="index" class="mt-4">
       <label for="amount" class="block text-lg font-medium text-gray-700 mb-2">
-        Selecciona el monto que quieras aportar:
+        <div v-if="spectatorArray.length > 1" class="flex items-center gap-2">
+          <div class="avatar placeholder">
+            <div class="bg-neutral text-neutral-content w-8 rounded-full">
+              <span>P</span>
+            </div>
+          </div>
+          <p class="text-xs">Participante {{ item }}</p>
+        </div>
       </label>
       <div class="relative flex">
         <input
@@ -11,13 +35,13 @@
           min="0"
           max="100000"
           step="500"
-          v-model="amount"
+          v-model="amount[index]"
           @input="updateProgress"
           class="range range-primary bg-gray-200"
         />
       </div>
       <div class="mt-4 text-center text-xl font-semibold text-gray-800">
-        {{ formattedAmount }}
+        {{ formatAmount(amount[index]) }}
       </div>
     </div>
 
@@ -30,12 +54,12 @@
           name="email"
           id="email"
           class="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md"
-          placeholder="you@example.com"
+          placeholder="correo@ejemplo.com"
         />
       </div>
       <p v-if="emailError" class="text-red-500 text-sm mt-1">{{ emailError }}</p>
     </div>
-
+    <p>Tu aporte total: {{ formatAmount(totalAmountToPay) }}</p>
     <button
       type="button"
       :disabled="isButtonDisabled"
@@ -48,20 +72,25 @@
     </button>
     <button class="btn btn-active btn-link w-full text-gray-400" @click="goToThankYouPage">Prefiero no aportar</button>
   </div>
+  </div>
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue';
+import { ref, reactive, computed, onMounted } from 'vue';
 import { createPaymentLink } from '@/services/mercadoPago';
 import { CreditCardIcon } from '@heroicons/vue/24/outline'
 import { useRouter, useRoute } from 'vue-router';
+import { getFirestore, doc, getDoc } from 'firebase/firestore';
+import { InformationCircleIcon } from '@heroicons/vue/24/outline'
+
 
 const router = useRouter();
 const route = useRoute();
 
 // Variables reactivas
 const isLoading = ref(false);
-const amount = ref(2000);
+const spectator = ref(null);
+const amount = reactive([]);
 const description = ref('Tu experiencia 40 Minutos');
 const email = ref('');
 const progressWidth = ref('50%');
@@ -69,19 +98,61 @@ const paymentLink = ref('');
 const emailError = ref('');
 const baseUrl = ref('');
 const params = ref('');
+const spectatorArray = ref();
+const uniquePaymentOfGroup = ref(false);
+const isViewLoading = ref(false);
 
 onMounted(() => {
+  // Captura los parámetros actuales de la URL
+  baseUrl.value = window.location.origin; // Obtiene la URL base actual (dominio)
+  params.value = route.params.idSpectator;
+  if (params.value && !route.query.referenceLink) {
+  fetchSpectator();
+  } else {
+    setDefaultUniqueSpectator(1)
+  }
   updateProgress();
-      // Captura los parámetros actuales de la URL
-    baseUrl.value = window.location.origin; // Obtiene la URL base actual (dominio)
-    params.value = route.params.idSpectator;
 });
+const setDefaultUniqueSpectator = (number) => {
+  amount.length = 0;
+  spectatorArray.value = getNumberArray(number);
+  const items = spectatorArray.value;
+  items.forEach((item, index) => {
+    amount[index] = 2000; // Inicializamos el valor de cada input
+  });
+}
+// Función para obtener los datos del espectador desde Firestore
+const fetchSpectator = async () => {
+  isViewLoading.value = true;
+  const db = getFirestore();
+  const docRef = doc(db, 'spectators', params.value);
+  try {
+    const docSnap = await getDoc(docRef);
+    if (docSnap.exists()) {
+      spectator.value = docSnap.data();
+      email.value = spectator.value.email;
+      spectatorArray.value = getNumberArray(spectator.value.number_of_people);
+      const items = spectatorArray.value;
+      items.forEach((item, index) => {
+        amount[index] = 5000; // Inicializamos el valor de cada input
+      });
+    } else {
+      console.error('No se encontró el documento con el ID proporcionado');
+    }
+  } catch (error) {
+    console.error('Error al obtener los datos del espectador:', error);
+  }
+  isViewLoading.value = false;
+};
+
+const getNumberArray = (num) => {
+      return Array.from({ length: num }, (v, i) => i + 1);
+};
 
 const updateProgress = () => {
   const percentage = (amount.value / 100000) * 100;
   progressWidth.value = `${percentage}%`;
 };
-
 // Validación del email
 const validateEmail = () => {
   const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -99,7 +170,7 @@ const generatePaymentLink = async () => {
   isLoading.value = true;
   try {
     paymentLink.value = await createPaymentLink({
-      amount: amount.value,
+      amount: totalAmountToPay.value,
       description: description.value,
       email: email.value,
       backUrls: {
@@ -115,13 +186,17 @@ const generatePaymentLink = async () => {
 }
   isLoading.value = false;
 };
-const formattedAmount = computed(() => {
+const formatAmount = (amount) => {
   return new Intl.NumberFormat('es-CL', {
     style: 'currency',
     currency: 'CLP',
-    minimumFractionDigits: 0,
-  }).format(amount.value);
-});
+    minimumFractionDigits: 0, // Controla los dígitos decimales
+  }).format(amount);
+};
+
+const totalAmountToPay = computed(() =>
+  amount.reduce((total, num) => total + parseFloat(num), 0)
+)
 
 const goToThankYouPage = () => {
   router.push({
