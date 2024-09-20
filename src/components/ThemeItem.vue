@@ -1,7 +1,7 @@
 <template>
   <div>
       <div :class="openCollapse ? 'collapse-open' : ''" class="collapse border-base-300 bg-base-200 border rounded-none">
-        <div class="collapse-title text-xl font-medium flex items-center justify-between">
+        <div class="collapse-title text-xl font-medium flex items-center justify-between pr-1">
           <div>
             <p class="w-full">
             {{ localTheme.name }}
@@ -14,10 +14,9 @@
             </div>
           </div>
           <div class="flex items-center">
-            <button v-if="localTheme.artist !== '' && localTheme.description !== ''" class="btn btn-active btn-link text-gray-400" @click="openCollapse = !openCollapse">
-              <ChevronDownIcon v-if="!openCollapse" class="h-5 w-5"/>
-              <ChevronUpIcon v-else class="h-5 w-5"/>
-              {{!openCollapse ? 'Ver más' : 'Ocultar'}}
+            <button v-if="localTheme.artist !== '' && localTheme.description !== ''" class="btn btn-active btn-link" @click="openCollapse = !openCollapse">
+              <PlusCircleIcon v-if="!openCollapse" class="h-5 w-5"/>
+              <MinusCircleIcon v-else class="h-5 w-5"/>
             </button>
             <div v-else class="min-w-28"></div>
           </div>
@@ -52,7 +51,7 @@
 <script setup>
 import { ref, onMounted, defineEmits } from 'vue';
 // import { doc, getDoc, updateDoc, getFirestore } from 'firebase/firestore';
-import { StarIcon, ChevronDownIcon, ChevronUpIcon } from '@heroicons/vue/24/solid'
+import { StarIcon, PlusCircleIcon, MinusCircleIcon } from '@heroicons/vue/24/solid'
 import { storage } from '@/firebase';
 import { ref as storageRef, getDownloadURL } from 'firebase/storage';
 
