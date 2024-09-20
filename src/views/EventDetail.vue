@@ -4,7 +4,7 @@
     <div v-if="themes.length">
       <h2 class="text-xl font-semibold mb-4">Temas del evento:</h2>
       <ul>
-        <li v-for="theme in themes" :key="theme.id" class="mb-4 p-4 border bg-white rounded-md">
+        <li v-for="theme in themes" :key="theme.id" class="mb-4 bg-white rounded-md">
           <ThemeItem :theme="theme" @onRateChange="handleRateChange"/>
         </li>
       </ul>
