@@ -102,7 +102,7 @@
       <span v-if="isLoading">Te estamos redirigiendo...</span>
     </button>
     <button class="btn btn-active btn-link w-full text-gray-400" @click="goToThankYouPage">Prefiero no aportar</button>
-  </div>{{ totalAmountToPay }}
+  </div>
   </div>
 </template>
 
