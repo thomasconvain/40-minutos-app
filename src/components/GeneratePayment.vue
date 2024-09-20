@@ -13,7 +13,7 @@
     <div v-if="rowTableArray?.length > 1" class="form-control">
       <label class="label cursor-pointer flex justify-start gap-2">
         <input type="checkbox" class="checkbox checkbox-primary" :checked="uniquePaymentOfGroup" @change="uniquePaymentOfGroup ? (setDefaultUniqueSpectator(spectator.number_of_people), uniquePaymentOfGroup = false) : (setDefaultUniqueSpectator(1), uniquePaymentOfGroup = true)" />
-        <span class="label-text">Quiero aportar el mismo monto para todos los participantes:</span>
+        <span class="label-text">Quiero aportar el mismo monto para todos los integrantes:</span>
       </label>
     </div>
   <div v-for="(item, index) in spectatorArray" :key="index" class="mt-4">
@@ -21,10 +21,10 @@
         <div v-if="spectatorArray.length > 1" class="flex items-center gap-2">
           <div class="avatar placeholder">
             <div class="bg-neutral text-neutral-content w-8 rounded-full">
-              <span>P</span>
+              <span>I</span>
             </div>
           </div>
-          <p class="text-xs">Participante {{ item }}</p>
+          <p class="text-xs">Integrante {{ item }}</p>
         </div>
       </label>
       <div class="relative flex">
@@ -44,7 +44,39 @@
       </div>
     </div>
 
-    <div class="mb-6">
+    <div v-if="rowTableArray?.length > 1" class="overflow-x-auto mt-4">
+      <table class="table">
+        <!-- head -->
+        <thead>
+          <tr>
+            <th>Integrantes</th>
+            <th>Monto</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- row 1 -->
+          <tr v-for="(row, index) in rowTableArray" :key="index">
+            <td>
+              <div class="flex items-center gap-3">
+                <div class="avatar placeholder">
+                  <div class="bg-neutral text-neutral-content w-8 rounded-full">
+                    <span>I</span>
+                  </div>
+                </div>
+                <div>
+                  <div class="font-bold">Integrante {{ row }}</div>
+                </div>
+              </div>
+            </td>
+            <td>{{uniquePaymentOfGroup ? formatAmount(amount[0]) : formatAmount(amount[index]) }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p class="my-6">Tu aporte total: {{ uniquePaymentOfGroup && spectator ? formatAmount(amount[0] * spectator?.number_of_people) : formatAmount(totalAmountToPay) }}</p>
+
+    <div class="mt-6">
       <label for="email" class="block text-sm font-medium text-gray-700">Tu correo</label>
       <div class="mt-1">
         <input
@@ -58,38 +90,6 @@
       </div>
       <p v-if="emailError" class="text-red-500 text-sm mt-1">{{ emailError }}</p>
     </div>
-
-    <div v-if="rowTableArray?.length > 1" class="overflow-x-auto">
-      <table class="table">
-        <!-- head -->
-        <thead>
-          <tr>
-            <th>Participantes</th>
-            <th>Monto</th>
-          </tr>
-        </thead>
-        <tbody>
-          <!-- row 1 -->
-          <tr v-for="(row, index) in rowTableArray" :key="index">
-            <td>
-              <div class="flex items-center gap-3">
-                <div class="avatar placeholder">
-                  <div class="bg-neutral text-neutral-content w-8 rounded-full">
-                    <span>P</span>
-                  </div>
-                </div>
-                <div>
-                  <div class="font-bold">Participante {{ row }}</div>
-                </div>
-              </div>
-            </td>
-            <td>{{uniquePaymentOfGroup ? formatAmount(amount[0]) : formatAmount(amount[index]) }}</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-
-    <p class="my-4">Tu aporte total: {{ uniquePaymentOfGroup && spectator ? formatAmount(amount[0] * spectator?.number_of_people) : formatAmount(totalAmountToPay) }}</p>
 
     <button
       type="button"
