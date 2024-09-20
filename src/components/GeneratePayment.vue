@@ -12,13 +12,15 @@
       </div>
       <a :href='`https://wa.me/?text=https://cuarenta-minutos.web.app/checkout/${params}?referenceLink=true`'><button class="btn btn-sm min-w-56"><ShareIcon class="-ml-1 mr-3 h-4 w-4" aria-hidden="true" />Compartir link de pago</button></a>
     </div>
-    <div v-if="rowTableArray?.length > 1" class="form-control">
-      <label class="label cursor-pointer flex justify-start gap-2">
-        <input type="checkbox" class="checkbox checkbox-primary" :checked="uniquePaymentOfGroup" @change="uniquePaymentOfGroup ? (setDefaultUniqueSpectator(spectator.number_of_people), uniquePaymentOfGroup = false) : (setDefaultUniqueSpectator(1), uniquePaymentOfGroup = true)" />
-        <span class="label-text">Quiero aportar el mismo monto para todos los integrantes:</span>
-      </label>
+    <div class="flex flex-wrap justify-between items-center">
+      <div v-if="rowTableArray?.length > 1" class="form-control">
+        <label class="label cursor-pointer flex justify-start gap-2">
+          <input type="checkbox" class="checkbox checkbox-primary" :checked="uniquePaymentForGroup" @change="uniquePaymentForGroup ? (setDefaultUniqueSpectator(spectator.number_of_people), uniquePaymentForGroup = false) : (setDefaultUniqueSpectator(1), uniquePaymentForGroup = true)" />
+          <span class="label-text">Quiero aportar el mismo monto para todos los integrantes:</span>
+        </label>
+      </div>
     </div>
-  <div v-for="(item, index) in spectatorArray" :key="index" class="mt-4">
+    <div v-for="(item, index) in spectatorArray" :key="index" class="mt-4">
       <label for="amount" class="block text-lg font-medium text-gray-700 mb-2">
         <div v-if="spectatorArray.length > 1" class="flex items-center gap-2">
           <div class="avatar placeholder">
@@ -26,7 +28,8 @@
               <span>I</span>
             </div>
           </div>
-          <p class="text-xs">Integrante {{ item }}</p>
+          <p v-if="item === 1" class="text-xs">Tu aporte</p>
+          <p v-else class="text-xs">Integrante {{ item - 1 }}</p>
         </div>
       </label>
       <div class="relative flex">
@@ -66,18 +69,21 @@
                   </div>
                 </div>
                 <div>
-                  <div class="font-bold">Integrante {{ row }}</div>
+                  <div v-if="row === 1" class="font-bold">Tu aporte</div>
+                  <div v-else class="font-bold">Integrante {{ row - 1 }}</div>
                 </div>
               </div>
             </td>
-            <td>{{uniquePaymentOfGroup ? formatAmount(amount[0]) : formatAmount(amount[index]) }}</td>
+            <td>{{uniquePaymentForGroup ? formatAmount(amount[0]) : formatAmount(amount[index]) }}</td>
           </tr>
         </tbody>
       </table>
     </div>
 
-    <p class="my-6">Tu aporte total: {{ uniquePaymentOfGroup && spectator ? formatAmount(amount[0] * spectator?.number_of_people) : formatAmount(totalAmountToPay) }}</p>
-
+    <div class="my-6 flex flex-wrap items-center gap-2">
+      <p>Tu aporte total: {{ uniquePaymentForGroup && spectator ? formatAmount(amount[0] * spectator?.number_of_people) : formatAmount(totalAmountToPay) }}</p>
+      <button v-if="spectator?.number_of_people > 1 && isFirstGreaterThanZero" class="btn btn-link btn-sm text-gray-400" @click="setGroupValuesToZero">Prefiero aportar solamente lo mío</button>
+    </div>
     <div class="mt-6">
       <label for="email" class="block text-sm font-medium text-gray-700">Tu correo</label>
       <div class="mt-1">
@@ -133,7 +139,7 @@ const baseUrl = ref('');
 const params = ref('');
 const spectatorArray = ref();
 const rowTableArray = ref();
-const uniquePaymentOfGroup = ref(true);
+const uniquePaymentForGroup = ref(true);
 const isViewLoading = ref(false);
 
 onMounted(() => {
@@ -151,7 +157,7 @@ const setDefaultUniqueSpectator = (number) => {
   spectatorArray.value = getNumberArray(number);
   const items = spectatorArray.value;
   items.forEach((item, index) => {
-    amount[index] = uniquePaymentOfGroup.value == true ?  amount[0] : (amount.length = 1, amount[0]); // Inicializamos el valor de cada input
+    amount[index] = uniquePaymentForGroup.value == true ?  amount[0] : (amount.length = 1, amount[0]); // Inicializamos el valor de cada input
   });
 }
 // Función para obtener los datos del espectador desde Firestore
@@ -181,6 +187,12 @@ const fetchSpectator = async () => {
 
 const getNumberArray = (num) => {
       return Array.from({ length: num }, (v, i) => i + 1);
+};
+
+const setGroupValuesToZero = () => {
+  uniquePaymentForGroup.value = false;
+  setDefaultUniqueSpectator(spectator.value.number_of_people)
+  amount.fill(0, 1);
 };
 
 const updateProgress = () => {
@@ -231,6 +243,15 @@ const formatAmount = (amount) => {
 const totalAmountToPay = computed(() =>
   amount.reduce((total, num) => total + parseFloat(num), 0)
 )
+
+// Computed para evaluar si el primer índice es mayor que 0 y todos los demás son iguales a 0
+const isFirstGreaterThanZero = computed(() => {
+  if (amount.length > 1) {
+  return amount[0] > 0 && !amount.slice(1).every(num => num === 0);
+  } else {
+    return true
+  }
+});
 
 const goToThankYouPage = () => {
   router.push({
