@@ -4,18 +4,17 @@
     <span class="loading loading-spinner loading-md"></span>
   </div>
   <div v-else>
-  <p>Selecciona el monto que quieres aportar <span v-if="spectatorArray?.length > 1">para cada integrante de tu grupo</span></p>
-  <div v-if="spectatorArray?.length > 1" class="alert alert-info rounded-none my-6">
+  <p>Selecciona el monto que quieres aportar <span v-if="spectator?.number_of_people > 1">para cada integrante de tu grupo:</span></p>
+  <div v-if="spectator?.number_of_people > 1" class="alert alert-info rounded-none my-6">
       <InformationCircleIcon class="-ml-1 mr-3 h-5 w-5" aria-hidden="true" />
-      <span class="text-xs">Tambien puedes compartir el link de pago a algunos integrantes de tu grupo o pagar solamente tu aporte.</span>
+      <span class="text-xs">Tambien puedes compartir el link de pago a algunos integrantes de tu grupo para que puedan realizar su propio aporte.</span>
       <a :href='`https://wa.me/?text=https://cuarenta-minutos.web.app/checkout/${params}?referenceLink=true`'><button class="btn btn-sm">Compartir link de pago</button></a>
-      <button class="btn btn-link" @click="setDefaultUniqueSpectator(1), uniquePaymentOfGroup = true">Prefiero pagar solo mi aporte personal</button>
     </div>
-    <div v-if="uniquePaymentOfGroup" class="alert alert-info rounded-none my-6">
-      <InformationCircleIcon class="-ml-1 mr-3 h-5 w-5" aria-hidden="true" />
-      <span class="text-xs">Recuerda que estás seleccionando solamente tu aporte personal.</span>
-      <a :href='`https://wa.me/?text=https://https://cuarenta-minutos.web.app/checkout/${params}?referenceLink=true`'><button class="btn btn-sm">Compartir link de pago</button></a>
-      <button class="btn btn-link" @click="setDefaultUniqueSpectator(spectator.number_of_people), uniquePaymentOfGroup = false">Prefiero pagar para todo el grupo</button>
+    <div v-if="rowTableArray?.length > 1" class="form-control">
+      <label class="label cursor-pointer flex justify-start gap-2">
+        <input type="checkbox" class="checkbox checkbox-primary" :checked="uniquePaymentOfGroup" @change="uniquePaymentOfGroup ? (setDefaultUniqueSpectator(spectator.number_of_people), uniquePaymentOfGroup = false) : (setDefaultUniqueSpectator(1), uniquePaymentOfGroup = true)" />
+        <span class="label-text">Quiero aportar el mismo monto para todos los participantes:</span>
+      </label>
     </div>
   <div v-for="(item, index) in spectatorArray" :key="index" class="mt-4">
       <label for="amount" class="block text-lg font-medium text-gray-700 mb-2">
@@ -59,7 +58,39 @@
       </div>
       <p v-if="emailError" class="text-red-500 text-sm mt-1">{{ emailError }}</p>
     </div>
-    <p>Tu aporte total: {{ formatAmount(totalAmountToPay) }}</p>
+
+    <div v-if="rowTableArray?.length > 1" class="overflow-x-auto">
+      <table class="table">
+        <!-- head -->
+        <thead>
+          <tr>
+            <th>Participantes</th>
+            <th>Monto</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- row 1 -->
+          <tr v-for="(row, index) in rowTableArray" :key="index">
+            <td>
+              <div class="flex items-center gap-3">
+                <div class="avatar placeholder">
+                  <div class="bg-neutral text-neutral-content w-8 rounded-full">
+                    <span>P</span>
+                  </div>
+                </div>
+                <div>
+                  <div class="font-bold">Participante {{ row }}</div>
+                </div>
+              </div>
+            </td>
+            <td>{{uniquePaymentOfGroup ? formatAmount(amount[0]) : formatAmount(amount[index]) }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p class="my-4">Tu aporte total: {{ uniquePaymentOfGroup && spectator ? formatAmount(amount[0] * spectator?.number_of_people) : formatAmount(totalAmountToPay) }}</p>
+
     <button
       type="button"
       :disabled="isButtonDisabled"
@@ -90,7 +121,7 @@ const route = useRoute();
 // Variables reactivas
 const isLoading = ref(false);
 const spectator = ref(null);
-const amount = reactive([]);
+const amount = reactive([5000]);
 const description = ref('Tu experiencia 40 Minutos');
 const email = ref('');
 const progressWidth = ref('50%');
@@ -99,7 +130,8 @@ const emailError = ref('');
 const baseUrl = ref('');
 const params = ref('');
 const spectatorArray = ref();
-const uniquePaymentOfGroup = ref(false);
+const rowTableArray = ref();
+const uniquePaymentOfGroup = ref(true);
 const isViewLoading = ref(false);
 
 onMounted(() => {
@@ -114,11 +146,10 @@ onMounted(() => {
   updateProgress();
 });
 const setDefaultUniqueSpectator = (number) => {
-  amount.length = 0;
   spectatorArray.value = getNumberArray(number);
   const items = spectatorArray.value;
   items.forEach((item, index) => {
-    amount[index] = 5000; // Inicializamos el valor de cada input
+    amount[index] = uniquePaymentOfGroup.value == true ?  totalAmountToPay.value : (amount.length = 1, amount[0]); // Inicializamos el valor de cada input
   });
 }
 // Función para obtener los datos del espectador desde Firestore
@@ -131,7 +162,8 @@ const fetchSpectator = async () => {
     if (docSnap.exists()) {
       spectator.value = docSnap.data();
       email.value = spectator.value.email;
-      spectatorArray.value = getNumberArray(spectator.value.number_of_people);
+      spectatorArray.value = getNumberArray(1);
+      rowTableArray.value = getNumberArray(spectator.value.number_of_people);
       const items = spectatorArray.value;
       items.forEach((item, index) => {
         amount[index] = 5000; // Inicializamos el valor de cada input
@@ -207,5 +239,15 @@ const goToThankYouPage = () => {
 </script>
 
 <style>
-
+.fix-focus-toggle {
+  opacity: 0.6;
+}
+.fix-focus-toggle:focus {
+  box-shadow: var(--handleoffsetcalculator) 0 0 2px var(--tglbg) inset,
+    0 0 0 2px var(--tglbg) inset,
+    var(--togglehandleborder)
+}
+.fix-focus-toggle:checked {
+  opacity: 1;
+}
 </style>
