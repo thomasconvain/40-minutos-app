@@ -6,9 +6,11 @@
   <div v-else>
   <p>Selecciona el monto que quieres aportar <span v-if="spectator?.number_of_people > 1">para cada integrante de tu grupo:</span></p>
   <div v-if="spectator?.number_of_people > 1" class="alert alert-info rounded-none my-6">
-      <InformationCircleIcon class="-ml-1 mr-3 h-5 w-5" aria-hidden="true" />
-      <span class="text-xs">Tambien puedes compartir el link de pago a algunos integrantes de tu grupo para que puedan realizar su propio aporte.</span>
-      <a :href='`https://wa.me/?text=https://cuarenta-minutos.web.app/checkout/${params}?referenceLink=true`'><button class="btn btn-sm">Compartir link de pago</button></a>
+      <div class="flex">
+        <InformationCircleIcon class="-ml-1 mr-3 h-5 min-w-5" aria-hidden="true" />
+        <span class="text-xs text-left">Tambien puedes compartir el link de pago a algunos integrantes de tu grupo para que puedan realizar su propio aporte.</span>
+      </div>
+      <a :href='`https://wa.me/?text=https://cuarenta-minutos.web.app/checkout/${params}?referenceLink=true`'><button class="btn btn-sm min-w-56"><ShareIcon class="-ml-1 mr-3 h-4 w-4" aria-hidden="true" />Compartir link de pago</button></a>
     </div>
     <div v-if="rowTableArray?.length > 1" class="form-control">
       <label class="label cursor-pointer flex justify-start gap-2">
@@ -112,7 +114,7 @@ import { createPaymentLink } from '@/services/mercadoPago';
 import { CreditCardIcon } from '@heroicons/vue/24/outline'
 import { useRouter, useRoute } from 'vue-router';
 import { getFirestore, doc, getDoc } from 'firebase/firestore';
-import { InformationCircleIcon } from '@heroicons/vue/24/outline'
+import { InformationCircleIcon, ShareIcon } from '@heroicons/vue/24/outline'
 
 
 const router = useRouter();
