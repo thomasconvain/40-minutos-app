@@ -1,6 +1,6 @@
 <template>
   <div class="flex flex-col items-center gap-10">
-    <img src="../assets/logo.png" width="200">
+    <img src="../assets/logo.png" width="150">
     <p class="text-xl">Gracias por asistir!</p>
     <p>Tu aporte: {{ paymentDetails ? formattedAmount : formattedAmount = '$0' }}</p>
   </div>
