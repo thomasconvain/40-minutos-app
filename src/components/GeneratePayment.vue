@@ -8,7 +8,7 @@
   <div v-if="spectatorArray?.length > 1" class="alert alert-info rounded-none my-6">
       <InformationCircleIcon class="-ml-1 mr-3 h-5 w-5" aria-hidden="true" />
       <span class="text-xs">Tambien puedes compartir el link de pago a algunos integrantes de tu grupo o pagar solamente tu aporte.</span>
-      <a :href='`https://wa.me/?text=https://https://cuarenta-minutos.web.app/checkout/${params}?referenceLink=true`'><button class="btn btn-sm">Compartir link de pago</button></a>
+      <a :href='`https://wa.me/?text=https://cuarenta-minutos.web.app/checkout/${params}?referenceLink=true`'><button class="btn btn-sm">Compartir link de pago</button></a>
       <button class="btn btn-link" @click="setDefaultUniqueSpectator(1), uniquePaymentOfGroup = true">Prefiero pagar solo mi aporte personal</button>
     </div>
     <div v-if="uniquePaymentOfGroup" class="alert alert-info rounded-none my-6">
