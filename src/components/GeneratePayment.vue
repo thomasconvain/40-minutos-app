@@ -118,7 +118,7 @@ const setDefaultUniqueSpectator = (number) => {
   spectatorArray.value = getNumberArray(number);
   const items = spectatorArray.value;
   items.forEach((item, index) => {
-    amount[index] = 2000; // Inicializamos el valor de cada input
+    amount[index] = 5000; // Inicializamos el valor de cada input
   });
 }
 // Función para obtener los datos del espectador desde Firestore
