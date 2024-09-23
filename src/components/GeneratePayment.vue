@@ -216,7 +216,7 @@ const generatePaymentLink = async () => {
   isLoading.value = true;
   try {
     paymentLink.value = await createPaymentLink({
-      amount: totalAmountToPay.value,
+      amount: (uniquePaymentForGroup.value && spectator) ? amount[0] * spectator.value.number_of_people : totalAmountToPay.value,
       description: description.value,
       email: email.value,
       backUrls: {
