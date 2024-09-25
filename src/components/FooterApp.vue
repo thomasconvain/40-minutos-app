@@ -7,7 +7,7 @@
         </aside>
         <nav>
           <div class="grid grid-flow-col gap-4">
-            <a class="flex gap-2">
+            <a href="https://www.instagram.com/40_minutos" target="_blank" class="flex gap-2">
               <p>Síguenos en instagram</p>
               <svg
                 width="24px"
