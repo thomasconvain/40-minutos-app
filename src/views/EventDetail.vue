@@ -9,7 +9,7 @@
         </li>
       </ul>
     </div>
-    <div v-else class="mb-4 p-4 border bg-white rounded-md">
+    <div class="mb-4 p-4 border bg-white rounded-md w-full">
     <div class="skeleton h-6 w-32 rounded-none"></div>
     <div class="flex flex-wrap sm:flex-nowrap items-center justify-center sm:justify-start gap-4">
       <div class="skeleton h-20 w-20 shrink-0 rounded-full"></div>
@@ -33,7 +33,7 @@
     <button
       type="button"
       :disabled="isButtonDisabled"
-      class="mt-2 inline-flex justify-center w-full items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-gray-800 hover:bg-black focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed"
+      class="mt-2 inline-flex justify-center w-full items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-gray-800 hover:bg-black focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 disabled:opacity-50 disabled:cursor-not-allowed"
       @click="goToCheckout"
     >
       <span v-if="!isLoading">Checkout</span>

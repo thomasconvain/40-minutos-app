@@ -4,8 +4,8 @@
     <span class="loading loading-spinner loading-md"></span>
   </div>
   <div v-else>
-  <p>Selecciona el monto que quieres aportar <span v-if="spectator?.number_of_people > 1">para cada integrante de tu grupo:</span></p>
-  <div v-if="spectator?.number_of_people > 1" class="alert alert-info rounded-none my-6">
+  <p>Selecciona el monto que quieres aportar <span v-if="spectator?.numberOfPeople > 1">para cada integrante de tu grupo:</span></p>
+  <div v-if="spectator?.numberOfPeople > 1" class="alert alert-info rounded-none my-6">
       <div class="flex">
         <InformationCircleIcon class="-ml-1 mr-3 h-5 min-w-5" aria-hidden="true" />
         <span class="text-xs text-left">Tambien puedes compartir el link de pago a algunos integrantes de tu grupo para que puedan realizar su propio aporte.</span>
@@ -15,7 +15,7 @@
     <div class="flex flex-wrap justify-between items-center">
       <div v-if="rowTableArray?.length > 1" class="form-control">
         <label class="label cursor-pointer flex justify-start gap-2">
-          <input type="checkbox" class="checkbox checkbox-primary" :checked="uniquePaymentForGroup" @change="uniquePaymentForGroup ? (setDefaultUniqueSpectator(spectator.number_of_people), uniquePaymentForGroup = false) : (setDefaultUniqueSpectator(1), uniquePaymentForGroup = true)" />
+          <input type="checkbox" class="checkbox checkbox-primary" :checked="uniquePaymentForGroup" @change="uniquePaymentForGroup ? (setDefaultUniqueSpectator(spectator.numberOfPeople), uniquePaymentForGroup = false) : (setDefaultUniqueSpectator(1), uniquePaymentForGroup = true)" />
           <span class="label-text">Quiero aportar el mismo monto para todos los integrantes:</span>
         </label>
       </div>
@@ -81,8 +81,8 @@
     </div>
 
     <div class="my-6 flex flex-wrap items-center gap-2">
-      <p>Tu aporte total: {{ uniquePaymentForGroup && spectator ? formatAmount(amount[0] * spectator?.number_of_people) : formatAmount(totalAmountToPay) }}</p>
-      <button v-if="spectator?.number_of_people > 1 && isFirstGreaterThanZero" class="btn btn-link btn-sm text-gray-400" @click="setGroupValuesToZero">Prefiero aportar solamente lo mío</button>
+      <p>Tu aporte total: {{ uniquePaymentForGroup && spectator ? formatAmount(amount[0] * spectator?.numberOfPeople) : formatAmount(totalAmountToPay) }}</p>
+      <button v-if="spectator?.numberOfPeople > 1 && isFirstGreaterThanZero" class="btn btn-link btn-sm text-gray-400" @click="setGroupValuesToZero">Prefiero aportar solamente lo mío</button>
     </div>
     <div class="mt-6">
       <label for="email" class="block text-sm font-medium text-gray-700">Tu correo</label>
@@ -92,7 +92,7 @@
           type="email"
           name="email"
           id="email"
-          class="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md"
+          class="shadow-sm focus:ring-gray-500 focus:border-gray-500 block w-full sm:text-sm border-gray-300 rounded-md"
           placeholder="correo@ejemplo.com"
         />
       </div>
@@ -102,7 +102,7 @@
     <button
       type="button"
       :disabled="isButtonDisabled"
-      class="mt-2 inline-flex justify-center w-full items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-gray-800 hover:bg-black focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed"
+      class="mt-2 inline-flex justify-center w-full items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-gray-800 hover:bg-black focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 disabled:opacity-50 disabled:cursor-not-allowed"
       @click="generatePaymentLink"
     >
       <CreditCardIcon v-if="!isLoading" class="-ml-1 mr-3 h-5 w-5" aria-hidden="true" />
@@ -171,7 +171,7 @@ const fetchSpectator = async () => {
       spectator.value = docSnap.data();
       email.value = spectator.value.email;
       spectatorArray.value = getNumberArray(1);
-      rowTableArray.value = getNumberArray(spectator.value.number_of_people);
+      rowTableArray.value = getNumberArray(spectator.value.numberOfPeople);
       const items = spectatorArray.value;
       items.forEach((item, index) => {
         amount[index] = 5000; // Inicializamos el valor de cada input
@@ -191,7 +191,7 @@ const getNumberArray = (num) => {
 
 const setGroupValuesToZero = () => {
   uniquePaymentForGroup.value = false;
-  setDefaultUniqueSpectator(spectator.value.number_of_people)
+  setDefaultUniqueSpectator(spectator.value.numberOfPeople)
   amount.fill(0, 1);
 };
 
@@ -216,7 +216,7 @@ const generatePaymentLink = async () => {
   isLoading.value = true;
   try {
     paymentLink.value = await createPaymentLink({
-      amount: (uniquePaymentForGroup.value && spectator) ? amount[0] * spectator.value.number_of_people : totalAmountToPay.value,
+      amount: (uniquePaymentForGroup.value && spectator) ? amount[0] * spectator.value.numberOfPeople : totalAmountToPay.value,
       description: description.value,
       email: email.value,
       backUrls: {

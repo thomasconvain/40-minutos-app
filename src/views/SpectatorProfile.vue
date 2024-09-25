@@ -1,29 +1,26 @@
 <template>
-  <div class="w-full">
+  <div>
     <h1 class="text-2xl font-bold mb-6">Hola {{ spectator?.name }} 👋</h1>
     <p>Gracias por inscribirte a uno de nuestros eventos.<br>
       Por favor muestra esa pantalla antes de ingresar al recinto.</p>
     <div class="mt-4" v-if="spectator">
-      <p><strong>Tus datos:</strong></p>
-      <p class="text-sm"><strong>Email:</strong> {{ spectator.email }}</p>
-      <p class="text-sm"><strong>Teléfono:</strong> {{ spectator.phone }}</p>
       <p class="my-4"><strong>Estás inscrito para los siguientes eventos:</strong></p>
       <div v-if="events.length">
-        <div v-for="event in events" :key="event.id" class="card sm:card-side bg-base-100 border border-base-600">
-          <figure class="sm:max-w-52 max-w-full">
-            <img
-              src="../assets/afiche 40 minutos_1.png"
-              alt="Shoes" />
-          </figure>
+        <div v-for="event in events" :key="event.id" class="card bg-base-100 border border-base-600">
           <div class="card-body">
             <h2 class="card-title">{{ event.name }}</h2>
             <p><strong>Lugar:</strong> {{ event.place }}</p>
             <p><strong>Fecha:</strong> {{ formatDate(event.date) }}</p>
-            <p><strong>Número de personas:</strong> {{ spectator.number_of_people }}</p>
+            <p><strong>Número de personas:</strong> {{ spectator.numberOfPeople }}</p>
             <div class="card-actions justify-start mt-4">
-              <button class="btn btn-primary text-white" @click="goToEvent(event)">Entrar al concierto</button>
+              <button class="btn btn-primary text-white w-full" @click="goToEvent(event)">Entrar al concierto</button>
             </div>
           </div>
+        </div>
+        <div class="mt-4">
+          <p><strong>Tus datos:</strong></p>
+          <p class="text-sm"><strong>Email:</strong> {{ spectator.email }}</p>
+          <p class="text-sm"><strong>Teléfono:</strong> {{ spectator.phone }}</p>
         </div>
       </div>
       <div v-else class="flex justify-center w-full">
@@ -59,7 +56,7 @@ const fetchSpectator = async () => {
     const docSnap = await getDoc(docRef);
     if (docSnap.exists()) {
       spectator.value = docSnap.data();
-      await fetchEvents(spectator.value['subscribed_events_id']);
+      await fetchEvents(spectator.value['subscribedEventsId']);
     } else {
       console.error('No se encontró el documento con el ID proporcionado');
     }

@@ -5,16 +5,20 @@
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
-    "lint": "vue-cli-service lint"
+    "lint": "vue-cli-service lint",
+    "uploadFirestore": "node help-script/uploadFirestore.js",
+    "deleteFirestore": "node help-script/deleteFirestoreAccordingToEmail.js"
   },
   "dependencies": {
     "@heroicons/vue": "^2.1.5",
     "axios": "^1.7.7",
     "core-js": "^3.8.3",
     "firebase": "^10.13.0",
+    "firebase-admin": "^12.5.0",
     "mercadopago": "^2.0.13",
     "vue": "^3.2.13",
-    "vue-router": "^4.0.13"
+    "vue-router": "^4.0.13",
+    "xlsx": "^0.18.5"
   },
   "devDependencies": {
     "@babel/core": "^7.12.16",
