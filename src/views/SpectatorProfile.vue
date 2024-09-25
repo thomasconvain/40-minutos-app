@@ -13,7 +13,11 @@
             <p><strong>Fecha:</strong> {{ formatDate(event.date) }}</p>
             <p><strong>Número de personas:</strong> {{ spectator.numberOfPeople }}</p>
             <div class="card-actions justify-start mt-4">
-              <button class="btn btn-primary text-white w-full" @click="goToEvent(event)">Entrar al concierto</button>
+              <div v-if="!spectator.isCheckinActive" class="alert alert-info rounded-none flex text-left">
+                <InformationCircleIcon class="-ml-1 mr-3 h-5 min-w-5" aria-hidden="true" />
+                <span class="text-xs">El día del concierto se habilitará el acceso a tu checkin. </span>
+              </div>
+              <button v-else class="btn btn-primary text-white w-full" @click="goToEvent(event)">Hacer checkin</button>
             </div>
           </div>
         </div>
@@ -37,6 +41,8 @@
 import { ref, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { getFirestore, doc, getDoc, collection } from 'firebase/firestore';
+import { InformationCircleIcon } from '@heroicons/vue/24/outline'
+
 
 // Obtener el ID del espectador desde la ruta
 const route = useRoute();
