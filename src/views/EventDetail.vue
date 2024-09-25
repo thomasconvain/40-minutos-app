@@ -9,7 +9,7 @@
         </li>
       </ul>
     </div>
-    <div class="mb-4 p-4 border bg-white rounded-md w-full">
+    <div v-else class="mb-4 p-4 border bg-white rounded-md w-full">
     <div class="skeleton h-6 w-32 rounded-none"></div>
     <div class="flex flex-wrap sm:flex-nowrap items-center justify-center sm:justify-start gap-4">
       <div class="skeleton h-20 w-20 shrink-0 rounded-full"></div>

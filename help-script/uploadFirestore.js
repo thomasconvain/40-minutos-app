@@ -48,21 +48,23 @@ const uploadDataToFirestore = async () => {
 
     // Convertir subscribed_events_id a un arreglo si es una cadena de texto
     let subscribedEventsArray = [];
-    if (typeof row.subscribed_events_id === 'string' && row.subscribed_events_id.trim()) {
-      subscribedEventsArray = row.subscribed_events_id.split(',').map(event => event.trim()); // Convertir cadena a arreglo
-      console.log(`subscribed_events_id parseado en la fila ${i + 1}:`, subscribedEventsArray);
-    } else if (Array.isArray(row.subscribed_events_id)) {
-      subscribedEventsArray = row.subscribed_events_id; // Si ya es un arreglo, lo dejamos como está
+    if (typeof row.subscribedEventsId === 'string' && row.subscribedEventsId.trim()) {
+      try {
+      subscribedEventsArray = JSON.parse(row.subscribedEventsId);
+      } catch (error) {
+        console.log(`Error en la fila ${i + 1}: subscribed_events_id no es un JSON válido.`);
+        continue
+      }
     }
 
     // Estructurar los datos de cada fila
     const documentData = {
-      email: row.email,
+      email: row.email.replace(/\s/g, ''),
       name: row.name,
       lastName: row.lastName,
       numberOfPeople: row.numberOfPeople,
-      phone: row.phone,
-      subscribedEventsId: subscribedEventsArray,
+      phone: row.phone.replace(/\s/g, ''),
+      subscribedEventsId: subscribedEventsArray || null,
       companionsInfo: companionsInfoArray || null,
     };
 
