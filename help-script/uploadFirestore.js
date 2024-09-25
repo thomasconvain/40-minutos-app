@@ -19,7 +19,6 @@ const sheet = workbook.Sheets[sheetName];
 
 // Convertir los datos del Excel en formato JSON
 const data = XLSX.utils.sheet_to_json(sheet);
-console.log(data);
 
 // Subir cada fila a Firestore
 const uploadDataToFirestore = async () => {
@@ -35,11 +34,9 @@ const uploadDataToFirestore = async () => {
 
     // Manejar companionsInfo: Intentar parsear si es un string JSON
     let companionsInfoArray = [];
-    console.log('HOLAAAAAAA', row.companionsInfo);
     if (typeof row.companionsInfo === 'string' && row.companionsInfo.trim()) {
       try {
         companionsInfoArray = JSON.parse(row.companionsInfo); // Parsear cadena JSON
-        console.log(companionsInfoArray);
       } catch (error) {
         console.log(`Error en la fila ${i + 1}: companionsInfo no es un JSON válido.`);
         continue; // Omitir la fila si el JSON es inválido
