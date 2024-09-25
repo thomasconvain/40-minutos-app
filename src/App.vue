@@ -20,7 +20,7 @@ import FooterApp from './components/FooterApp.vue';
   -moz-osx-font-smoothing: grayscale;
   color: #2c3e50;
   background-color: #f7f9ff;
-  background-image: url('./assets/bg_web_header.png');
+  background-image: url('./assets/bg_web_header_sm.png');
   background-repeat: no-repeat;
   background-size: auto 55rem;
   background-position: center -10rem;
