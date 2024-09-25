@@ -66,6 +66,7 @@ const uploadDataToFirestore = async () => {
       phone: row.phone.replace(/\s/g, ''),
       subscribedEventsId: subscribedEventsArray || null,
       companionsInfo: companionsInfoArray || null,
+      isCheckinActive: row.isCheckinActive
     };
 
     try {

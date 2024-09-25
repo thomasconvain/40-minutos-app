@@ -129,7 +129,7 @@ const route = useRoute();
 // Variables reactivas
 const isLoading = ref(false);
 const spectator = ref(null);
-const amount = reactive([5000]);
+const amount = reactive([12000]);
 const description = ref('Tu experiencia 40 Minutos');
 const email = ref('');
 const progressWidth = ref('50%');
@@ -174,7 +174,7 @@ const fetchSpectator = async () => {
       rowTableArray.value = getNumberArray(spectator.value.numberOfPeople);
       const items = spectatorArray.value;
       items.forEach((item, index) => {
-        amount[index] = 5000; // Inicializamos el valor de cada input
+        amount[index] = 12000; // Inicializamos el valor de cada input
       });
     } else {
       console.error('No se encontró el documento con el ID proporcionado');
