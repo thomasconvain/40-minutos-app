@@ -1,6 +1,6 @@
 <template>
   <div>
-      <div :class="openCollapse ? 'collapse-open' : ''" class="collapse border-base-300 bg-base-200 border rounded-none">
+      <div :class="openCollapse ? 'collapse-open' : ''" class="collapse border-base-300 bg-base-200 border rounded-xl">
         <div class="collapse-title text-xl font-medium flex items-center justify-between pr-1">
           <div>
             <p class="w-full">

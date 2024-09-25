@@ -1,30 +1,36 @@
 <template>
   <div>
+    <button class="btn bg-white border-none mb-4" @click="$router.go(-1)">Volver</button>
     <h1 class="text-2xl font-bold mb-6">Hola {{ spectator?.name }} 👋</h1>
     <p>Gracias por inscribirte a uno de nuestros eventos.<br>
       Por favor muestra esa pantalla antes de ingresar al recinto.</p>
     <div class="mt-4" v-if="spectator">
       <p class="my-4"><strong>Estás inscrito para los siguientes eventos:</strong></p>
       <div v-if="events.length">
-        <div v-for="event in events" :key="event.id" class="card bg-base-100 border border-base-600">
-          <div class="card-body">
-            <h2 class="card-title">{{ event.name }}</h2>
-            <p><strong>Lugar:</strong> {{ event.place }}</p>
-            <p><strong>Fecha:</strong> {{ formatDate(event.date) }}</p>
-            <p><strong>Número de personas:</strong> {{ spectator.numberOfPeople }}</p>
-            <div class="card-actions justify-start mt-4">
-              <div v-if="!spectator.isCheckinActive" class="alert alert-info rounded-none flex text-left">
-                <InformationCircleIcon class="-ml-1 mr-3 h-5 min-w-5" aria-hidden="true" />
-                <span class="text-xs">El día del concierto se habilitará el acceso a tu checkin. </span>
+        <div class="indicator w-full">
+          <span v-if="!spectator.isCheckinActive" class="indicator-item badge badge-primary">Pronto</span>
+          <div v-for="event in events" :key="event.id" class="card w-full bg-base-100 border border-base-600">
+            <div class="card-body">
+              <h2 class="card-title">{{ event.name }}</h2>
+              <p><strong>Lugar:</strong> {{ event.place }}</p>
+              <p><strong>Fecha:</strong> {{ formatDate(event.date) }}</p>
+              <p><strong>Número de personas:</strong> {{ spectator.numberOfPeople }}</p>
+              <div class="card-actions justify-start mt-4">
+                <div v-if="!spectator.isCheckinActive" class="alert alert-info rounded-none flex text-left">
+                  <InformationCircleIcon class="-ml-1 mr-3 h-5 min-w-5" aria-hidden="true" />
+                  <span class="text-xs">El día del concierto se habilitará el acceso a tu checkin. </span>
+                </div>
+                <button v-else class="btn-md btn btn-primary text-white w-full" @click="goToEvent(event)">Hacer checkin</button>
               </div>
-              <button v-else class="btn btn-primary text-white w-full" @click="goToEvent(event)">Hacer checkin</button>
             </div>
           </div>
         </div>
-        <div class="mt-4">
-          <p><strong>Tus datos:</strong></p>
-          <p class="text-sm"><strong>Email:</strong> {{ spectator.email }}</p>
-          <p class="text-sm"><strong>Teléfono:</strong> {{ spectator.phone }}</p>
+        <div class="card bg-base-100 border border-base-600 mt-6">
+          <div class="card-body">
+            <h2 class="card-title">Tus datos</h2>
+            <p><strong>Email:</strong> {{ spectator.email }}</p>
+            <p><strong>Teléfono:</strong> {{ spectator.phone }}</p>
+          </div>
         </div>
       </div>
       <div v-else class="flex justify-center w-full">

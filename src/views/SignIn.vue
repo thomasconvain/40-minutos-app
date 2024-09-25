@@ -1,6 +1,6 @@
 <template>
   <div>
-    <button class="btn btn-link" @click="router.push({name:'Home'})">Volver</button>
+    <button class="btn bg-white border-none mb-4" @click="router.push({name:'Home'})">Volver</button>
     <div class="flex flex-col items-center mb-10">
       <img src="../assets/logo.png" width="150">
     </div>
@@ -13,7 +13,7 @@
           type="tel"
           name="phone-number"
           id="phone-number"
-          class="grow block w-full px-3 py-2 rounded-md focus:ring-gray-500 focus:border-gray-500 sm:text-sm border-gray-300"
+          class="input-md grow block w-full px-3 py-2 rounded-md focus:ring-gray-500 focus:border-gray-500 sm:text-sm border-gray-300"
           placeholder="" />
       </div>
     </div>
@@ -22,7 +22,7 @@
       <button
         type="button"
         :disabled="isButtonDisabled"
-        class="mt-2 inline-flex justify-center w-full items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-gray-800 hover:bg-black focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 disabled:opacity-50 disabled:cursor-not-allowed"
+        class="btn-md mt-2 inline-flex justify-center w-full items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-gray-800 hover:bg-black focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 disabled:opacity-50 disabled:cursor-not-allowed"
         @click="checkSpectatorSubscriptions"
       >
         <span>Entrar</span>

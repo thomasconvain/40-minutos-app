@@ -1,5 +1,6 @@
 <template>
   <div>
+    <button class="btn bg-white border-none mb-4" @click="$router.go(-1)">Volver</button>
     <h1 class="text-2xl font-bold mb-6">{{ nameEvent }}</h1>
     <div v-if="themes.length">
       <h2 class="text-xl font-semibold mb-4">Temas del evento:</h2>
@@ -33,7 +34,7 @@
     <button
       type="button"
       :disabled="isButtonDisabled"
-      class="mt-2 inline-flex justify-center w-full items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-gray-800 hover:bg-black focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 disabled:opacity-50 disabled:cursor-not-allowed"
+      class="btn-md btn btn-primary text-white w-full mt-4"
       @click="goToCheckout"
     >
       <span v-if="!isLoading">Checkout</span>
