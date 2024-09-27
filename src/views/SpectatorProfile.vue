@@ -5,7 +5,7 @@
     <p>Gracias por inscribirte a uno de nuestros eventos.<br>
       Por favor muestra esa pantalla antes de ingresar al recinto.</p>
     <div class="mt-4" v-if="spectator">
-      <p class="my-4"><strong>Estás inscrito para los siguientes eventos:</strong></p>
+      <p class="my-4"><strong>Estás inscrito para los siguientes eventos: </strong></p>
       <div v-if="events.length">
         <div class="indicator w-full">
           <span v-if="!spectator.isCheckinActive" class="indicator-item badge badge-primary">Pronto</span>
