@@ -20,16 +20,9 @@
                   <InformationCircleIcon class="-ml-1 mr-3 h-5 min-w-5" aria-hidden="true" />
                   <span class="text-xs">El día del concierto se habilitará el acceso a tu checkin. </span>
                 </div>
-                <button v-else class="btn-md btn btn-primary text-white w-full" @click="goToEvent(event)">Hacer checkin</button>
+                <button v-else class="btn-md btn btn-primary text-white w-full" @click="goToEvent(event)">{{ spectator.isChecked ? 'Entrar' : 'Hacer checkin'}}</button>
               </div>
             </div>
-          </div>
-        </div>
-        <div class="card bg-base-100 border border-base-600 mt-6">
-          <div class="card-body">
-            <h2 class="card-title">Tus datos</h2>
-            <p><strong>Email:</strong> {{ spectator.email }}</p>
-            <p><strong>Teléfono:</strong> {{ spectator.phone }}</p>
           </div>
         </div>
       </div>
@@ -52,7 +45,7 @@ import { InformationCircleIcon } from '@heroicons/vue/24/outline'
 
 // Obtener el ID del espectador desde la ruta
 const route = useRoute();
-const id = route.params.id;
+const idSpectator = route.params.idSpectator;
 
 // Variables reactivas para almacenar los datos del espectador y los eventos
 const spectator = ref(null);
@@ -62,7 +55,7 @@ const router = useRouter(); // Instancia de Vue Router
 // Función para obtener los datos del espectador desde Firestore
 const fetchSpectator = async () => {
   const db = getFirestore();
-  const docRef = doc(db, 'spectators', id);
+  const docRef = doc(db, 'spectators', idSpectator);
 
   try {
     const docSnap = await getDoc(docRef);
@@ -105,12 +98,11 @@ const formatDate = (timestamp) => {
 // Función para navegar a la página del evento
 const goToEvent = (event) => {
   router.push({
-    name: 'EventDetail',
-    params: { idSpectator: id, idEvent: event.id, nameEvent: event.name },
+    name: spectator.value.isChecked ? 'EventDetail' : 'Checkin',
+    params: { idSpectator: idSpectator, idEvent: event.id, nameEvent: event.name },
   });
 };
 
-// Llamar a la función para obtener los datos cuando el componente se monte
 onMounted(fetchSpectator);
 </script>
 

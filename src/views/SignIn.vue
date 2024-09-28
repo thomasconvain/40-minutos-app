@@ -65,7 +65,7 @@ const checkSpectatorSubscriptions = async () => {
     if (!querySnapshot.empty) {
       // Si se encuentra una coincidencia, redirige a la ruta /profile/:id
       const doc = querySnapshot.docs[0];
-      router.push({ name: 'Profile', params: { id: doc.id } });
+      router.push({ name: 'Profile', params: { idSpectator: doc.id } });
     } else {
       alert('Número no encontrado.');
     }

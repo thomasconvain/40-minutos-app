@@ -3,7 +3,8 @@ import Home from '@/views/Home.vue';
 import SignIn from '@/views/SignIn.vue';
 import SpectatorProfile from '@/views/SpectatorProfile.vue';
 import EventDetail from '@/views/EventDetail.vue';
-import Checkout from '@/views/Checkout.vue';
+import CheckOut from '@/views/CheckOut.vue';
+import CheckIn from '@/views/CheckIn.vue';
 import ThankYouPage from '@/views/ThankYouPage.vue';
 
 const routes = [
@@ -18,9 +19,14 @@ const routes = [
     component: SignIn,
   },
   {
-    path: '/profile/:id',
+    path: '/profile/:idSpectator',
     name: 'Profile',
     component: SpectatorProfile,
+  },
+  {
+    path: '/checkin/:idSpectator/:idEvent/:nameEvent?',
+    name: 'Checkin',
+    component: CheckIn,
   },
   { path: '/event/:idSpectator/:idEvent/:nameEvent', 
     name: 'EventDetail', 
@@ -28,7 +34,7 @@ const routes = [
   {
     path: '/checkout/:idSpectator/:idEvent/:nameEvent?',
     name: 'Checkout',
-    component: Checkout,
+    component: CheckOut,
   },
   {
     path: '/thankyou',

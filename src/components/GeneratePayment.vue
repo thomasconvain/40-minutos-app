@@ -145,13 +145,16 @@ const uniquePaymentForGroup = ref(true);
 const isViewLoading = ref(false);
 const randomId = ref('');
 
-onMounted(() => {
+onMounted(async () => {
   // Captura los parámetros actuales de la URL
   baseUrl.value = window.location.origin; // Obtiene la URL base actual (dominio)
   spectatorParams.value = route.params.idSpectator;
   eventParams.value = route.params.idEvent;
   if (spectatorParams.value && !route.query.referenceLink) {
-  fetchSpectator();
+    await fetchSpectator();
+    if (!spectator.value.uniquePaymentForGroup) {
+      setGroupValuesToZero()
+    }
   } else {
     setDefaultUniqueSpectator(1)
   }

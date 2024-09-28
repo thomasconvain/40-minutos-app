@@ -12,7 +12,7 @@ admin.initializeApp({
 const db = admin.firestore();
 
 // Leer el archivo Excel
-const filePath = path.join(__dirname, './inputs/24_09_24.xlsx'); // Ruta al archivo Excel
+const filePath = path.join(__dirname, './inputs/28_09_24.xlsx'); // Ruta al archivo Excel
 const workbook = XLSX.readFile(filePath);
 const sheetName = workbook.SheetNames[1]; // Obtener la segunda hoja del archivo Excel
 const sheet = workbook.Sheets[sheetName];
@@ -63,7 +63,9 @@ const uploadDataToFirestore = async () => {
       phone: row.phone.replace(/\s/g, ''),
       subscribedEventsId: subscribedEventsArray || null,
       companionsInfo: companionsInfoArray || null,
-      isCheckinActive: row.isCheckinActive
+      isCheckinActive: row.isCheckinActive,
+      isChecked: row.isChecked,
+      uniquePaymentForGroup: row.uniquePaymentForGroup
     };
 
     try {
