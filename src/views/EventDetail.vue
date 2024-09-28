@@ -2,6 +2,7 @@
   <div>
     <button class="btn bg-white border-none mb-4" @click="$router.go(-1)">Volver</button>
     <h1 class="text-2xl font-bold mb-6">{{ nameEvent }}</h1>
+    <p class="mb-6">{{ eventDescription }}</p>
     <div v-if="themes.length">
       <h2 class="text-xl font-semibold mb-4">Temas del evento:</h2>
       <ul>
@@ -58,6 +59,7 @@ const router = useRouter();
 const nameEvent = route.params.nameEvent;
 const idEvent = route.params.idEvent;
 const idSpectator = route.params.idSpectator;
+const eventDescription = ref('');
 
 const themes = ref([]);
 const ratings = ref([]); // Usar un arreglo para los ratings
@@ -96,6 +98,8 @@ const fetchEventThemes = async () => {
         .filter(themeDoc => themeDoc.exists())
         .map(themeDoc => ({ id: themeDoc.id, ...themeDoc.data() }))
         .sort((a, b) => a.order - b.order);
+      
+      eventDescription.value = eventDocSnap.data().description;
     } else {
       console.error('No se encontró el evento con el ID proporcionado');
     }

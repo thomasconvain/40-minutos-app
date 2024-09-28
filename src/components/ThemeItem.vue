@@ -2,15 +2,19 @@
   <div>
       <div :class="openCollapse ? 'collapse-open' : ''" class="collapse border-base-300 bg-base-200 border rounded-xl">
         <div class="collapse-title text-xl font-medium flex items-center justify-between pr-1">
-          <div>
-            <p class="w-full">
-            {{ localTheme.name }}
-            </p>
+          <div class="flex gap-4 items-center">
+            <img class="h-full w-16 sm:w-20 mt-4 sm:m-0" v-if="imageUrl" :src="imageUrl" alt="cover" />
             <div>
-              <div class="flex items-center">
-                <StarIcon  v-for="star in 5" :key="star" @click="rateTheme(star)" class="cursor-pointer h-7 w-7" :class="star <= userRating ? 'text-yellow-500' : 'text-gray-300'"/>
+              <p class="w-full text-sm sm:text-base">
+              {{ localTheme.name }}
+              </p>
+              <p class="text-xs sm:text-sm italic text-gray-500 font-thin">{{ localTheme.artist }}</p>
+              <div class="flex items-center gap-4">
+                <div class="flex items-center">
+                  <StarIcon  v-for="star in 5" :key="star" @click="rateTheme(star)" class="cursor-pointer h-7 w-7" :class="star <= userRating ? 'text-yellow-500' : 'text-gray-300'"/>
+                </div>
+                <p class="text-xs text-gray-400"><span v-if="userRating !== 0"> Tu nota: {{ userRating }}</span></p>
               </div>
-              <p class="text-xs text-gray-400"><span v-if="userRating !== 0"> Tu nota: {{ userRating }}</span></p>
             </div>
           </div>
           <div class="flex items-center">
@@ -23,9 +27,7 @@
         </div>
         <div class="collapse-content">
           <div class="flex flex-wrap sm:flex-nowrap items-center justify-center sm:justify-start gap-4">
-            <img class="h-full mt-4 sm:m-0" v-if="imageUrl" :src="imageUrl" alt="cover" width="100" />
             <div class="my-4 flex flex-col gap-2">
-              <p><strong>{{ localTheme.artist }}</strong></p>
               <p>{{ localTheme.description }}</p>
             </div>
           </div>
