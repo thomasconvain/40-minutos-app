@@ -113,6 +113,15 @@ const getPaymentDetails = async () => {
     
   } catch (error) {
     console.error('Error al obtener detalles del pago:', error);
+    const spectatorRef = doc(db, 'spectators', idSpectator);
+    await updateDoc(spectatorRef, {
+          payments: arrayUnion({
+            paymentId: 'failed payment',
+            paymentMethod: 'Mercado Pago',
+            amount: 0,
+            date: new Date() // Timestamp del momento
+          })
+        });
   }
 };
 
@@ -181,7 +190,7 @@ const formattedAmount = computed(() => {
     style: 'currency',
     currency: 'CLP',
     minimumFractionDigits: 0,
-  }).format(paymentDetails.value ? paymentDetails.value.amount : route.query.amount);
+  }).format(paymentDetails.value ? paymentDetails.value.amount : paymentId === 'null' ? 0 : route.query.amount);
 });
 
 // Llamar a la función cuando el componente se monte
