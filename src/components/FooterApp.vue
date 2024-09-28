@@ -1,6 +1,6 @@
 <template>
   <div>
-    <footer class="footer footer-center bg-transparent text-primary-content p-10">
+    <footer class="footer footer-center bg-transparent text-primary-content pt-10">
       <div class="w-full flex justify-between">
         <aside>
           <img class="footer-logo" src="../assets/logo.png" width="50">

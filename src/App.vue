@@ -3,9 +3,9 @@
     <div class="px-10 grow pb-5 md:max-w-4xl w-full m-auto">
       <div class="py-10">
         <router-view  />
+        <FooterApp></FooterApp>
       </div>
     </div>
-    <FooterApp></FooterApp>
   </div>
 </template>
 
@@ -22,17 +22,16 @@ import FooterApp from './components/FooterApp.vue';
   background-color: #f7f9ff;
   background-image: url('./assets/bg_web_header_sm.png');
   background-repeat: no-repeat;
-  background-size: auto 55rem;
+  background-size: 100% auto;
   background-position: center -10rem;
 }
-/* @media screen and (max-width: 600px) {
+@media screen and (max-width: 1300px) {
   #app {
-    background-size: 170%;
-    background-position: top center;
+    background-size: auto 55rem;
   }
 }
 
-@media screen and (min-width: 1200px) {
+/* @media screen and (min-width: 1200px) {
   #app {
     background-position: center -10rem;
   }
