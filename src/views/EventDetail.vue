@@ -4,7 +4,7 @@
     <h1 class="text-2xl font-bold mb-6">{{ nameEvent }}</h1>
     <p class="mb-6">{{ eventDescription }}</p>
     <div v-if="themes.length">
-      <h2 class="text-xl font-semibold mb-4">Temas del evento:</h2>
+      <h2 class="text-xl font-semibold mb-4">Programa:</h2>
       <ul>
         <li v-for="theme in themes" :key="theme.id" class="mb-4 bg-white rounded-md">
           <ThemeItem :theme="theme" @onRateChange="handleRateChange"/>

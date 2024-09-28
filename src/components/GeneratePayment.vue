@@ -10,7 +10,8 @@
         <InformationCircleIcon class="-ml-1 mr-3 h-5 min-w-5" aria-hidden="true" />
         <span class="text-xs text-left">Tambien puedes compartir el link de pago a algunos integrantes de tu grupo para que puedan realizar su propio aporte.</span>
       </div>
-      <a :href='`https://wa.me/?text=https://cuarenta-minutos.web.app/checkout/${params}?referenceLink=true`'><button class="btn btn-sm min-w-56"><ShareIcon class="-ml-1 mr-3 h-4 w-4" aria-hidden="true" />Compartir link de pago</button></a>
+      <a :href='`https://wa.me/?text=https://cuarenta-minutos.web.app/checkout/${spectatorParams}/${eventParams}?referenceLink=true%26idVisitor=visitor-${randomId}`'>
+        <button class="btn btn-sm min-w-56"><ShareIcon class="-ml-1 mr-3 h-4 w-4" aria-hidden="true" />Compartir link de pago</button></a>
     </div>
     <div class="flex flex-wrap justify-between items-center">
       <div v-if="rowTableArray?.length > 1" class="form-control">
@@ -106,10 +107,10 @@
       @click="generatePaymentLink"
     >
       <CreditCardIcon v-if="!isLoading" class="-ml-1 mr-3 h-5 w-5" aria-hidden="true" />
-      <span v-if="!isLoading">Pagar</span>
+      <span v-if="!isLoading">Pagar con Mercado Pago</span>
       <span v-if="isLoading">Te estamos redirigiendo...</span>
     </button>
-    <button class="btn btn-active btn-link w-full text-gray-400" @click="goToThankYouPage">Prefiero no aportar</button>
+    <button class="btn btn-active mt-2 w-full text-gray-400" @click="goToThankYouPage">Prefiero pagar por transferencia</button>
   </div>
   </div>
 </template>
@@ -136,21 +137,25 @@ const progressWidth = ref('50%');
 const paymentLink = ref('');
 const emailError = ref('');
 const baseUrl = ref('');
-const params = ref('');
+const spectatorParams = ref('');
+const eventParams = ref('');
 const spectatorArray = ref();
 const rowTableArray = ref();
 const uniquePaymentForGroup = ref(true);
 const isViewLoading = ref(false);
+const randomId = ref('');
 
 onMounted(() => {
   // Captura los parámetros actuales de la URL
   baseUrl.value = window.location.origin; // Obtiene la URL base actual (dominio)
-  params.value = route.params.idSpectator;
-  if (params.value && !route.query.referenceLink) {
+  spectatorParams.value = route.params.idSpectator;
+  eventParams.value = route.params.idEvent;
+  if (spectatorParams.value && !route.query.referenceLink) {
   fetchSpectator();
   } else {
     setDefaultUniqueSpectator(1)
   }
+  generateRandomId();
   updateProgress();
 });
 const setDefaultUniqueSpectator = (number) => {
@@ -164,7 +169,7 @@ const setDefaultUniqueSpectator = (number) => {
 const fetchSpectator = async () => {
   isViewLoading.value = true;
   const db = getFirestore();
-  const docRef = doc(db, 'spectators', params.value);
+  const docRef = doc(db, 'spectators', spectatorParams.value);
   try {
     const docSnap = await getDoc(docRef);
     if (docSnap.exists()) {
@@ -220,9 +225,9 @@ const generatePaymentLink = async () => {
       description: description.value,
       email: email.value,
       backUrls: {
-        success: `${baseUrl.value}/thankyou?idSpectator=${params.value}`,
-        failure: `${baseUrl.value}/thankyou?idSpectator=${params.value}`,
-        pending: `${baseUrl.value}/thankyou?idSpectator=${params.value}`,
+        success: `${baseUrl.value}/thankyou?idSpectator=${spectatorParams.value}`,
+        failure: `${baseUrl.value}/thankyou?idSpectator=${spectatorParams.value}`,
+        pending: `${baseUrl.value}/thankyou?idSpectator=${spectatorParams.value}`,
       },
     });
     window.open(paymentLink.value, '_self');
@@ -253,10 +258,28 @@ const isFirstGreaterThanZero = computed(() => {
   }
 });
 
+// Definir la función para generar el ID aleatorio
+function generateRandomId() {
+  const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  let result = '';
+  const charactersLength = characters.length;
+  
+  for (let i = 0; i < 4; i++) {
+    result += characters.charAt(Math.floor(Math.random() * charactersLength));
+  }
+  
+  randomId.value = result;
+}
+
 const goToThankYouPage = () => {
   router.push({
     name: 'ThankYou',
-    query: { idSpectator: route.params.idSpectator}
+    query: { 
+      idSpectator: route.params.idSpectator,
+      idVisitor: route.query.idVisitor,
+      idEvent: route.params.idEvent,
+      paymentMethod: 'bankTransfer',
+      amount: (uniquePaymentForGroup.value && spectator && !route.query.referenceLink) ? amount[0] * spectator.value.numberOfPeople : totalAmountToPay.value }
   });
 };
 </script>
