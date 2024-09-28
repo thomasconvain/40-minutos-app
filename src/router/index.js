@@ -3,7 +3,7 @@ import Home from '@/views/Home.vue';
 import SignIn from '@/views/SignIn.vue';
 import SpectatorProfile from '@/views/SpectatorProfile.vue';
 import EventDetail from '@/views/EventDetail.vue';
-import CheckOut from '@/views/CheckOut.vue';
+import Checkout from '@/views/Checkout.vue';
 import CheckIn from '@/views/CheckIn.vue';
 import ThankYouPage from '@/views/ThankYouPage.vue';
 
@@ -34,8 +34,8 @@ const routes = [
   },
   {
     path: '/checkout/:idSpectator/:idEvent/:nameEvent?',
-    name: 'CheckOut',
-    component: CheckOut,
+    name: 'Checkout',
+    component: Checkout,
   },
   {
     path: '/thankyou',
