@@ -4,7 +4,7 @@ const {MercadoPagoConfig, Preference, Payment} = require("mercadopago");
 
 // Inicializa el cliente de Mercado Pago con el access token
 const client = new MercadoPagoConfig({
-  accessToken: functions.config().mercadopago.token_dev,
+  accessToken: functions.config().mercadopago.token,
   options: {timeout: 5000},
 });
 
