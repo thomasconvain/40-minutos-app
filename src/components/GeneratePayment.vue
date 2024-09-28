@@ -228,9 +228,9 @@ const generatePaymentLink = async () => {
       description: description.value,
       email: email.value,
       backUrls: {
-        success: `${baseUrl.value}/thankyou?idSpectator=${spectatorParams.value}`,
-        failure: `${baseUrl.value}/thankyou?idSpectator=${spectatorParams.value}`,
-        pending: `${baseUrl.value}/thankyou?idSpectator=${spectatorParams.value}`,
+        success: `${baseUrl.value}/thankyou?idSpectator=${spectatorParams.value}&numberOfPeople=${countNumberOfPeopleAboveZero.value}`,
+        failure: `${baseUrl.value}/thankyou?idSpectator=${spectatorParams.value}&numberOfPeople=${countNumberOfPeopleAboveZero.value}`,
+        pending: `${baseUrl.value}/thankyou?idSpectator=${spectatorParams.value}&numberOfPeople=${countNumberOfPeopleAboveZero.value}`,
       },
     });
     window.open(paymentLink.value, '_self');
@@ -261,6 +261,15 @@ const isFirstGreaterThanZero = computed(() => {
   }
 });
 
+// Computado para contar cuántos espectadores tienen numberOfPeople > 0
+const countNumberOfPeopleAboveZero = computed(() => {
+  if (uniquePaymentForGroup.value) {
+    return amount.filter(amount => amount > 0).length * spectator.value?.numberOfPeople;
+  } else {
+    return amount.filter(amount => amount > 0).length;
+  }
+});
+
 // Definir la función para generar el ID aleatorio
 function generateRandomId() {
   const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -279,6 +288,7 @@ const goToThankYouPage = () => {
     name: 'ThankYou',
     query: { 
       idSpectator: route.params.idSpectator,
+      numberOfPeople: countNumberOfPeopleAboveZero.value,
       idVisitor: route.query.idVisitor,
       idEvent: route.params.idEvent,
       paymentMethod: 'bankTransfer',

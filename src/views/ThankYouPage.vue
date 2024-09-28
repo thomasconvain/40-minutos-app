@@ -71,6 +71,7 @@ const copiedMessage = ref('');
 // Obtener el payment_id desde los parámetros de la URL
 const paymentId = route.query.payment_id;
 const idSpectator = route.query.idSpectator; 
+const numberOfPeople = route.query.numberOfPeople;
 const idVisitor = route.query.idVisitor; 
 
 // Función para obtener detalles del pago desde Firebase Functions
@@ -99,6 +100,7 @@ const getPaymentDetails = async () => {
         await updateDoc(spectatorRef, {
           payments: arrayUnion({
             paymentId: paymentId,
+            numberOfPeople: numberOfPeople,
             paymentMethod: 'Mercado Pago',
             amount: paymentDetails.value.amount,
             date: new Date() // Timestamp del momento
@@ -117,6 +119,7 @@ const getPaymentDetails = async () => {
     await updateDoc(spectatorRef, {
           payments: arrayUnion({
             paymentId: 'failed payment',
+            numberOfPeople: numberOfPeople,
             paymentMethod: 'Mercado Pago',
             amount: 0,
             date: new Date() // Timestamp del momento
@@ -138,6 +141,7 @@ const updateZeroPaymentSpectator = async () => {
       await updateDoc(spectatorRef, {
         payments: arrayUnion({
           paymentMethod: 'BankTransfer',
+          numberOfPeople: numberOfPeople,
           paymentId: idSpectator + '-' + (idVisitor ? idVisitor : 'owner'),
           amount: route.query.amount,
           date: new Date() // Timestamp del momento
