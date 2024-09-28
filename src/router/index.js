@@ -25,7 +25,7 @@ const routes = [
   },
   {
     path: '/checkin/:idSpectator/:idEvent/:nameEvent?',
-    name: 'Checkin',
+    name: 'CheckIn',
     component: CheckIn,
   },
   { path: '/event/:idSpectator/:idEvent/:nameEvent', 
@@ -33,7 +33,7 @@ const routes = [
     component: EventDetail },
   {
     path: '/checkout/:idSpectator/:idEvent/:nameEvent?',
-    name: 'Checkout',
+    name: 'CheckOut',
     component: CheckOut,
   },
   {
