@@ -98,7 +98,7 @@ const formatDate = (timestamp) => {
 // Función para navegar a la página del evento
 const goToEvent = (event) => {
   router.push({
-    name: spectator.value.isChecked ? 'EventDetail' : 'Checkin',
+    name: spectator.value.isChecked ? 'EventDetail' : 'CheckIn',
     params: { idSpectator: idSpectator, idEvent: event.id, nameEvent: event.name },
   });
 };
