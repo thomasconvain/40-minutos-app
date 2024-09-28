@@ -9,12 +9,13 @@
               {{ localTheme.name }}
               </p>
               <p class="text-xs sm:text-sm italic text-gray-500 font-thin">{{ localTheme.artist }}</p>
-              <div class="flex items-center gap-4">
+              <div class="flex items-center flex-wrap gap-4">
                 <div class="flex items-center">
                   <StarIcon  v-for="star in 5" :key="star" @click="rateTheme(star)" class="cursor-pointer h-7 w-7" :class="star <= userRating ? 'text-yellow-500' : 'text-gray-300'"/>
                 </div>
                 <p class="text-xs text-gray-400"><span v-if="userRating !== 0"> Tu nota: {{ userRating }}</span></p>
               </div>
+              <div v-for="(item, index) in localTheme.topic" :key="index" class="badge badge-neutral badge-xs border-none bg-gray-200 text-gray-600 p-2 font-thin mr-1">{{ item }}</div>
             </div>
           </div>
           <div class="flex items-center">
