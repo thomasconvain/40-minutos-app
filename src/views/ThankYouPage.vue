@@ -1,6 +1,6 @@
 <template>
   <div>
-    <button class="btn bg-white border-none mb-4"  @click="$router.go(-1)">Volver</button>
+    <button v-if="paymentId !== 'null' || !paymentId" class="btn bg-white border-none mb-4"  @click="$router.go(-1)">Volver</button>
     <div class="flex flex-col items-center gap-10">
       <img src="../assets/logo.png" width="150">
       <div v-if="paymentId === 'null'">
