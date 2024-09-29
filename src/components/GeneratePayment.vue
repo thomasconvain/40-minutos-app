@@ -107,7 +107,7 @@
       @click="generatePaymentLink"
     >
       <CreditCardIcon v-if="!isLoading" class="-ml-1 mr-3 h-5 w-5" aria-hidden="true" />
-      <span v-if="!isLoading">Pagar con Mercado Pago</span>
+      <span v-if="!isLoading">Pagar con tarjeta</span>
       <span v-if="isLoading">Te estamos redirigiendo...</span>
     </button>
     <button class="btn btn-active mt-2 w-full text-gray-400" @click="goToThankYouPage">Prefiero pagar por transferencia</button>

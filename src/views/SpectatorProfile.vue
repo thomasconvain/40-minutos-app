@@ -2,8 +2,7 @@
   <div>
     <button class="btn bg-white border-none mb-4" @click="$router.go(-1)">Volver</button>
     <h1 class="text-2xl font-bold mb-6">Hola {{ spectator?.name }} 👋</h1>
-    <p>Gracias por inscribirte a uno de nuestros eventos.<br>
-      Por favor muestra esa pantalla antes de ingresar al recinto.</p>
+    <p>Gracias por inscribirte a uno de nuestros eventos.</p>
     <div class="mt-4" v-if="spectator">
       <p class="my-4"><strong>Estás inscrito para los siguientes eventos:</strong></p>
       <div v-if="events.length">
@@ -25,6 +24,7 @@
             </div>
           </div>
         </div>
+        <p class="mt-4 text-sm italic text-gray-400">En caso de cualquier inconveniente, muestra esta pantalla para validar tu reserva.</p>
       </div>
       <div v-else class="flex justify-center w-full">
         <span class="loading loading-spinner loading-md"></span>

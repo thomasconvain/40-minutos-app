@@ -1,6 +1,6 @@
 <template>
   <div>
-    <button class="btn bg-white border-none mb-4" @click="router.push({name:'Home'})">Volver</button>
+    <button class="btn bg-white border-none mb-4"  @click="$router.go(-1)">Volver</button>
     <div class="w-full">
       <ul class="steps w-full">
         <li class="step step-primary">Tus datos</li>
