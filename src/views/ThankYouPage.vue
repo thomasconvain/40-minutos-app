@@ -8,7 +8,7 @@
         <button class="btn bg-white my-4 w-full" @click="$router.go(-1)">Volver a pantalla de pago</button>
       </div>
       <p v-else class="text-xl">Gracias por asistir!</p>
-      <p>Tu aporte: {{ formattedAmount }}</p>
+      <p v-if="formattedAmount">Tu aporte: {{ formattedAmount }}</p>
       <div v-if="route.query.paymentMethod === 'bankTransfer'" class="w-full">
         <div class="alert alert-info rounded-none">
         <InformationCircleIcon class="-ml-1 mr-3 h-5 w-5" aria-hidden="true" />
