@@ -6,23 +6,23 @@
         <h2 class="card-title">Ingresa tus datos</h2>
         <form @submit.prevent="submitForm">
           <div class="flex flex-col">
-          <label class="text-sm" for="email">Email</label>
+          <label class="text-sm" for="email"><strong>Email</strong></label>
             <input v-model="email" type="string" id="email" class="input input-bordered w-full w-full" required />
             <p v-if="emailError" class="text-red-500 text-sm mt-1">{{ emailError }}</p>
           </div>
 
           <div class="flex flex-col mt-4">
-            <label class="text-sm" for="name">Nombre</label>
+            <label class="text-sm" for="name"><strong>Nombre</strong></label>
             <input v-model="name" type="text" id="name" class="input input-bordered w-full w-full" required />
           </div>
 
           <div class="flex flex-col mt-4">
-            <label class="text-sm" for="name">Appellidos</label>
+            <label class="text-sm" for="name"><strong>Appellidos</strong></label>
             <input v-model="lastName" type="text" id="name" class="input input-bordered w-full w-full" required />
           </div>
 
           <div class="flex flex-col mt-4">
-            <label class="text-sm" for="phone">Teléfono</label>
+            <label class="text-sm" for="phone"><strong>Teléfono</strong></label>
             <input v-model="phone" type="text" id="phone" class="input input-bordered w-full w-full" required />
             <p v-if="phoneError" class="text-red-500 text-sm mt-1">{{ phoneError }}</p>
           </div>

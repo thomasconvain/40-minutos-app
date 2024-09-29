@@ -263,7 +263,7 @@ const isFirstGreaterThanZero = computed(() => {
 
 // Computado para contar cuántos espectadores tienen numberOfPeople > 0
 const countNumberOfPeopleAboveZero = computed(() => {
-  if (uniquePaymentForGroup.value) {
+  if (uniquePaymentForGroup.value && spectator.value) {
     return amount.filter(amount => amount > 0).length * spectator.value?.numberOfPeople;
   } else {
     return amount.filter(amount => amount > 0).length;

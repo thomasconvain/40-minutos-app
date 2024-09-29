@@ -133,7 +133,8 @@ const goToCheckout = async () => {
     // Una vez que se actualizan los ratings, redirigir al checkout
     router.push({
       name: 'Checkout',
-      params: { idSpectator, idEvent, nameEvent }
+      params: { idSpectator, idEvent, nameEvent },
+      query: { referenceLink: route.query.referenceLink, idVisitor: route.query.idVisitor}
     });
   } catch (error) {
     console.error('Error al enviar los ratings:', error);

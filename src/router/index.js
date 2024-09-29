@@ -34,7 +34,7 @@ const routes = [
     name: 'CheckIn',
     component: CheckIn,
   },
-  { path: '/event/:idSpectator/:idEvent/:nameEvent', 
+  { path: '/event/:idSpectator/:idEvent/:nameEvent?', 
     name: 'EventDetail', 
     component: EventDetail,
   },

@@ -13,32 +13,50 @@
         <div class="card bg-base-100 border border-base-600 mt-6">
           <div v-if="spectator" class="card-body">
             <h2 class="card-title">Tus datos</h2>
-            <p class="text-sm">Puedes modificar tus datos si no están correctos:</p>
-            <p><strong>Email:</strong></p>
-            <input v-model="spectator.email" type="text" placeholder="correo" class="input input-bordered w-full max-w-xs" />
+            <p class="">Puedes modificar tus datos si no están correctos:</p>
+            <label class="text-sm" for="email"><strong>Email</strong></label>
+            <input v-model="spectator.email" type="text" placeholder="correo" class="input input-bordered w-full" />
             <p v-if="emailError" class="text-red-500 text-sm mt-1">{{ emailError }}</p>
-            <p><strong>Teléfono:</strong></p>
-            <input v-model="spectator.phone" type="text" placeholder="teléfono" class="input input-bordered w-full max-w-xs" />
+            <label class="text-sm" for="email"><strong>Teléfono</strong></label>
+            <input v-model="spectator.phone" type="text" placeholder="teléfono" class="input input-bordered w-full" />
             <p v-if="phoneError" class="text-red-500 text-sm mt-1">{{ phoneError }}</p>
           </div>
         </div>
       </div>
       <div v-if="activeStep === 2">
-        Confirma el número de participantes en tu reserva:
-        <input v-model="spectator.numberOfPeople" type="number" min="1" placeholder="Type here" class="input input-bordered w-full max-w-xs" />
-        <label v-if="spectator.numberOfPeople > 1" class="label cursor-pointer flex justify-start gap-2">
-          <input type="checkbox" class="checkbox checkbox-primary" :checked="uniquePaymentForGroup" @change="uniquePaymentForGroup = !uniquePaymentForGroup" />
-          <span class="label-text">Quiero pagar para todo mi grupo al final del concierto</span>
-        </label>
+        <div class="card bg-base-100 border border-base-600 mt-6">
+          <div v-if="spectator" class="card-body">
+            <h2 class="card-title">Tu grupo</h2>
+            <p class="">Confirma el número de participantes en tu reserva:</p>
+            <input v-model="spectator.numberOfPeople" type="number" min="1" placeholder="Type here" class="input input-bordered w-full" />
+            <div v-if="spectator.numberOfPeople > 1">
+              <label class="label cursor-pointer flex justify-start gap-2">
+                <input type="checkbox" class="checkbox checkbox-primary" :checked="uniquePaymentForGroup" @change="uniquePaymentForGroup = !uniquePaymentForGroup" />
+                <span class="label-text">Quiero pagar para todo mi grupo al final del concierto</span>
+              </label>
+              <div class="mt-4 alert alert-info rounded-none">
+                <span class="text-xs">Comparte al link del programa del concierto a tu grupo para que puedan seguir con la experiencia en sus propios dispositivos</span>
+              </div>
+              <a :href='`https://wa.me/?text=https://cuarenta-minutos.web.app/event/${spectatorParams}/${eventParams}/?referenceLink=true%26idVisitor=visitor-${randomId}`'>
+                <button class="btn btn-active mt-2 w-full"><ShareIcon class="-ml-1 mr-3 h-4 w-4" aria-hidden="true" />Compartir link</button>
+              </a>
+            </div>
+          </div>
+        </div>
       </div>
       <div v-if="activeStep === 3">
-        {{event.checkinInstructions}}
+        <div class="card bg-base-100 border border-base-600 mt-6">
+          <div v-if="spectator" class="card-body">
+            <h2 class="card-title">¡Bienvenido/a!</h2>
+            {{event.checkinInstructions}}
+          </div>
+        </div>
       </div>
     </div>
     <div class="controllers mt-4 grid justify-items-stretch w-full" :class="activeStep === 1 ? 'grid-cols-1' : 'grid-cols-2'">
       <button v-if="activeStep > 1" class="btn justify-self-start" @click="activeStep -= 1">Anterior</button>
-      <button v-if="activeStep < 3" class="btn justify-self-end" @click="validateFormat()">Siguiente</button>
-      <button v-if="activeStep === 3" class="btn btn-primary justify-self-end w-full animate-bounce" @click="validateCheckin">Entrar</button>
+      <button v-if="activeStep < 3" class="btn btn-primary justify-self-end text-white" @click="validateFormat()">Siguiente</button>
+      <button v-if="activeStep === 3" class="btn btn-primary justify-self-end w-full animate-bounce text-white" @click="validateCheckin">Entrar</button>
     </div>
   </div>
 </template>
@@ -47,6 +65,8 @@
 import { ref, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { getFirestore, doc, getDoc, updateDoc } from 'firebase/firestore';
+import { ShareIcon } from '@heroicons/vue/24/outline'
+
 
 const activeStep = ref(1);
 const spectator = ref(null);
@@ -54,6 +74,9 @@ const event = ref(null);
 const uniquePaymentForGroup = ref(true);
 const emailError = ref('');
 const phoneError = ref('');
+const randomId = ref('');
+const spectatorParams = ref('');
+const eventParams = ref('');
 
 const route = useRoute();
 const router = useRouter(); // Instancia de Vue Router
@@ -141,11 +164,25 @@ const validateFormat = () => {
   }
 }
 
-
+// Definir la función para generar el ID aleatorio
+function generateRandomId() {
+  const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  let result = '';
+  const charactersLength = characters.length;
+  
+  for (let i = 0; i < 4; i++) {
+    result += characters.charAt(Math.floor(Math.random() * charactersLength));
+  }
+  
+  randomId.value = result;
+}
 
 onMounted(() => {
+  spectatorParams.value = route.params.idSpectator;
+  eventParams.value = route.params.idEvent;
   fetchSpectator();
   fetchEvents();
+  generateRandomId();
 });
 
 </script>
