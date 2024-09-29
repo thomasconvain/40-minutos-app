@@ -28,7 +28,7 @@
           <div v-if="spectator" class="card-body">
             <h2 class="card-title">Tu grupo</h2>
             <p class="">Confirma el número de participantes en tu reserva:</p>
-            <input v-model="spectator.numberOfPeople" type="number" min="1" placeholder="Type here" class="input input-bordered w-full" />
+            <input v-model="spectator.numberOfPeople" type="number" min="1" placeholder="Ingresa el número de participantes" class="input input-bordered w-full" />
             <div v-if="spectator.numberOfPeople > 1">
               <label class="label cursor-pointer flex justify-start gap-2">
                 <input type="checkbox" class="checkbox checkbox-primary" :checked="uniquePaymentForGroup" @change="uniquePaymentForGroup = !uniquePaymentForGroup" />
