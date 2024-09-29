@@ -97,6 +97,7 @@ const fetchEventThemes = async () => {
       themes.value = themeDocs
         .filter(themeDoc => themeDoc.exists())
         .map(themeDoc => ({ id: themeDoc.id, ...themeDoc.data() }))
+        .filter(theme => theme.isActive) 
         .sort((a, b) => a.order - b.order);
       
       eventDescription.value = eventDocSnap.data().description;
