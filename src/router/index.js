@@ -7,6 +7,7 @@ import EventDetail from '@/views/EventDetail.vue';
 import Checkout from '@/views/Checkout.vue';
 import CheckIn from '@/views/CheckIn.vue';
 import ThankYouPage from '@/views/ThankYouPage.vue';
+import AdminPage from '@/views/AdminPage.vue';
 
 const routes = [
   {
@@ -47,6 +48,11 @@ const routes = [
     path: '/thankyou',
     name: 'ThankYou',
     component: ThankYouPage,
+  },
+  {
+    path: '/admin',
+    name: 'Admin',
+    component: AdminPage,
   }
 ];
 
