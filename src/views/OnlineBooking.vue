@@ -53,7 +53,7 @@ const lastName = ref('');
 const phone = ref('+56');
 const numberOfPeople = ref(1);
 const isChecked = ref(false);
-const isCheckinActive = ref(false);
+const isCheckinActive = ref(true);
 const uniquePaymentForGroup = ref(true);
 const subscribedEventsId = ref('4Ms88Hw9i3okcTHI7AV6');
 
