@@ -4,6 +4,14 @@
     <h1 class="text-2xl font-bold mb-6">{{ nameEvent }}</h1>
     <p class="mb-6">{{ eventDescription }}</p>
     <div v-if="themes.length">
+      <div class="my-8" v-if="spectator.numberOfPeople > 1">
+        <div class="alert alert-info rounded-none">
+          <span class="text-xs">Comparte al link del programa del concierto a tu grupo para que puedan seguir con la experiencia en sus propios dispositivos</span>
+        </div>
+        <a :href='`https://wa.me/?text=https://cuarenta-minutos.web.app/event/${spectatorParams}/${eventParams}/?referenceLink=true%26idVisitor=visitor-${randomId}`'>
+          <button class="btn btn-active mt-2 w-full"><ShareIcon class="-ml-1 mr-3 h-4 w-4" aria-hidden="true" />Compartir link</button>
+        </a>
+      </div>
       <h2 class="text-xl font-semibold mb-4">Programa:</h2>
       <ul>
         <li v-for="theme in themes" :key="theme.id" class="mb-4 bg-white rounded-md">
@@ -47,7 +55,7 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import { doc, getDoc, updateDoc } from 'firebase/firestore';
+import { doc, getDoc, updateDoc,  getFirestore } from 'firebase/firestore';
 import { db } from '@/firebase';
 import ThemeItem from '@/components/ThemeItem.vue';
 import { InformationCircleIcon } from '@heroicons/vue/24/outline'
@@ -60,6 +68,11 @@ const nameEvent = route.params.nameEvent;
 const idEvent = route.params.idEvent;
 const idSpectator = route.params.idSpectator;
 const eventDescription = ref('');
+const spectator = ref(null);
+const id = route.params.idSpectator;
+const randomId = ref('');
+const spectatorParams = ref('');
+const eventParams = ref('');
 
 const themes = ref([]);
 const ratings = ref([]); // Usar un arreglo para los ratings
@@ -109,6 +122,22 @@ const fetchEventThemes = async () => {
   }
 };
 
+const fetchSpectator = async () => {
+  const db = getFirestore();
+  const docRef = doc(db, 'spectators', id);
+  
+  try {
+    const docSnap = await getDoc(docRef);
+    if (docSnap.exists()) {
+      spectator.value = docSnap.data();
+    } else {
+      console.error('No se encontró el documento con el ID proporcionado');
+    }
+  } catch (error) {
+    console.error('Error al obtener los datos del espectador:', error);
+  }
+};
+
 // Función para actualizar los ratings al hacer clic en Checkout
 const goToCheckout = async () => {
   isLoading.value = true;
@@ -142,8 +171,27 @@ const goToCheckout = async () => {
   isLoading.value = false;
 };
 
+// Definir la función para generar el ID aleatorio
+function generateRandomId() {
+  const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  let result = '';
+  const charactersLength = characters.length;
+  
+  for (let i = 0; i < 4; i++) {
+    result += characters.charAt(Math.floor(Math.random() * charactersLength));
+  }
+  
+  randomId.value = result;
+}
+
 // Llamar a la función para obtener los datos cuando el componente se monte
-onMounted(fetchEventThemes);
+onMounted(() => {
+  spectatorParams.value = route.params.idSpectator;
+  eventParams.value = route.params.idEvent;
+  fetchSpectator();
+  fetchEventThemes();
+  generateRandomId();
+});
 </script>
 
 <style scoped>
