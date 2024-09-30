@@ -31,7 +31,8 @@
             type="submit"
             class="btn-md btn btn-primary text-white w-full mt-4"
           >
-            <span>Registrarme y entrar</span>
+            <span v-if="!isLoading">Registrarme y entrar</span>
+            <span v-else class="loading loading-dots loading-sm"></span>
           </button>
         </form>
       </div>
@@ -41,7 +42,7 @@
 
 <script setup>
 import { ref } from 'vue';
-import { collection, addDoc } from 'firebase/firestore';
+import { collection, query, where, getDocs, addDoc } from 'firebase/firestore';
 import { db } from '@/firebase'; // Asegúrate de que tienes tu instancia de Firestore
 import { useRouter } from 'vue-router';
 
@@ -59,11 +60,36 @@ const subscribedEventsId = ref('4Ms88Hw9i3okcTHI7AV6');
 const emailError = ref('');
 const phoneError = ref('');
 
+const isLoading = ref(false);
+
 const router = useRouter();
 
+const checkExistingPhoneNumber = async () => {
+  const q = query(collection(db, 'spectators'), where('phone', '==', phone.value));
+  const querySnapshot = await getDocs(q);
+
+  // Si el query devuelve algún documento, significa que el número de teléfono ya existe
+  if (!querySnapshot.empty) {
+    phoneError.value = 'El número de teléfono ya está en uso';
+    isLoading.value = false;
+    return false;
+  }
+
+  phoneError.value = '';
+  return true;
+};
+
 const submitForm = async () => {
+  isLoading.value = true;
   validateFormat();
   if (emailError.value === '' && phoneError.value === '') {
+    const isPhoneAvailable = await checkExistingPhoneNumber();
+
+    // Si el número de teléfono ya está en uso, detener la ejecución
+    if (!isPhoneAvailable) {
+      return;
+    }
+
     try {
       const spectatorData = {
         email: email.value,
@@ -76,15 +102,16 @@ const submitForm = async () => {
         subscribedEventsId: subscribedEventsId.value.split(',').map(id => id.trim()),
       };
 
-    // Guardar documento y obtener su ID
-    const docRef = await addDoc(collection(db, 'spectators'), spectatorData);
+      // Guardar documento y obtener su ID
+      const docRef = await addDoc(collection(db, 'spectators'), spectatorData);
 
-    // Redirigir a la ruta /profile/{documentId}
-    router.push(`/profile/${docRef.id}`);
+      // Redirigir a la ruta /profile/{documentId}
+      router.push(`/profile/${docRef.id}`);
     } catch (error) {
       console.error('Error guardando el espectador: ', error);
     }
   }
+  isLoading.value = false;
 };
 
 // Validación del email
