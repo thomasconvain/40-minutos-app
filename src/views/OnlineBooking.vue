@@ -17,7 +17,7 @@
           </div>
 
           <div class="flex flex-col mt-4">
-            <label class="text-sm" for="name"><strong>Appellidos</strong></label>
+            <label class="text-sm" for="name"><strong>Apellidos</strong></label>
             <input v-model="lastName" type="text" id="name" class="input input-bordered w-full w-full" required />
           </div>
 
@@ -52,7 +52,7 @@ const lastName = ref('');
 const phone = ref('+56');
 const numberOfPeople = ref(1);
 const isChecked = ref(false);
-const isCheckinActive = ref(true);
+const isCheckinActive = ref(false);
 const uniquePaymentForGroup = ref(true);
 const subscribedEventsId = ref('4Ms88Hw9i3okcTHI7AV6');
 
