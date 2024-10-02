@@ -7,7 +7,8 @@
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
     "uploadFirestore": "node help-script/uploadFirestore.js",
-    "deleteFirestore": "node help-script/deleteFirestoreAccordingToEmail.js"
+    "deleteFirestore": "node help-script/deleteFirestoreAccordingToEmail.js",
+    "exportSpectators": "node help-script/exportSpectatorsToJson.js"
   },
   "dependencies": {
     "@heroicons/vue": "^2.1.5",

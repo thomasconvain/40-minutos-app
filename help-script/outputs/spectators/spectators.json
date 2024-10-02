@@ -1,0 +1,2577 @@
+[
+  {
+    "id": "02CCAQ4eHP0dYABpU7hC",
+    "lastName": "Avendaño",
+    "subscribedEventsId": [
+      "4Ms88Hw9i3okcTHI7AV6"
+    ],
+    "phone": "+56942616164",
+    "uniquePaymentForGroup": true,
+    "name": "Valentina",
+    "companionsInfo": [
+      {
+        "lastName": "Alvarado",
+        "name": "Claudio",
+        "email": "calvarado@ieschile.cl"
+      }
+    ],
+    "email": "vpavenda@uc.cl",
+    "numberOfPeople": 2,
+    "isCheckinActive": true,
+    "isChecked": true,
+    "payments": [
+      {
+        "paymentId": "88966431329",
+        "numberOfPeople": "2",
+        "paymentMethod": "Mercado Pago",
+        "amount": 30000,
+        "date": {
+          "_seconds": 1727740959,
+          "_nanoseconds": 50000000
+        }
+      }
+    ]
+  },
+  {
+    "id": "0JwHtM1XQaVQWK0T2DPV",
+    "email": "haviert@gmail.com",
+    "name": "Javier Rodriguez",
+    "phone": "+56934283436",
+    "subscribedEventsId": [
+      "4Ms88Hw9i3okcTHI7AV6"
+    ],
+    "isCheckinActive": true,
+    "uniquePaymentForGroup": true,
+    "payments": [],
+    "numberOfPeople": 2,
+    "isChecked": true
+  },
+  {
+    "id": "0NHkJNDdYBmSgHGsfg4O",
+    "lastName": "Gómez O.",
+    "subscribedEventsId": [
+      "4Ms88Hw9i3okcTHI7AV6"
+    ],
+    "phone": "+56996433015",
+    "uniquePaymentForGroup": true,
+    "name": "Natalia",
+    "companionsInfo": [
+      {
+        "lastName": "Schumacher",
+        "name": "Bárbara"
+      },
+      {
+        "lastName": "Schumacher",
+        "name": "Mathías"
+      },
+      {
+        "lastName": "Schumacher",
+        "name": "Herman",
+        "email": "herman.schumacher@gmail.com"
+      }
+    ],
+    "isChecked": false,
+    "email": "ngo1984@gmail.com",
+    "numberOfPeople": 4,
+    "isCheckinActive": true
+  },
+  {
+    "id": "0WQsT9hd0cnTEMj6rlB2",
+    "lastName": "Recher",
+    "subscribedEventsId": [
+      "4Ms88Hw9i3okcTHI7AV6"
+    ],
+    "phone": "+56977008293",
+    "uniquePaymentForGroup": true,
+    "companionsInfo": [],
+    "name": "Antonia",
+    "isChecked": false,
+    "email": "arecher93@gmail.com",
+    "numberOfPeople": 1,
+    "isCheckinActive": true
+  },
+  {
+    "id": "1O7p4jIrYV0XbDOplGFo",
+    "phone": "+56985791446",
+    "name": "Juane",
+    "email": "jeferrert@gmail.com",
+    "subscribedEventsId": [
+      "4Ms88Hw9i3okcTHI7AV6"
+    ],
+    "uniquePaymentForGroup": true,
+    "isCheckinActive": true,
+    "payments": [],
+    "numberOfPeople": 2,
+    "isChecked": true
+  },
+  {
+    "id": "1Vamp7bns6Njr3mUvoQE",
+    "lastName": "Angerstein",
+    "subscribedEventsId": [
+      "4Ms88Hw9i3okcTHI7AV6"
+    ],
+    "phone": "+56988298674",
+    "companionsInfo": [],
+    "name": "Francisca",
+    "email": "fangerstein@gmail.com",
+    "isCheckinActive": true,
+    "uniquePaymentForGroup": false,
+    "isChecked": true,
+    "numberOfPeople": 3,
+    "payments": [
+      {
+        "paymentId": "89297709434",
+        "numberOfPeople": "1",
+        "paymentMethod": "Mercado Pago",
+        "amount": 12000,
+        "date": {
+          "_seconds": 1727783338,
+          "_nanoseconds": 923000000
+        }
+      }
+    ]
+  },
+  {
+    "id": "1cyK49iT7JJDn8raEEvh",
+    "lastName": "Pérez",
+    "subscribedEventsId": [
+      "4Ms88Hw9i3okcTHI7AV6"
+    ],
+    "phone": "+56971653981",
+    "uniquePaymentForGroup": true,
+    "name": "Daniel",
+    "companionsInfo": [
+      {
+        "lastName": "Neale",
+        "name": "Sylvia"
+      }
+    ],
+    "email": "cristimenendez@hotmail.com",
+    "numberOfPeople": 2,
+    "isCheckinActive": true,
+    "isChecked": true,
+    "payments": [
+      {
+        "paymentMethod": "BankTransfer",
+        "numberOfPeople": "2",
+        "paymentId": "1cyK49iT7JJDn8raEEvh-owner",
+        "amount": "40000",
+        "date": {
+          "_seconds": 1727742175,
+          "_nanoseconds": 796000000
+        }
+      }
+    ]
+  },
+  {
+    "id": "1kCPHXczhFFyYRx4LiOb",
+    "lastName": "Vergara",
+    "subscribedEventsId": [
+      "4Ms88Hw9i3okcTHI7AV6"
+    ],
+    "phone": "+56973072401",
+    "uniquePaymentForGroup": true,
+    "name": "Estefanía",
+    "companionsInfo": [
+      {
+        "lastName": "Donoso",
+        "name": "Gustavo"
+      }
+    ],
+    "isChecked": false,
+    "email": "estefi.vergara@gmail.com",
+    "numberOfPeople": 2,
+    "isCheckinActive": true
+  },
+  {
+    "id": "1la1KAVPoYvBOvimHhNy",
+    "lastName": "OShea",
+    "subscribedEventsId": [
+      "4Ms88Hw9i3okcTHI7AV6"
+    ],
+    "phone": "+56998635607",
+    "uniquePaymentForGroup": true,
+    "name": "Loreto",
+    "companionsInfo": [
+      {
+        "lastName": "Correa",
+        "name": "Tomas"
+      },
+      {
+        "lastName": "Correa",
+        "name": "María Gracia"
+      },
+      {
+        "lastName": "Lecaros",
+        "name": "Luz"
+      }
+    ],
+    "email": "loreto.oshea@gmail.com",
+    "isCheckinActive": true,
+    "isChecked": true,
+    "numberOfPeople": 2
+  },
+  {
+    "id": "2bgxP7zrs2vYCEEPsnQQ",
+    "lastName": "Yon",
+    "subscribedEventsId": [
+      "4Ms88Hw9i3okcTHI7AV6"
+    ],
+    "phone": "+56997588221",
+    "uniquePaymentForGroup": true,
+    "name": "Ramón",
+    "companionsInfo": [
+      {
+        "lastName": "Lausen",
+        "name": "Carolina",
+        "email": "carolinalausen@gmail.com"
+      }
+    ],
+    "email": "ryon@uc.cl",
+    "numberOfPeople": 2,
+    "isCheckinActive": true,
+    "isChecked": true,
+    "payments": [
+      {
+        "paymentMethod": "BankTransfer",
+        "numberOfPeople": "2",
+        "paymentId": "2bgxP7zrs2vYCEEPsnQQ-owner",
+        "amount": "24000",
+        "date": {
+          "_seconds": 1727740807,
+          "_nanoseconds": 7000000
+        }
+      }
+    ]
+  },
+  {
+    "id": "2p4akFXrfhXiK1jJwy1r",
+    "lastName": "Kast",
+    "subscribedEventsId": [
+      "4Ms88Hw9i3okcTHI7AV6"
+    ],
+    "phone": "+56962492200",
+    "uniquePaymentForGroup": true,
+    "name": "Mónica",
+    "companionsInfo": [
+      {
+        "lastName": "Larraín",
+        "name": "Nicolás",
+        "email": "nlarrainh@gmail.com"
+      }
+    ],
+    "email": "monakast@gmail.com",
+    "numberOfPeople": 2,
+    "isCheckinActive": true,
+    "isChecked": true,
+    "payments": [
+      {
+        "paymentId": "89273682790",
+        "numberOfPeople": "2",
+        "paymentMethod": "Mercado Pago",
+        "amount": 24000,
+        "date": {
+          "_seconds": 1727740780,
+          "_nanoseconds": 219000000
+        }
+      }
+    ]
+  },
+  {
+    "id": "32nqqdyiEo1AqUsW8zLb",
+    "lastName": "Rodriguez",
+    "subscribedEventsId": [
+      "4Ms88Hw9i3okcTHI7AV6"
+    ],
+    "phone": "+56982886357",
+    "uniquePaymentForGroup": true,
+    "companionsInfo": [],
+    "name": "Joaquín",
+    "email": "jrodvar@gmail.com",
+    "isCheckinActive": true,
+    "isChecked": true,
+    "numberOfPeople": 3,
+    "payments": [
+      {
+        "paymentMethod": "BankTransfer",
+        "numberOfPeople": "3",
+        "paymentId": "32nqqdyiEo1AqUsW8zLb-owner",
+        "amount": "4500",
+        "date": {
+          "_seconds": 1727741451,
+          "_nanoseconds": 787000000
+        }
+      },
+      {
+        "paymentId": "failed payment",
+        "numberOfPeople": "3",
+        "paymentMethod": "Mercado Pago",
+        "amount": 0,
+        "date": {
+          "_seconds": 1727741897,
+          "_nanoseconds": 287000000
+        }
+      }
+    ]
+  },
+  {
+    "id": "3aeJXBSvFg72TfCWqIdo",
+    "lastName": "Faille",
+    "subscribedEventsId": [
+      "4Ms88Hw9i3okcTHI7AV6"
+    ],
+    "phone": "+56998860126",
+    "uniquePaymentForGroup": true,
+    "name": "Harold",
+    "companionsInfo": [
+      {
+        "lastName": "Matte",
+        "name": "Paula",
+        "email": "Pmattevial@gmail.com"
+      }
+    ],
+    "email": "Hfaille@greenvic.cl",
+    "numberOfPeople": 2,
+    "isCheckinActive": true,
+    "isChecked": true
+  },
+  {
+    "id": "3zVMqQyANOUcXwxIawoN",
+    "lastName": "Gomez",
+    "subscribedEventsId": [
+      "4Ms88Hw9i3okcTHI7AV6"
+    ],
+    "phone": "+56963260713",
+    "uniquePaymentForGroup": true,
+    "name": "Cecilia",
+    "companionsInfo": [
+      {
+        "lastName": "Gajardo Jara",
+        "name": "Isabel"
+      }
+    ],
+    "isChecked": false,
+    "email": "ceciliagomez.ga@gmail.com",
+    "numberOfPeople": 2,
+    "isCheckinActive": true
+  },
+  {
+    "id": "4E67O9DlC0Je1jGO0mIU",
+    "lastName": "Toro",
+    "subscribedEventsId": [
+      "4Ms88Hw9i3okcTHI7AV6"
+    ],
+    "phone": "+56992395445",
+    "uniquePaymentForGroup": true,
+    "companionsInfo": [],
+    "name": "Angelica",
+    "isChecked": false,
+    "email": "matoror@gmail.com",
+    "numberOfPeople": 2,
+    "isCheckinActive": true
+  },
+  {
+    "id": "5E8vvhAvj4UPNPdwwlQv",
+    "lastName": "Torrealba",
+    "subscribedEventsId": [
+      "4Ms88Hw9i3okcTHI7AV6"
+    ],
+    "phone": "+56990184609",
+    "uniquePaymentForGroup": true,
+    "name": "Trinidad",
+    "companionsInfo": [
+      {
+        "lastName": "Fonck",
+        "name": "María Luisa",
+        "email": "trinitorrealba@gmail.com"
+      }
+    ],
+    "email": "trinitorrealba@gmail.com",
+    "numberOfPeople": 2,
+    "isCheckinActive": true,
+    "isChecked": true
+  },
+  {
+    "id": "5vrkZN1nGIVU8Q8xYao6",
+    "name": "Gabo",
+    "email": "gabrielwhr@gmail.com",
+    "phone": "+56995458812",
+    "subscribedEventsId": [
+      "4Ms88Hw9i3okcTHI7AV6"
+    ],
+    "isCheckinActive": true,
+    "uniquePaymentForGroup": true,
+    "isChecked": true,
+    "numberOfPeople": 2
+  },
+  {
+    "id": "67TxHgNSV7B2qe8WRQjt",
+    "lastName": "Branth",
+    "subscribedEventsId": [
+      "4Ms88Hw9i3okcTHI7AV6"
+    ],
+    "phone": "+56993591841",
+    "uniquePaymentForGroup": true,
+    "companionsInfo": [],
+    "name": "Mariela",
+    "isChecked": false,
+    "email": "marielabranth@hbt.cl",
+    "numberOfPeople": 2,
+    "isCheckinActive": true
+  },
+  {
+    "id": "6Qi1IRjGkMezaXzFdMC6",
+    "lastName": "Delucchi",
+    "subscribedEventsId": [
+      "4Ms88Hw9i3okcTHI7AV6"
+    ],
+    "phone": "+56956710413",
+    "uniquePaymentForGroup": true,
+    "name": "Maria Cecilia",
+    "companionsInfo": [
+      {
+        "lastName": "Delucchi",
+        "name": "Andrés"
+      }
+    ],
+    "email": "ceciliadeboli@gmail.com",
+    "isCheckinActive": true,
+    "isChecked": true,
+    "numberOfPeople": 1,
+    "payments": [
+      {
+        "paymentMethod": "BankTransfer",
+        "numberOfPeople": "1",
+        "paymentId": "6Qi1IRjGkMezaXzFdMC6-owner",
+        "amount": "20000",
+        "date": {
+          "_seconds": 1727742370,
+          "_nanoseconds": 250000000
+        }
+      }
+    ]
+  },
+  {
+    "id": "6Se4EdQY6cc6wwnSiBS0",
+    "lastName": "Cherniavsky",
+    "subscribedEventsId": [
+      "4Ms88Hw9i3okcTHI7AV6"
+    ],
+    "phone": "+56982881756",
+    "uniquePaymentForGroup": true,
+    "name": "Carolina",
+    "companionsInfo": [
+      " "
+    ],
+    "isChecked": false,
+    "email": "Cchernia@hotmail.com",
+    "numberOfPeople": 2,
+    "isCheckinActive": true
+  },
+  {
+    "id": "7eP1CPPsEu0mUirMG6wB",
+    "lastName": "Valverde",
+    "subscribedEventsId": [
+      "4Ms88Hw9i3okcTHI7AV6"
+    ],
+    "phone": "+56982174162",
+    "uniquePaymentForGroup": true,
+    "companionsInfo": [],
+    "name": "Bernardita",
+    "email": "bpvalverdei@gmail.com",
+    "numberOfPeople": 3,
+    "isCheckinActive": true,
+    "isChecked": true,
+    "payments": [
+      {
+        "paymentId": "88972135841",
+        "numberOfPeople": "3",
+        "paymentMethod": "Mercado Pago",
+        "amount": 15000,
+        "date": {
+          "_seconds": 1727745487,
+          "_nanoseconds": 901000000
+        }
+      }
+    ]
+  },
+  {
+    "id": "89bxRIUB0oWRS0JlWSOZ",
+    "subscribedEventsId": [
+      "4Ms88Hw9i3okcTHI7AV6"
+    ],
+    "phone": "+56991874448",
+    "uniquePaymentForGroup": true,
+    "name": "Soledad ",
+    "email": "ms.ruizo@gmail.com",
+    "isCheckinActive": true,
+    "isChecked": true,
+    "numberOfPeople": 2
+  },
+  {
+    "id": "8HkhXeIBq00Db374Kwhy",
+    "lastName": "Toro Labbé",
+    "subscribedEventsId": [
+      "4Ms88Hw9i3okcTHI7AV6"
+    ],
+    "phone": "+56997307516",
+    "uniquePaymentForGroup": true,
+    "name": "María Jesús",
+    "companionsInfo": [
+      {
+        "lastName": "Maturana Ovalle",
+        "name": "Andrés",
+        "email": "amaturanao@gmail.com"
+      }
+    ],
+    "isChecked": false,
+    "email": "mjtorola@gmail.com",
+    "numberOfPeople": 5,
+    "isCheckinActive": true
+  },
+  {
+    "id": "8LyIh3ppu3ZSfdE2EMB3",
+    "lastName": "Marín",
+    "subscribedEventsId": [
+      "4Ms88Hw9i3okcTHI7AV6"
+    ],
+    "phone": "+56982946322",
+    "isCheckinActive": true,
+    "uniquePaymentForGroup": true,
+    "companionsInfo": [],
+    "name": "Andrés",
+    "isChecked": false,
+    "email": "amarinasenjo@gmail.com",
+    "numberOfPeople": 2
+  },
+  {
+    "id": "9Ao9T2WmAA4MBrgAu797",
+    "lastName": "Nuñez Sánchez",
+    "subscribedEventsId": [
+      "4Ms88Hw9i3okcTHI7AV6"
+    ],
+    "phone": "+56998945348",
+    "name": "Renato",
+    "companionsInfo": [
+      {
+        "lastName": "Undurraga Fernández",
+        "name": "Carolina"
+      }
+    ],
+    "email": "renato.rns@gmail.com",
+    "numberOfPeople": 2,
+    "isCheckinActive": true,
+    "uniquePaymentForGroup": false,
+    "isChecked": true,
+    "payments": [
+      {
+        "paymentId": "failed payment",
+        "numberOfPeople": "2",
+        "paymentMethod": "Mercado Pago",
+        "amount": 0,
+        "date": {
+          "_seconds": 1727796475,
+          "_nanoseconds": 52000000
+        }
+      },
+      {
+        "paymentId": "failed payment",
+        "numberOfPeople": "2",
+        "paymentMethod": "Mercado Pago",
+        "amount": 0,
+        "date": {
+          "_seconds": 1727796485,
+          "_nanoseconds": 453000000
+        }
+      },
+      {
+        "paymentId": "failed payment",
+        "numberOfPeople": "2",
+        "paymentMethod": "Mercado Pago",
+        "amount": 0,
+        "date": {
+          "_seconds": 1727796531,
+          "_nanoseconds": 382000000
+        }
+      }
+    ]
+  },
+  {
+    "id": "9KgzVxwkZcQi7dmLq1si",
+    "lastName": "Rodriguez",
+    "subscribedEventsId": [
+      "4Ms88Hw9i3okcTHI7AV6"
+    ],
+    "phone": "+56982992999",
+    "uniquePaymentForGroup": true,
+    "companionsInfo": [],
+    "name": "María José",
+    "email": "mariajoserodriguezt@gmail.com",
+    "numberOfPeople": 7,
+    "isCheckinActive": true,
+    "isChecked": true
+  },
+  {
+    "id": "9QUZNGTwLtjBYk3kj6SF",
+    "lastName": "Bianchi",
+    "subscribedEventsId": [
+      "4Ms88Hw9i3okcTHI7AV6"
+    ],
+    "phone": "+56990788471",
+    "uniquePaymentForGroup": true,
+    "name": "Felipe",
+    "companionsInfo": [
+      {
+        "lastName": "Basoalto",
+        "name": "Verónica",
+        "email": "vbasoalto@gmail.com"
+      }
+    ],
+    "email": "fbianchi@gmail.com",
+    "numberOfPeople": 2,
+    "isCheckinActive": true,
+    "isChecked": true,
+    "payments": [
+      {
+        "paymentId": "88966385167",
+        "numberOfPeople": "2",
+        "paymentMethod": "Mercado Pago",
+        "amount": 24000,
+        "date": {
+          "_seconds": 1727740922,
+          "_nanoseconds": 288000000
+        }
+      }
+    ]
+  },
+  {
+    "id": "9n1qcR4pmk4iP3J8KXGC",
+    "lastName": "Salazar Bolaño",
+    "subscribedEventsId": [
+      "4Ms88Hw9i3okcTHI7AV6"
+    ],
+    "phone": "+56998633818",
+    "uniquePaymentForGroup": true,
+    "name": "Claudia",
+    "companionsInfo": [
+      {
+        "lastName": "Ortúzar Salazar",
+        "name": "Ignacia"
+      },
+      {
+        "lastName": "Ortúzar Salazar",
+        "name": "Alonso"
+      },
+      {
+        "lastName": "Ortúzar Salazar",
+        "name": "Tomás"
+      }
+    ],
+    "isChecked": false,
+    "email": "csalazarbolano@gmail.com",
+    "numberOfPeople": 4,
+    "isCheckinActive": true
+  },
+  {
+    "id": "9rNvqWk90UDOszMqicEx",
+    "subscribedEventsId": [
+      "4Ms88Hw9i3okcTHI7AV6"
+    ],
+    "phone": "+56999192198",
+    "isCheckinActive": true,
+    "uniquePaymentForGroup": true,
+    "name": "Mariela",
+    "email": "Futronoalgarrobo@gmail.com",
+    "numberOfPeople": 1,
+    "isChecked": true
+  },
+  {
+    "id": "AAwOmglG0F7Yd9ArML4y",
+    "lastName": "Tonkin",
+    "subscribedEventsId": [
+      "4Ms88Hw9i3okcTHI7AV6"
+    ],
+    "phone": "+56992186182",
+    "uniquePaymentForGroup": true,
+    "name": "Elisa",
+    "companionsInfo": [
+      {
+        "lastName": "Correa",
+        "name": "Juan Ignacio",
+        "email": "jicorrea@mi.cl"
+      }
+    ],
+    "email": "elisatonkin@gmail.com",
+    "numberOfPeople": 2,
+    "isCheckinActive": true,
+    "isChecked": true,
+    "payments": [
+      {
+        "paymentMethod": "BankTransfer",
+        "numberOfPeople": "1",
+        "paymentId": "AAwOmglG0F7Yd9ArML4y-visitor-R4aB",
+        "amount": "8000",
+        "date": {
+          "_seconds": 1727740750,
+          "_nanoseconds": 711000000
+        }
+      }
+    ]
+  },
+  {
+    "id": "BOxVFFKKRhlyNG6ov3QA",
+    "lastName": "Raczynski",
+    "subscribedEventsId": [
+      "4Ms88Hw9i3okcTHI7AV6"
+    ],
+    "phone": "+56995159093",
+    "uniquePaymentForGroup": true,
+    "companionsInfo": [],
+    "name": "Andrea",
+    "isChecked": false,
+    "email": "andrea.raczynski@csuv.cl",
+    "numberOfPeople": 1,
+    "isCheckinActive": true
+  },
+  {
+    "id": "CB8CLpOjySJehhWVEjqi",
+    "lastName": "Germain",
+    "subscribedEventsId": [
+      "4Ms88Hw9i3okcTHI7AV6"
+    ],
+    "phone": "+56995797158",
+    "uniquePaymentForGroup": true,
+    "companionsInfo": [],
+    "name": "Andrés",
+    "email": "andresgermain@gmail.com",
+    "numberOfPeople": 1,
+    "isCheckinActive": true,
+    "isChecked": true,
+    "payments": [
+      {
+        "paymentId": "89273976804",
+        "numberOfPeople": "1",
+        "paymentMethod": "Mercado Pago",
+        "amount": 15000,
+        "date": {
+          "_seconds": 1727740963,
+          "_nanoseconds": 57000000
+        }
+      }
+    ]
+  },
+  {
+    "id": "EHMwdDT8fOrsXbZwD0jw",
+    "lastName": "Romo Figueroa",
+    "subscribedEventsId": [
+      "4Ms88Hw9i3okcTHI7AV6"
+    ],
+    "phone": "+56997325679",
+    "isCheckinActive": true,
+    "uniquePaymentForGroup": true,
+    "name": "Elena",
+    "companionsInfo": [
+      {
+        "lastName": "Figueroa Navarrete",
+        "name": "Elena",
+        "email": "elenaderomo@gmail.com"
+      }
+    ],
+    "isChecked": false,
+    "email": "eleromo@gmail.com",
+    "numberOfPeople": 2
+  },
+  {
+    "id": "EIZCGiWbeJ6G9FSlfRRJ",
+    "lastName": "Ferrer",
+    "subscribedEventsId": [
+      "4Ms88Hw9i3okcTHI7AV6"
+    ],
+    "phone": "+56944537000",
+    "uniquePaymentForGroup": true,
+    "companionsInfo": [],
+    "name": "Ignacio",
+    "email": "ferrer.gh89@hotmail.com",
+    "numberOfPeople": 1,
+    "isCheckinActive": true,
+    "isChecked": true
+  },
+  {
+    "id": "EMPAr1LRxcOOA8P0JQhl",
+    "subscribedEventsId": [
+      "4Ms88Hw9i3okcTHI7AV6"
+    ],
+    "phone": "+56991297959",
+    "uniquePaymentForGroup": true,
+    "name": "Rafael ",
+    "email": "rafaeldawabe@hotmail.com",
+    "numberOfPeople": 1,
+    "isCheckinActive": true,
+    "isChecked": true
+  },
+  {
+    "id": "EnxuXuhCxjfbmVgdQeOG",
+    "lastName": "Bier",
+    "subscribedEventsId": [
+      "4Ms88Hw9i3okcTHI7AV6"
+    ],
+    "phone": "+56997796429",
+    "uniquePaymentForGroup": true,
+    "name": "Catalina",
+    "companionsInfo": [
+      {
+        "lastName": "Tagle",
+        "name": "Manuel",
+        "email": "Mantagle@outlook.cl"
+      }
+    ],
+    "email": "cbier@eyla.cl",
+    "numberOfPeople": 2,
+    "isCheckinActive": true,
+    "isChecked": true
+  },
+  {
+    "id": "ErC2vjsRcpg7KySG5QWn",
+    "lastName": "Quiroga Newbery",
+    "subscribedEventsId": [
+      "4Ms88Hw9i3okcTHI7AV6"
+    ],
+    "uniquePaymentForGroup": true,
+    "name": "Patricia",
+    "companionsInfo": [
+      {
+        "lastName": "Bunout Cifuentes",
+        "name": "Marcel",
+        "email": "marcel.bunout@gmail.com"
+      },
+      {
+        "lastName": "Bunout Quiroga",
+        "name": "Marie",
+        "email": "domibuqui@gmail.com"
+      },
+      {
+        "lastName": "Vial Gutierrez",
+        "name": "Laura",
+        "email": "domibuqui@gmail.com"
+      }
+    ],
+    "numberOfPeople": 4,
+    "isCheckinActive": true,
+    "isChecked": true,
+    "phone": "+56998846220",
+    "email": "quiroga.newbery.patricia@gmail.com"
+  },
+  {
+    "id": "FBA7YYXBjYdVyreURzVr",
+    "subscribedEventsId": [
+      "4Ms88Hw9i3okcTHI7AV6"
+    ],
+    "phone": "+56984414388",
+    "isCheckinActive": true,
+    "uniquePaymentForGroup": true,
+    "name": "María de los Ángeles ",
+    "isChecked": false,
+    "email": "Negrangeles@hotmail.com",
+    "numberOfPeople": 1
+  },
+  {
+    "id": "G5spi8J8ojBpmwMup8L1",
+    "lastName": "Herrera",
+    "subscribedEventsId": [
+      "4Ms88Hw9i3okcTHI7AV6"
+    ],
+    "phone": "+56993421609",
+    "uniquePaymentForGroup": true,
+    "companionsInfo": [],
+    "name": "Rosario",
+    "isChecked": false,
+    "email": "rosarioherreraabalos@gmail.com",
+    "numberOfPeople": 1,
+    "isCheckinActive": true
+  },
+  {
+    "id": "GmYYO4dX3UjlbQNruHpW",
+    "lastName": "Valdes",
+    "subscribedEventsId": [
+      "4Ms88Hw9i3okcTHI7AV6"
+    ],
+    "phone": "+56985012198",
+    "uniquePaymentForGroup": true,
+    "companionsInfo": [],
+    "name": "María Jesús",
+    "isChecked": false,
+    "email": "jesuvaldes@gmail.com",
+    "numberOfPeople": 2,
+    "isCheckinActive": true
+  },
+  {
+    "id": "HX7sL5DooZVTIvomF2SE",
+    "lastName": "Willson",
+    "subscribedEventsId": [
+      "4Ms88Hw9i3okcTHI7AV6"
+    ],
+    "phone": "+56976673870",
+    "uniquePaymentForGroup": true,
+    "companionsInfo": [],
+    "name": "Isabel",
+    "email": "isabelwillson@hotmail.com",
+    "isCheckinActive": true,
+    "isChecked": true,
+    "numberOfPeople": 1,
+    "payments": [
+      {
+        "paymentMethod": "BankTransfer",
+        "numberOfPeople": "1",
+        "paymentId": "HX7sL5DooZVTIvomF2SE-owner",
+        "amount": "20000",
+        "date": {
+          "_seconds": 1727740763,
+          "_nanoseconds": 830000000
+        }
+      }
+    ]
+  },
+  {
+    "id": "HktoarHRKHxZJudqXdOB",
+    "lastName": "Von Appen",
+    "subscribedEventsId": [
+      "4Ms88Hw9i3okcTHI7AV6"
+    ],
+    "phone": "+56997446511",
+    "uniquePaymentForGroup": true,
+    "name": "Beatriz",
+    "companionsInfo": [
+      {
+        "lastName": "Matte",
+        "name": "Francisco"
+      }
+    ],
+    "email": "titiappen@hotmail.com",
+    "numberOfPeople": 2,
+    "isCheckinActive": true,
+    "isChecked": true,
+    "payments": [
+      {
+        "paymentId": "89276727454",
+        "numberOfPeople": "2",
+        "paymentMethod": "Mercado Pago",
+        "amount": 24000,
+        "date": {
+          "_seconds": 1727743173,
+          "_nanoseconds": 808000000
+        }
+      }
+    ]
+  },
+  {
+    "id": "ID2KNn2cp0M5qmKSvSFM",
+    "lastName": "Izquierdo",
+    "subscribedEventsId": [
+      "4Ms88Hw9i3okcTHI7AV6"
+    ],
+    "phone": "+56994829661",
+    "uniquePaymentForGroup": true,
+    "companionsInfo": [],
+    "name": "Manuel",
+    "email": "mfizquierdo@uc.cl",
+    "isCheckinActive": true,
+    "isChecked": true,
+    "numberOfPeople": 1
+  },
+  {
+    "id": "K7BW6DfEjF3M9X6MS8lw",
+    "lastName": "Cubillos",
+    "subscribedEventsId": [
+      "4Ms88Hw9i3okcTHI7AV6"
+    ],
+    "phone": "+56998212762",
+    "uniquePaymentForGroup": true,
+    "companionsInfo": [],
+    "name": "Catalina",
+    "email": "catacubillos@gmail.com",
+    "numberOfPeople": 1,
+    "isCheckinActive": true,
+    "isChecked": true,
+    "payments": [
+      {
+        "paymentMethod": "BankTransfer",
+        "numberOfPeople": "1",
+        "paymentId": "K7BW6DfEjF3M9X6MS8lw-owner",
+        "amount": "15000",
+        "date": {
+          "_seconds": 1727740854,
+          "_nanoseconds": 960000000
+        }
+      }
+    ]
+  },
+  {
+    "id": "KVpxQMJspZIWgL6zQmx0",
+    "lastName": "Ibarra Videla",
+    "subscribedEventsId": [
+      "4Ms88Hw9i3okcTHI7AV6"
+    ],
+    "phone": "+56972114149",
+    "uniquePaymentForGroup": true,
+    "name": "Paulina",
+    "companionsInfo": [
+      {
+        "lastName": "Martínez",
+        "name": "Ciro",
+        "email": "ciromartineza@gmail.com"
+      }
+    ],
+    "email": "pibarra@sepco.cl",
+    "numberOfPeople": 2,
+    "isCheckinActive": true,
+    "isChecked": true
+  },
+  {
+    "id": "Kb1W9Bpg79j42k9JwtDc",
+    "lastName": "Müller",
+    "subscribedEventsId": [
+      "4Ms88Hw9i3okcTHI7AV6"
+    ],
+    "phone": "+56965871743",
+    "uniquePaymentForGroup": true,
+    "name": "Verónica",
+    "companionsInfo": [
+      " "
+    ],
+    "email": "veromullergh@gmail.com",
+    "numberOfPeople": 2,
+    "isCheckinActive": true,
+    "isChecked": true
+  },
+  {
+    "id": "LKBB41prINKoZz5hRhcQ",
+    "lastName": "Matte Vial",
+    "subscribedEventsId": [
+      "4Ms88Hw9i3okcTHI7AV6"
+    ],
+    "phone": "+56992566196",
+    "uniquePaymentForGroup": true,
+    "name": "Paula",
+    "email": "pmattevial@gmail.com",
+    "isCheckinActive": true,
+    "companionsInfo": [
+      {
+        "lastName": "Faille",
+        "name": "Harold",
+        "email": "hfaille@greenvic.cl"
+      },
+      {
+        "lastName": "Faille Matte",
+        "name": "Margarita",
+        "email": ""
+      }
+    ],
+    "numberOfPeople": 3,
+    "isChecked": true
+  },
+  {
+    "id": "LM3vg3IFmCJqrSRhRrwg",
+    "lastName": "Irarrázaval",
+    "subscribedEventsId": [
+      "4Ms88Hw9i3okcTHI7AV6"
+    ],
+    "phone": "+56988522567",
+    "uniquePaymentForGroup": true,
+    "name": "Josefina",
+    "companionsInfo": [
+      {
+        "lastName": "Irarrázaval",
+        "name": "Cristian"
+      },
+      {
+        "lastName": "Andrews",
+        "name": "Anita"
+      },
+      {
+        "lastName": "Andrews",
+        "name": "María Angélica"
+      }
+    ],
+    "email": "joseirarrazaval92@gmail.com",
+    "numberOfPeople": 4,
+    "isCheckinActive": true,
+    "isChecked": true,
+    "payments": [
+      {
+        "paymentMethod": "BankTransfer",
+        "numberOfPeople": "1",
+        "paymentId": "LM3vg3IFmCJqrSRhRrwg-visitor-LF7c",
+        "amount": "12000",
+        "date": {
+          "_seconds": 1727740889,
+          "_nanoseconds": 916000000
+        }
+      }
+    ]
+  },
+  {
+    "id": "MeT0l8hEljGIKJP9HCeb",
+    "lastName": "Gajardo",
+    "subscribedEventsId": [
+      "4Ms88Hw9i3okcTHI7AV6"
+    ],
+    "phone": "+56994949321",
+    "uniquePaymentForGroup": true,
+    "companionsInfo": [],
+    "name": "Vicente",
+    "email": "vihegaro@gmail.com",
+    "numberOfPeople": 1,
+    "isCheckinActive": true,
+    "isChecked": true,
+    "payments": [
+      {
+        "paymentId": "89273727488",
+        "numberOfPeople": "1",
+        "paymentMethod": "Mercado Pago",
+        "amount": 5000,
+        "date": {
+          "_seconds": 1727740823,
+          "_nanoseconds": 20000000
+        }
+      }
+    ]
+  },
+  {
+    "id": "MgCDG4yXs8fz1NAhr9aT",
+    "lastName": "Larrain Queiroz",
+    "subscribedEventsId": [
+      "4Ms88Hw9i3okcTHI7AV6"
+    ],
+    "phone": "+56976097255",
+    "uniquePaymentForGroup": true,
+    "name": "Gabriela ",
+    "companionsInfo": [
+      {
+        "lastName": "Gonzalez Aldunate",
+        "name": "Tomas",
+        "email": "tgonzalez@claro.cl"
+      },
+      {
+        "lastName": "Gonzalez Larrain",
+        "name": "Emilia",
+        "email": "ea.gonzalez@csuv.cl"
+      },
+      {
+        "lastName": "Gonzalez Larrain",
+        "name": "Eduardo",
+        "email": "p.gonzalez.2030@tabancura.cl"
+      }
+    ],
+    "email": "glarraiq@uc.cl",
+    "numberOfPeople": 4,
+    "isCheckinActive": true,
+    "isChecked": true,
+    "payments": [
+      {
+        "paymentMethod": "BankTransfer",
+        "numberOfPeople": "1",
+        "paymentId": "MgCDG4yXs8fz1NAhr9aT-visitor-8QJZ",
+        "amount": "27000",
+        "date": {
+          "_seconds": 1727740792,
+          "_nanoseconds": 978000000
+        }
+      }
+    ]
+  },
+  {
+    "id": "OHCjAeSwnIJSrw4SIHaI",
+    "lastName": "Valdes",
+    "subscribedEventsId": [
+      "4Ms88Hw9i3okcTHI7AV6"
+    ],
+    "phone": "+56977581698",
+    "uniquePaymentForGroup": true,
+    "companionsInfo": [],
+    "name": "Loreto",
+    "isChecked": false,
+    "email": "lorteto.valdes@security.cl",
+    "numberOfPeople": 1,
+    "isCheckinActive": true
+  },
+  {
+    "id": "P95HKPuqd79l1jwIHj1j",
+    "lastName": "Bunout",
+    "subscribedEventsId": [
+      "4Ms88Hw9i3okcTHI7AV6"
+    ],
+    "phone": "+56988500055",
+    "uniquePaymentForGroup": true,
+    "companionsInfo": [],
+    "name": "Marie Anne",
+    "email": "ma.bunout@gmail.com",
+    "numberOfPeople": 1,
+    "isCheckinActive": true,
+    "isChecked": true,
+    "payments": [
+      {
+        "paymentMethod": "BankTransfer",
+        "numberOfPeople": "0",
+        "paymentId": "P95HKPuqd79l1jwIHj1j-owner",
+        "amount": "0",
+        "date": {
+          "_seconds": 1727740862,
+          "_nanoseconds": 430000000
+        }
+      }
+    ]
+  },
+  {
+    "id": "Pl2SOld5sboV3TfVEomE",
+    "subscribedEventsId": [
+      "4Ms88Hw9i3okcTHI7AV6"
+    ],
+    "phone": "+56998427369",
+    "uniquePaymentForGroup": true,
+    "name": "Mónica",
+    "isChecked": false,
+    "email": "monicacharme@gmail.com",
+    "numberOfPeople": 1,
+    "isCheckinActive": true
+  },
+  {
+    "id": "Pwa0ZAhwZHx8RPLUegB3",
+    "lastName": "Joglar",
+    "subscribedEventsId": [
+      "4Ms88Hw9i3okcTHI7AV6"
+    ],
+    "phone": "+56992188925",
+    "uniquePaymentForGroup": true,
+    "companionsInfo": [],
+    "name": "Rodrigo",
+    "isChecked": false,
+    "email": "rfjoglar@gmail.com",
+    "numberOfPeople": 2,
+    "isCheckinActive": true
+  },
+  {
+    "id": "QHFdWeOkKXhNQjBuXSS3",
+    "lastName": "Fonck",
+    "subscribedEventsId": [
+      "4Ms88Hw9i3okcTHI7AV6"
+    ],
+    "phone": "+56976688724",
+    "uniquePaymentForGroup": true,
+    "companionsInfo": [],
+    "name": "Francisca",
+    "email": "francisca.fonck@csuv.cl",
+    "numberOfPeople": 1,
+    "isCheckinActive": true,
+    "isChecked": true
+  },
+  {
+    "id": "QrdE3WeKAt6JWyI00lyI",
+    "lastName": "Yuraszeck",
+    "subscribedEventsId": [
+      "4Ms88Hw9i3okcTHI7AV6"
+    ],
+    "phone": "+56998248737",
+    "uniquePaymentForGroup": true,
+    "companionsInfo": [],
+    "name": "Cecilia",
+    "isChecked": false,
+    "email": "ceciliayk@gmail.com",
+    "numberOfPeople": 3,
+    "isCheckinActive": true
+  },
+  {
+    "id": "RQ9FK9IkEDu867ZwGU88",
+    "lastName": "Prado",
+    "subscribedEventsId": [
+      "4Ms88Hw9i3okcTHI7AV6"
+    ],
+    "phone": "+56988080831",
+    "uniquePaymentForGroup": true,
+    "companionsInfo": [],
+    "name": "Magdalena ",
+    "email": "maidaprado@gmail.com",
+    "numberOfPeople": 1,
+    "isCheckinActive": true,
+    "isChecked": true,
+    "payments": [
+      {
+        "paymentMethod": "BankTransfer",
+        "numberOfPeople": "1",
+        "paymentId": "RQ9FK9IkEDu867ZwGU88-owner",
+        "amount": "5000",
+        "date": {
+          "_seconds": 1727741206,
+          "_nanoseconds": 716000000
+        }
+      }
+    ]
+  },
+  {
+    "id": "SImU01RTlihDhBxLGrWE",
+    "subscribedEventsId": [
+      "4Ms88Hw9i3okcTHI7AV6"
+    ],
+    "phone": "+56999695174",
+    "isCheckinActive": true,
+    "uniquePaymentForGroup": true,
+    "name": "Ignacio",
+    "email": "mail@ignacioarriagada.com",
+    "numberOfPeople": 1,
+    "isChecked": true,
+    "payments": [
+      {
+        "paymentId": "89273870090",
+        "numberOfPeople": "1",
+        "paymentMethod": "Mercado Pago",
+        "amount": 12000,
+        "date": {
+          "_seconds": 1727740979,
+          "_nanoseconds": 701000000
+        }
+      }
+    ]
+  },
+  {
+    "id": "TT8abiMHMrbWxXJZZwEX",
+    "subscribedEventsId": [
+      "4Ms88Hw9i3okcTHI7AV6"
+    ],
+    "phone": "+56992189292",
+    "uniquePaymentForGroup": true,
+    "name": "Alejandra",
+    "email": "alitavega@gmail.com",
+    "numberOfPeople": 1,
+    "isCheckinActive": true,
+    "isChecked": true
+  },
+  {
+    "id": "U3Wh5GKdi1ZGBK6gqBx7",
+    "lastName": "Lagos",
+    "subscribedEventsId": [
+      "4Ms88Hw9i3okcTHI7AV6"
+    ],
+    "phone": "+56997538124",
+    "uniquePaymentForGroup": true,
+    "name": "Javiera",
+    "companionsInfo": [
+      {
+        "lastName": "Ureta",
+        "name": "Cristobal",
+        "email": "C.ureta.soublette@outlook.com"
+      }
+    ],
+    "email": "Javilagosd@gmail.com",
+    "isCheckinActive": true,
+    "isChecked": true,
+    "numberOfPeople": 1,
+    "payments": [
+      {
+        "paymentId": "89273913460",
+        "numberOfPeople": "1",
+        "paymentMethod": "Mercado Pago",
+        "amount": 10000,
+        "date": {
+          "_seconds": 1727740989,
+          "_nanoseconds": 797000000
+        }
+      }
+    ]
+  },
+  {
+    "id": "UvgsUbf1oH3oxy0ttoJx",
+    "subscribedEventsId": [
+      "4Ms88Hw9i3okcTHI7AV6"
+    ],
+    "phone": "+56993716921",
+    "isCheckinActive": true,
+    "uniquePaymentForGroup": true,
+    "name": "María José ",
+    "email": "josemellab@gmail.com",
+    "numberOfPeople": 1,
+    "isChecked": true
+  },
+  {
+    "id": "UwZ2tZzNwqiFcGWlUN6k",
+    "lastName": "Barros",
+    "subscribedEventsId": [
+      "4Ms88Hw9i3okcTHI7AV6"
+    ],
+    "phone": "+56984299534",
+    "uniquePaymentForGroup": true,
+    "name": "Macarena",
+    "companionsInfo": [
+      {
+        "lastName": "Larraín",
+        "name": "Matías"
+      }
+    ],
+    "email": "mbarros@lfr.cl",
+    "numberOfPeople": 2,
+    "isCheckinActive": true,
+    "isChecked": true,
+    "payments": [
+      {
+        "paymentId": "89274036192",
+        "numberOfPeople": "2",
+        "paymentMethod": "Mercado Pago",
+        "amount": 24000,
+        "date": {
+          "_seconds": 1727740981,
+          "_nanoseconds": 771000000
+        }
+      }
+    ]
+  },
+  {
+    "id": "VFrOiNCbJp16roxWlyIu",
+    "lastName": "Saldívar",
+    "subscribedEventsId": [
+      "4Ms88Hw9i3okcTHI7AV6"
+    ],
+    "phone": "+56977575497",
+    "uniquePaymentForGroup": true,
+    "companionsInfo": [],
+    "name": "Jacqueline",
+    "isChecked": false,
+    "email": "jsaldivargalleguillos@miuandes.cl",
+    "numberOfPeople": 2,
+    "isCheckinActive": true
+  },
+  {
+    "id": "VTIeqorPM0vKqKIRWRy3",
+    "lastName": "Scherholz",
+    "subscribedEventsId": [
+      "4Ms88Hw9i3okcTHI7AV6"
+    ],
+    "phone": "+56993820869",
+    "name": "Caroline",
+    "companionsInfo": [
+      {
+        "lastName": "van Weezel",
+        "name": "Alex",
+        "email": " avw@uc.cl"
+      }
+    ],
+    "email": "c.scherholz@gmail.com",
+    "numberOfPeople": 2,
+    "isCheckinActive": true,
+    "uniquePaymentForGroup": false,
+    "isChecked": true,
+    "payments": [
+      {
+        "paymentId": "89317450378",
+        "numberOfPeople": "2",
+        "paymentMethod": "Mercado Pago",
+        "amount": 24000,
+        "date": {
+          "_seconds": 1727796309,
+          "_nanoseconds": 913000000
+        }
+      }
+    ]
+  },
+  {
+    "id": "W38cnYGUYiYT6ORz5db2",
+    "lastName": "Donoso Cuevas",
+    "subscribedEventsId": [
+      "4Ms88Hw9i3okcTHI7AV6"
+    ],
+    "phone": "+56974006532",
+    "uniquePaymentForGroup": true,
+    "companionsInfo": [],
+    "name": "Diego",
+    "isChecked": false,
+    "email": "ddonoso@miuandes.cl",
+    "numberOfPeople": 1,
+    "isCheckinActive": true
+  },
+  {
+    "id": "WLPeseg5nj8drDGHzHp2",
+    "subscribedEventsId": [
+      "4Ms88Hw9i3okcTHI7AV6"
+    ],
+    "phone": "+56992204483",
+    "uniquePaymentForGroup": true,
+    "name": "Paulina ",
+    "email": "dleytosw@uc.cl",
+    "numberOfPeople": 1,
+    "isCheckinActive": true,
+    "isChecked": true,
+    "payments": [
+      {
+        "paymentMethod": "BankTransfer",
+        "numberOfPeople": "1",
+        "paymentId": "WLPeseg5nj8drDGHzHp2-owner",
+        "amount": "15000",
+        "date": {
+          "_seconds": 1727751921,
+          "_nanoseconds": 971000000
+        }
+      }
+    ]
+  },
+  {
+    "id": "Wj9bhr8G7ry2pwzbAExi",
+    "lastName": "Toro Anastassiou",
+    "subscribedEventsId": [
+      "4Ms88Hw9i3okcTHI7AV6"
+    ],
+    "phone": "+56996828078",
+    "uniquePaymentForGroup": true,
+    "name": "Raúl",
+    "companionsInfo": [
+      {
+        "lastName": "Monckeberg Toro",
+        "name": "Alicia"
+      }
+    ],
+    "isChecked": false,
+    "email": "raultoro.cl@gmail.com",
+    "numberOfPeople": 2,
+    "isCheckinActive": true
+  },
+  {
+    "id": "WkCsQ8iNmupHCx6JcyeK",
+    "lastName": "Henríquez",
+    "subscribedEventsId": [
+      "4Ms88Hw9i3okcTHI7AV6"
+    ],
+    "phone": "+56990795633",
+    "uniquePaymentForGroup": true,
+    "companionsInfo": [],
+    "name": "Loreto",
+    "isChecked": false,
+    "email": "lhenriquezr@gmail.com",
+    "numberOfPeople": 2,
+    "isCheckinActive": true
+  },
+  {
+    "id": "XS1JofXEKKmzGWP50dUG",
+    "lastName": "Castillo",
+    "subscribedEventsId": [
+      "4Ms88Hw9i3okcTHI7AV6"
+    ],
+    "phone": "+56993188388",
+    "uniquePaymentForGroup": true,
+    "companionsInfo": [],
+    "name": "Francisca",
+    "email": "fcastilloserrano@gmail.com",
+    "numberOfPeople": 1,
+    "isCheckinActive": true,
+    "isChecked": true,
+    "payments": [
+      {
+        "paymentMethod": "BankTransfer",
+        "numberOfPeople": "1",
+        "paymentId": "XS1JofXEKKmzGWP50dUG-owner",
+        "amount": "12000",
+        "date": {
+          "_seconds": 1727740954,
+          "_nanoseconds": 649000000
+        }
+      }
+    ]
+  },
+  {
+    "id": "Xd2W4KTHmmiAPwoaKHcC",
+    "lastName": "Sutter",
+    "subscribedEventsId": [
+      "4Ms88Hw9i3okcTHI7AV6"
+    ],
+    "phone": "+56995410287",
+    "uniquePaymentForGroup": true,
+    "companionsInfo": [],
+    "name": "Valentina",
+    "email": "vsutter2@gmail.com",
+    "isCheckinActive": true,
+    "isChecked": true,
+    "numberOfPeople": 2
+  },
+  {
+    "id": "XgZjbmwf8zPb7EWchG3m",
+    "subscribedEventsId": [
+      "4Ms88Hw9i3okcTHI7AV6"
+    ],
+    "phone": "+56968461738",
+    "isCheckinActive": true,
+    "uniquePaymentForGroup": true,
+    "name": "Francisca",
+    "email": "fbaezaroth@gmail.com",
+    "numberOfPeople": 1,
+    "isChecked": true
+  },
+  {
+    "id": "XsYImf6ycvlK4gfFWcOi",
+    "subscribedEventsId": [
+      "4Ms88Hw9i3okcTHI7AV6"
+    ],
+    "phone": "+56968445209",
+    "uniquePaymentForGroup": true,
+    "name": "JUAN MANUEL",
+    "isChecked": false,
+    "email": "juanmanuelsantacruz@gmail.com",
+    "numberOfPeople": 1,
+    "isCheckinActive": true
+  },
+  {
+    "id": "YKzbvIWj6zg7p7ufp9Gk",
+    "subscribedEventsId": [
+      "4Ms88Hw9i3okcTHI7AV6"
+    ],
+    "phone": "+56966196746",
+    "isCheckinActive": true,
+    "uniquePaymentForGroup": true,
+    "name": "Ale",
+    "email": "aleserrano92@gmail.com",
+    "numberOfPeople": 1,
+    "isChecked": true,
+    "payments": [
+      {
+        "paymentMethod": "BankTransfer",
+        "numberOfPeople": "1",
+        "paymentId": "YKzbvIWj6zg7p7ufp9Gk-owner",
+        "amount": "12000",
+        "date": {
+          "_seconds": 1727741275,
+          "_nanoseconds": 730000000
+        }
+      }
+    ]
+  },
+  {
+    "id": "Z2jcjgduKSpFXrivhMKA",
+    "lastName": "Lagos",
+    "subscribedEventsId": [
+      "4Ms88Hw9i3okcTHI7AV6"
+    ],
+    "phone": "+56998461998",
+    "uniquePaymentForGroup": true,
+    "companionsInfo": [],
+    "name": "María",
+    "isChecked": false,
+    "email": "mjl@allarquitectos.cl",
+    "numberOfPeople": 3,
+    "isCheckinActive": true
+  },
+  {
+    "id": "ZBbKo7A8Butt1QzexZ09",
+    "lastName": "Bascuñán",
+    "subscribedEventsId": [
+      "4Ms88Hw9i3okcTHI7AV6"
+    ],
+    "phone": "+56981598421",
+    "uniquePaymentForGroup": true,
+    "name": "Francisca",
+    "companionsInfo": [
+      {
+        "lastName": "Bascuñan",
+        "name": "Catalina"
+      },
+      {
+        "lastName": "Venegas",
+        "name": "Carmelita"
+      }
+    ],
+    "email": "francisca.bascunan@gmail.com",
+    "numberOfPeople": 3,
+    "isCheckinActive": true,
+    "isChecked": true
+  },
+  {
+    "id": "Zrr3lB81KDHGjoPrtUVT",
+    "phone": "+56940923887",
+    "name": "Thomas",
+    "subscribedEventsId": [
+      "4Ms88Hw9i3okcTHI7AV6"
+    ],
+    "isCheckinActive": true,
+    "email": "thomas.convain@gmail.com",
+    "uniquePaymentForGroup": true,
+    "isChecked": true,
+    "numberOfPeople": 1,
+    "payments": [
+      {
+        "paymentId": "89293183610",
+        "numberOfPeople": "1",
+        "paymentMethod": "Mercado Pago",
+        "amount": 500,
+        "date": {
+          "_seconds": 1727778749,
+          "_nanoseconds": 570000000
+        }
+      }
+    ]
+  },
+  {
+    "id": "bGzBfKrTZrDuhHXlrXeJ",
+    "lastName": "Mella",
+    "subscribedEventsId": [
+      "4Ms88Hw9i3okcTHI7AV6"
+    ],
+    "phone": "+56989003364",
+    "uniquePaymentForGroup": true,
+    "companionsInfo": [],
+    "name": "Emilia",
+    "email": "emiliamellab@gmail.com",
+    "numberOfPeople": 1,
+    "isCheckinActive": true,
+    "isChecked": true,
+    "payments": [
+      {
+        "paymentMethod": "BankTransfer",
+        "numberOfPeople": "1",
+        "paymentId": "bGzBfKrTZrDuhHXlrXeJ-owner",
+        "amount": "20000",
+        "date": {
+          "_seconds": 1727802774,
+          "_nanoseconds": 933000000
+        }
+      }
+    ]
+  },
+  {
+    "id": "cWOM3itEvKZTZ1GukmQ1",
+    "subscribedEventsId": [
+      "4Ms88Hw9i3okcTHI7AV6"
+    ],
+    "phone": "+56973775205",
+    "isCheckinActive": true,
+    "uniquePaymentForGroup": true,
+    "name": "Rodrigo",
+    "email": "rod.garces@gmail.com",
+    "isChecked": true,
+    "numberOfPeople": 2
+  },
+  {
+    "id": "cXkhlvEPcA7TpAjtKosi",
+    "lastName": "Recher",
+    "subscribedEventsId": [
+      "4Ms88Hw9i3okcTHI7AV6"
+    ],
+    "phone": "+56993419665",
+    "uniquePaymentForGroup": true,
+    "companionsInfo": [],
+    "name": "Clara",
+    "isChecked": false,
+    "email": "clara.recherm@gmail.com",
+    "numberOfPeople": 1,
+    "isCheckinActive": true
+  },
+  {
+    "id": "dluUkMQT5TntJ0rb6L9Q",
+    "lastName": "Quiroga Newbery",
+    "subscribedEventsId": [
+      "4Ms88Hw9i3okcTHI7AV6"
+    ],
+    "phone": "+56934584765",
+    "uniquePaymentForGroup": true,
+    "companionsInfo": [],
+    "name": "Paulina Marcela Francisca",
+    "email": "paumaquinew@gmail.com",
+    "numberOfPeople": 1,
+    "isCheckinActive": true,
+    "isChecked": true
+  },
+  {
+    "id": "gEpsJ47B98QGkSAFzcjw",
+    "lastName": "Urrejola",
+    "subscribedEventsId": [
+      "4Ms88Hw9i3okcTHI7AV6"
+    ],
+    "phone": "+56994676669",
+    "uniquePaymentForGroup": true,
+    "companionsInfo": [],
+    "name": "Catalina",
+    "isChecked": false,
+    "email": "cataurrejola@yahoo.es",
+    "numberOfPeople": 2,
+    "isCheckinActive": true
+  },
+  {
+    "id": "gatXzCuUJwyvrzza66LB",
+    "lastName": "Ferrer",
+    "subscribedEventsId": [
+      "4Ms88Hw9i3okcTHI7AV6"
+    ],
+    "phone": "+56997503114",
+    "uniquePaymentForGroup": true,
+    "name": "Graciela",
+    "companionsInfo": [
+      {
+        "lastName": "Silva",
+        "name": "Edmundo",
+        "email": "esilva@vector.cl"
+      }
+    ],
+    "email": "graciela.ferrer@gmail.com",
+    "numberOfPeople": 2,
+    "isCheckinActive": true,
+    "isChecked": true
+  },
+  {
+    "id": "gckLRf9PXW5OFe0ybuUa",
+    "lastName": "Dominguez R-T",
+    "subscribedEventsId": [
+      "4Ms88Hw9i3okcTHI7AV6"
+    ],
+    "phone": "+56988287562",
+    "uniquePaymentForGroup": true,
+    "companionsInfo": [],
+    "name": "Francisca",
+    "email": "frandominguezrt@gmail.com",
+    "numberOfPeople": 2,
+    "isCheckinActive": true,
+    "isChecked": true
+  },
+  {
+    "id": "hQ5EuAUTGARwIgKgqtRF",
+    "lastName": "Schultz",
+    "subscribedEventsId": [
+      "4Ms88Hw9i3okcTHI7AV6"
+    ],
+    "phone": "+56981998599",
+    "uniquePaymentForGroup": true,
+    "name": "Soledad",
+    "companionsInfo": [
+      {
+        "lastName": "Matte",
+        "name": "Sergio",
+        "email": "Sergiomatte@hotmail.com"
+      }
+    ],
+    "email": "Soleschultz@gmail.com",
+    "isCheckinActive": true,
+    "isChecked": true,
+    "numberOfPeople": 6
+  },
+  {
+    "id": "hQg37b6aCihOwtRglUc6",
+    "lastName": "Pozo",
+    "subscribedEventsId": [
+      "4Ms88Hw9i3okcTHI7AV6"
+    ],
+    "phone": "+56991460608",
+    "uniquePaymentForGroup": true,
+    "name": "Constanza",
+    "companionsInfo": [
+      {
+        "lastName": "Alvear",
+        "name": "Jorge"
+      }
+    ],
+    "email": "constanzapozo@gmail.com",
+    "numberOfPeople": 2,
+    "isCheckinActive": true,
+    "isChecked": true,
+    "payments": [
+      {
+        "paymentId": "89274203506",
+        "numberOfPeople": "2",
+        "paymentMethod": "Mercado Pago",
+        "amount": 24000,
+        "date": {
+          "_seconds": 1727741187,
+          "_nanoseconds": 706000000
+        }
+      }
+    ]
+  },
+  {
+    "id": "heWhNr0u0sXYHRMbEnr3",
+    "lastName": "Ebensperger",
+    "subscribedEventsId": [
+      "4Ms88Hw9i3okcTHI7AV6"
+    ],
+    "phone": "+56966408787",
+    "uniquePaymentForGroup": true,
+    "companionsInfo": [],
+    "name": "Beatriz",
+    "email": "ebensperger@gmail.com",
+    "numberOfPeople": 2,
+    "isCheckinActive": true,
+    "isChecked": true
+  },
+  {
+    "id": "iAjwwJE2KqRupCT8Ls45",
+    "subscribedEventsId": [
+      "4Ms88Hw9i3okcTHI7AV6"
+    ],
+    "phone": "+56978895457",
+    "isCheckinActive": true,
+    "uniquePaymentForGroup": true,
+    "name": "María Jesús ",
+    "email": "Jesu_irarrazaval@hotmail.com",
+    "numberOfPeople": 1,
+    "isChecked": true
+  },
+  {
+    "id": "j0XfSjV16KMsa059iu4J",
+    "lastName": "Hederra",
+    "subscribedEventsId": [
+      "4Ms88Hw9i3okcTHI7AV6"
+    ],
+    "phone": "+56982372510",
+    "uniquePaymentForGroup": true,
+    "name": "Bernardita",
+    "companionsInfo": [
+      {
+        "lastName": "Montes",
+        "name": "Fernando",
+        "email": "Fmontes88@gmail.com"
+      }
+    ],
+    "isChecked": false,
+    "email": "bernihederra@gmail.com",
+    "numberOfPeople": 2,
+    "isCheckinActive": true
+  },
+  {
+    "id": "jdOzuZwDaSVDro1KL5zG",
+    "lastName": "Galleguillos",
+    "subscribedEventsId": [
+      "4Ms88Hw9i3okcTHI7AV6"
+    ],
+    "phone": "+56942623063",
+    "uniquePaymentForGroup": true,
+    "name": "Macarena",
+    "companionsInfo": [
+      {
+        "lastName": "Harrison",
+        "name": "Cristián",
+        "email": "cristianharrison@lchh.cl"
+      }
+    ],
+    "isChecked": false,
+    "email": "macarenagalleguillosp@gmail.com",
+    "numberOfPeople": 5,
+    "isCheckinActive": true
+  },
+  {
+    "id": "jumMYfgRt1paNyp6XRjd",
+    "subscribedEventsId": [
+      "4Ms88Hw9i3okcTHI7AV6"
+    ],
+    "phone": "+56988035165",
+    "isCheckinActive": true,
+    "name": "Jorge",
+    "email": "jalvear@alvearabogados.cl",
+    "isChecked": true,
+    "numberOfPeople": 2,
+    "uniquePaymentForGroup": false,
+    "payments": [
+      {
+        "paymentMethod": "BankTransfer",
+        "numberOfPeople": "2",
+        "paymentId": "jumMYfgRt1paNyp6XRjd-owner",
+        "amount": "24000",
+        "date": {
+          "_seconds": 1727740977,
+          "_nanoseconds": 632000000
+        }
+      }
+    ]
+  },
+  {
+    "id": "k6qga25kIccjjamycXoL",
+    "lastName": "Riesco Vicuña",
+    "subscribedEventsId": [
+      "4Ms88Hw9i3okcTHI7AV6"
+    ],
+    "phone": "+56990208985",
+    "uniquePaymentForGroup": true,
+    "name": "María Elvira",
+    "companionsInfo": [
+      {
+        "lastName": "Cisternas Fortune",
+        "name": "Juan Pablo",
+        "email": "juanpcisternas@gmail.com"
+      }
+    ],
+    "email": "elvirariesco@gmail.com",
+    "numberOfPeople": 2,
+    "isCheckinActive": true,
+    "isChecked": true,
+    "payments": [
+      {
+        "paymentId": "88970785635",
+        "numberOfPeople": "2",
+        "paymentMethod": "Mercado Pago",
+        "amount": 10000,
+        "date": {
+          "_seconds": 1727744431,
+          "_nanoseconds": 105000000
+        }
+      }
+    ]
+  },
+  {
+    "id": "kg4BRcqhpsF6F9dXAgei",
+    "lastName": "Redard",
+    "subscribedEventsId": [
+      "4Ms88Hw9i3okcTHI7AV6"
+    ],
+    "phone": "+56989048448",
+    "uniquePaymentForGroup": true,
+    "name": "Florencio",
+    "companionsInfo": [
+      {
+        "lastName": "García",
+        "name": "Carolina"
+      },
+      {
+        "lastName": "Stevenson",
+        "name": "Carolina"
+      },
+      {
+        "lastName": "García",
+        "name": "Luis"
+      }
+    ],
+    "isChecked": false,
+    "email": "faredard@miuandes.cl",
+    "numberOfPeople": 4,
+    "isCheckinActive": true
+  },
+  {
+    "id": "lCqLXrCIjtPjRLL58gr3",
+    "lastName": "Unterhofer",
+    "subscribedEventsId": [
+      "4Ms88Hw9i3okcTHI7AV6"
+    ],
+    "phone": "+56982392635",
+    "uniquePaymentForGroup": true,
+    "companionsInfo": [],
+    "name": "Simone",
+    "email": "simoneunterhofer@yahoo.ir",
+    "isCheckinActive": true,
+    "isChecked": true,
+    "numberOfPeople": 3
+  },
+  {
+    "id": "lnURAYGn0aT8sni36LzD",
+    "lastName": "Roa",
+    "subscribedEventsId": [
+      "4Ms88Hw9i3okcTHI7AV6"
+    ],
+    "phone": "+56992144516",
+    "uniquePaymentForGroup": true,
+    "companionsInfo": [],
+    "name": "Benjamín",
+    "isChecked": false,
+    "email": "benjaroa@gmail.com",
+    "numberOfPeople": 1,
+    "isCheckinActive": true
+  },
+  {
+    "id": "lvw1878kttmmwqSkyk6U",
+    "lastName": "Rodríguez",
+    "subscribedEventsId": [
+      "4Ms88Hw9i3okcTHI7AV6"
+    ],
+    "phone": "+56988290111",
+    "uniquePaymentForGroup": true,
+    "companionsInfo": [],
+    "name": "Agustín",
+    "isChecked": false,
+    "email": "null@null.com",
+    "numberOfPeople": 2,
+    "isCheckinActive": true
+  },
+  {
+    "id": "ne14BrzZuSoyDNZARQ8g",
+    "lastName": "Pérez-Cotapos González",
+    "subscribedEventsId": [
+      "4Ms88Hw9i3okcTHI7AV6"
+    ],
+    "phone": "+56957305326",
+    "uniquePaymentForGroup": true,
+    "name": "Catalina",
+    "companionsInfo": [
+      {
+        "lastName": "Ugarte Contreras",
+        "name": "Carolina",
+        "email": "cfugarte@uc.cl"
+      }
+    ],
+    "numberOfPeople": 2,
+    "isCheckinActive": true,
+    "isChecked": true,
+    "email": "cperezcotapos@uc.cl",
+    "payments": [
+      {
+        "paymentId": "89273816128",
+        "numberOfPeople": "1",
+        "paymentMethod": "Mercado Pago",
+        "amount": 20000,
+        "date": {
+          "_seconds": 1727740834,
+          "_nanoseconds": 410000000
+        }
+      }
+    ]
+  },
+  {
+    "id": "oHSufbSpRlyvkXQRtNJq",
+    "subscribedEventsId": [
+      "4Ms88Hw9i3okcTHI7AV6"
+    ],
+    "phone": "+56976189142",
+    "isCheckinActive": true,
+    "uniquePaymentForGroup": true,
+    "name": "Francesca",
+    "email": "franroccab@gmail.com",
+    "numberOfPeople": 1,
+    "isChecked": true
+  },
+  {
+    "id": "oVhvKg6x7PPU0jYBrHuB",
+    "lastName": "Lagos",
+    "subscribedEventsId": [
+      "4Ms88Hw9i3okcTHI7AV6"
+    ],
+    "phone": "+56998258380",
+    "uniquePaymentForGroup": true,
+    "name": "Jose joaquin",
+    "companionsInfo": [
+      " "
+    ],
+    "email": "Jlagos@fma.cl",
+    "isCheckinActive": true,
+    "isChecked": true,
+    "numberOfPeople": 4
+  },
+  {
+    "id": "p2AqZNkl5v7w69UFnpSM",
+    "lastName": "Lozano",
+    "subscribedEventsId": [
+      "4Ms88Hw9i3okcTHI7AV6"
+    ],
+    "phone": "+56993095212",
+    "uniquePaymentForGroup": true,
+    "name": "Angélica",
+    "companionsInfo": [
+      {
+        "lastName": "Herreros",
+        "name": "María Angélica"
+      }
+    ],
+    "email": "makeca@gmail.com",
+    "isCheckinActive": true,
+    "isChecked": true,
+    "numberOfPeople": 1,
+    "payments": [
+      {
+        "paymentMethod": "BankTransfer",
+        "numberOfPeople": "1",
+        "paymentId": "p2AqZNkl5v7w69UFnpSM-owner",
+        "amount": "26000",
+        "date": {
+          "_seconds": 1727740772,
+          "_nanoseconds": 105000000
+        }
+      }
+    ]
+  },
+  {
+    "id": "pHvJu6vFLA4G6BUpp5Gx",
+    "lastName": "Claro",
+    "subscribedEventsId": [
+      "4Ms88Hw9i3okcTHI7AV6"
+    ],
+    "phone": "+56994547946",
+    "uniquePaymentForGroup": true,
+    "companionsInfo": [],
+    "name": "Francisco",
+    "isChecked": false,
+    "email": "fracla@gmail.com",
+    "numberOfPeople": 2,
+    "isCheckinActive": true
+  },
+  {
+    "id": "qKDKyYUptCfj2ARumfTi",
+    "lastName": "Sieverson",
+    "subscribedEventsId": [
+      "4Ms88Hw9i3okcTHI7AV6"
+    ],
+    "phone": "+56985757457",
+    "uniquePaymentForGroup": true,
+    "name": "John",
+    "companionsInfo": [
+      {
+        "lastName": "Seco",
+        "name": "Ignacia",
+        "email": "mariasecocummins@gmail.com"
+      },
+      {
+        "lastName": "Escobar",
+        "name": "Antonio",
+        "email": "tucoescobar@yahoo.com"
+      },
+      {
+        "lastName": "Díaz",
+        "name": "Alejandra",
+        "email": "alediazcollins@gmail.coml"
+      }
+    ],
+    "email": "jsieverson@gmail.com",
+    "isCheckinActive": true,
+    "isChecked": true,
+    "numberOfPeople": 2
+  },
+  {
+    "id": "qedmTw3geQgCucF5NhIz",
+    "lastName": "Garcia Huidobro ",
+    "subscribedEventsId": [
+      "4Ms88Hw9i3okcTHI7AV6"
+    ],
+    "phone": "+56998227413",
+    "uniquePaymentForGroup": true,
+    "name": "Ines",
+    "companionsInfo": [
+      {
+        "lastName": "Corssen",
+        "name": "Barbara",
+        "email": "Bacorssen@hotmail.com"
+      },
+      {
+        "lastName": "Galleguillos",
+        "name": "Soledad",
+        "email": ""
+      },
+      {
+        "lastName": "Galleguillos",
+        "name": "Verónica",
+        "email": ""
+      },
+      {
+        "lastName": "Hess",
+        "name": "Paola",
+        "email": ""
+      }
+    ],
+    "email": "Inestomas@gmail.com",
+    "numberOfPeople": 2,
+    "isCheckinActive": true,
+    "isChecked": true
+  },
+  {
+    "id": "qprPn3iEXUk34W7O8AP8",
+    "lastName": "Briones",
+    "subscribedEventsId": [
+      "4Ms88Hw9i3okcTHI7AV6"
+    ],
+    "phone": "+56992897467",
+    "isCheckinActive": true,
+    "uniquePaymentForGroup": true,
+    "name": "Belen",
+    "companionsInfo": [
+      {
+        "lastName": "Riadi",
+        "name": "Julio",
+        "email": "julio.riadi@gmail.com"
+      }
+    ],
+    "isChecked": false,
+    "email": "belenbriones@gmail.com",
+    "numberOfPeople": 2
+  },
+  {
+    "id": "r0DksvZrETCNe7FLHDFx",
+    "subscribedEventsId": [
+      "4Ms88Hw9i3okcTHI7AV6"
+    ],
+    "phone": "+56999535061",
+    "isCheckinActive": true,
+    "uniquePaymentForGroup": true,
+    "name": "Benjamín",
+    "email": "bengimenezs@gmail.com",
+    "isChecked": true,
+    "numberOfPeople": 2,
+    "payments": [
+      {
+        "paymentMethod": "BankTransfer",
+        "numberOfPeople": "0",
+        "paymentId": "r0DksvZrETCNe7FLHDFx-owner",
+        "amount": "0",
+        "date": {
+          "_seconds": 1727740097,
+          "_nanoseconds": 171000000
+        }
+      }
+    ]
+  },
+  {
+    "id": "s46pi5JAz4a8j4DHZQQF",
+    "lastName": "Varas",
+    "subscribedEventsId": [
+      "4Ms88Hw9i3okcTHI7AV6"
+    ],
+    "phone": "+56992991714",
+    "uniquePaymentForGroup": true,
+    "companionsInfo": [],
+    "name": "Margarita",
+    "email": "mmvarasd@gmail.com",
+    "numberOfPeople": 3,
+    "isCheckinActive": true,
+    "isChecked": true,
+    "payments": [
+      {
+        "paymentId": "failed payment",
+        "numberOfPeople": "3",
+        "paymentMethod": "Mercado Pago",
+        "amount": 0,
+        "date": {
+          "_seconds": 1727741343,
+          "_nanoseconds": 973000000
+        }
+      },
+      {
+        "paymentMethod": "BankTransfer",
+        "numberOfPeople": "3",
+        "paymentId": "s46pi5JAz4a8j4DHZQQF-owner",
+        "amount": "36000",
+        "date": {
+          "_seconds": 1727741359,
+          "_nanoseconds": 166000000
+        }
+      }
+    ]
+  },
+  {
+    "id": "t0JYRn96JapSjI0hDHvL",
+    "subscribedEventsId": [
+      "4Ms88Hw9i3okcTHI7AV6"
+    ],
+    "isCheckinActive": true,
+    "uniquePaymentForGroup": true,
+    "name": "Maria Luisa",
+    "email": "Mlfonck@gmail.com",
+    "phone": "+56992340241",
+    "isChecked": true,
+    "numberOfPeople": 2,
+    "payments": [
+      {
+        "paymentId": "89276454498",
+        "numberOfPeople": "2",
+        "paymentMethod": "Mercado Pago",
+        "amount": 89000,
+        "date": {
+          "_seconds": 1727742844,
+          "_nanoseconds": 728000000
+        }
+      }
+    ]
+  },
+  {
+    "id": "tRwa6qMUgbPxOIGzqOiP",
+    "lastName": "Grez",
+    "subscribedEventsId": [
+      "4Ms88Hw9i3okcTHI7AV6"
+    ],
+    "phone": "+56982881588",
+    "uniquePaymentForGroup": true,
+    "name": "Magdalena ",
+    "companionsInfo": [
+      {
+        "lastName": "Albornoz",
+        "name": "Gonzalo",
+        "email": "albornoz.gonzalo@gmail.com"
+      }
+    ],
+    "isChecked": false,
+    "email": "maidagrez@gmail.com",
+    "numberOfPeople": 2,
+    "isCheckinActive": true
+  },
+  {
+    "id": "tsi8MfPSKnrzwxkklDGh",
+    "lastName": "Ferrer",
+    "subscribedEventsId": [
+      "4Ms88Hw9i3okcTHI7AV6"
+    ],
+    "phone": "+56990793214",
+    "uniquePaymentForGroup": true,
+    "companionsInfo": [],
+    "name": "Pilar",
+    "email": "pilarfepar@gmail.com",
+    "isCheckinActive": true,
+    "numberOfPeople": 4,
+    "isChecked": true,
+    "payments": [
+      {
+        "paymentMethod": "BankTransfer",
+        "numberOfPeople": "4",
+        "paymentId": "tsi8MfPSKnrzwxkklDGh-owner",
+        "amount": "48000",
+        "date": {
+          "_seconds": 1727741166,
+          "_nanoseconds": 899000000
+        }
+      }
+    ]
+  },
+  {
+    "id": "u5LaEdAMwMwvkkny6xZJ",
+    "lastName": "Jeldres",
+    "subscribedEventsId": [
+      "4Ms88Hw9i3okcTHI7AV6"
+    ],
+    "phone": "+56934569320",
+    "uniquePaymentForGroup": true,
+    "name": "Camila",
+    "companionsInfo": [
+      {
+        "lastName": "Finkelstein",
+        "name": "Felipe",
+        "email": "F.finkelstein@gmail.com"
+      }
+    ],
+    "isChecked": false,
+    "email": "Cjeldresb@gmail.com",
+    "numberOfPeople": 4,
+    "isCheckinActive": true
+  },
+  {
+    "id": "uUNfR7GBh9ZQpEV4Ms3n",
+    "subscribedEventsId": [
+      "4Ms88Hw9i3okcTHI7AV6"
+    ],
+    "phone": "+56994779428",
+    "uniquePaymentForGroup": true,
+    "name": "Felipe",
+    "isChecked": false,
+    "email": "felipestockebrand@gmail.com",
+    "numberOfPeople": 1,
+    "isCheckinActive": true
+  },
+  {
+    "id": "vmepg7kAkZb6g7TJB8M4",
+    "lastName": "Pumpin",
+    "subscribedEventsId": [
+      "4Ms88Hw9i3okcTHI7AV6"
+    ],
+    "phone": "+56998404320",
+    "uniquePaymentForGroup": true,
+    "name": "Rosario",
+    "companionsInfo": [
+      {
+        "lastName": "Delpin",
+        "name": "José Miguel",
+        "email": "jmdelpin88@gmail.com"
+      }
+    ],
+    "email": "rosariopumpin@gmail.com",
+    "isCheckinActive": true,
+    "isChecked": true,
+    "numberOfPeople": 2,
+    "payments": [
+      {
+        "paymentId": "89273633080",
+        "numberOfPeople": "2",
+        "paymentMethod": "Mercado Pago",
+        "amount": 24000,
+        "date": {
+          "_seconds": 1727740743,
+          "_nanoseconds": 512000000
+        }
+      }
+    ]
+  },
+  {
+    "id": "wCQd7qNlxRzx1aC32Zr3",
+    "subscribedEventsId": [
+      "4Ms88Hw9i3okcTHI7AV6"
+    ],
+    "phone": "+56956689629",
+    "uniquePaymentForGroup": true,
+    "name": "Juan Pablo",
+    "email": "Jpalvaradobreton@gmail.com",
+    "numberOfPeople": 1,
+    "isCheckinActive": true,
+    "isChecked": true,
+    "payments": [
+      {
+        "paymentMethod": "BankTransfer",
+        "numberOfPeople": "1",
+        "paymentId": "wCQd7qNlxRzx1aC32Zr3-owner",
+        "amount": "4000",
+        "date": {
+          "_seconds": 1727742457,
+          "_nanoseconds": 495000000
+        }
+      },
+      {
+        "paymentId": "88971536839",
+        "numberOfPeople": "1",
+        "paymentMethod": "Mercado Pago",
+        "amount": 4000,
+        "date": {
+          "_seconds": 1727744979,
+          "_nanoseconds": 688000000
+        }
+      }
+    ]
+  },
+  {
+    "id": "x75fT0Q9KEB2mNNA4HJE",
+    "lastName": "Irarrázaval",
+    "subscribedEventsId": [
+      "4Ms88Hw9i3okcTHI7AV6"
+    ],
+    "phone": "+56989995615",
+    "uniquePaymentForGroup": true,
+    "name": "Andrés",
+    "companionsInfo": [
+      {
+        "lastName": "Díaz",
+        "name": "Catalina",
+        "email": "catita.diaz@gmail.com"
+      }
+    ],
+    "isChecked": false,
+    "email": "airarrazavala@gmail.com",
+    "numberOfPeople": 2,
+    "isCheckinActive": true
+  },
+  {
+    "id": "xJpBVTRSHKRHiOrwZwKr",
+    "lastName": "Garcés",
+    "subscribedEventsId": [
+      "4Ms88Hw9i3okcTHI7AV6"
+    ],
+    "phone": "+56952265343",
+    "uniquePaymentForGroup": true,
+    "companionsInfo": [],
+    "name": "Rodrigo",
+    "isChecked": false,
+    "email": "rod.garces@gmail.com",
+    "numberOfPeople": 2,
+    "isCheckinActive": true
+  },
+  {
+    "id": "xyCBtoq5wNwAOZR4VeHq",
+    "lastName": "Ovalle",
+    "subscribedEventsId": [
+      "4Ms88Hw9i3okcTHI7AV6"
+    ],
+    "phone": "+56993368303",
+    "uniquePaymentForGroup": true,
+    "name": "Cecilia",
+    "companionsInfo": [
+      {
+        "lastName": "Soza",
+        "name": "Francisco",
+        "email": "fsozab@gmail.com"
+      },
+      {
+        "lastName": "Rivas",
+        "name": "Francisco",
+        "email": "panchorivasmusico@gmail.com"
+      }
+    ],
+    "email": "mcovalle@gmail.com",
+    "numberOfPeople": 3,
+    "isCheckinActive": true,
+    "isChecked": true
+  }
+]
