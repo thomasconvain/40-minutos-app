@@ -172,7 +172,7 @@ const fetchEvents = async () => {
       console.error('No se encontró el documento con el ID proporcionado');
     }
   } catch (error) {
-    console.error('Error al obtener los datos del evento:', error);
+    console.error('Error al obtener los datos bancarios del evento:', error);
   }
 };
 

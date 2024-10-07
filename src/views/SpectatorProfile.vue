@@ -6,7 +6,7 @@
     <div class="mt-4" v-if="spectator">
       <p class="my-4"><strong>Estás inscrito para los siguientes eventos:</strong></p>
       <div v-if="events.length">
-        <div class="indicator w-full">
+        <div class="indicator w-full flex flex-col gap-4">
           <span v-if="!spectator.isCheckinActive" class="indicator-item badge badge-primary">Pronto</span>
           <div v-for="event in events" :key="event.id" class="card w-full bg-base-100 border border-base-600">
             <div class="card-body">
@@ -83,7 +83,8 @@ const fetchEvents = async (eventIds) => {
     // Mapeamos los resultados válidos en la variable `events`
     events.value = eventDocs
       .filter(eventDoc => eventDoc.exists())
-      .map(eventDoc => ({ id: eventDoc.id, ...eventDoc.data() }));
+      .map(eventDoc => ({ id: eventDoc.id, ...eventDoc.data() }))
+      .filter(event => event.isActive);
   } catch (error) {
     console.error('Error al obtener los detalles de los eventos:', error);
   }

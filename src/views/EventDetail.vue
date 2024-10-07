@@ -49,6 +49,7 @@
       <span v-if="!isLoading">Checkout</span>
       <span v-else class="loading loading-dots loading-sm"></span>
     </button>
+    {{ isFreeEntrance }}
   </div>
 </template>
 
@@ -73,6 +74,7 @@ const id = route.params.idSpectator;
 const randomId = ref('');
 const spectatorParams = ref('');
 const eventParams = ref('');
+const isFreeEntrance = ref(true)
 
 const themes = ref([]);
 const ratings = ref([]); // Usar un arreglo para los ratings
@@ -102,6 +104,7 @@ const fetchEventThemes = async () => {
     const eventDocSnap = await getDoc(eventDocRef);
     if (eventDocSnap.exists()) {
       const themesIds = eventDocSnap.data().themes_id;
+      isFreeEntrance.value = eventDocSnap.data().isFreeEntrance;
 
       // Para cada theme_id, obtenemos los detalles del tema
       const themeDocsPromises = themesIds.map(themeId => getDoc(doc(db, 'themes', themeId)));
@@ -158,13 +161,26 @@ const goToCheckout = async () => {
         });
       }
     }
-
+    if(isFreeEntrance.value) {
     // Una vez que se actualizan los ratings, redirigir al checkout
     router.push({
       name: 'Checkout',
       params: { idSpectator, idEvent, nameEvent },
       query: { referenceLink: route.query.referenceLink, idVisitor: route.query.idVisitor}
     });
+  } else {
+    router.push({
+      name: 'ThankYou',
+      query: { 
+      idSpectator: idSpectator,
+      referenceLink: route.query.referenceLink,
+      idVisitor: route.query.idVisitor,
+      idEvent: idEvent,
+      paymentMethod: 'no payment',
+      amount: 0
+      }
+    });
+  }
   } catch (error) {
     console.error('Error al enviar los ratings:', error);
   }
