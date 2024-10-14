@@ -27,6 +27,11 @@
             <p v-if="phoneError" class="text-red-500 text-sm mt-1">{{ phoneError }}</p>
           </div>
 
+          <div class="flex flex-col mt-4">
+            <label class="text-sm" for="phone"><strong>Contraseña</strong></label>
+            <input v-model="password" type="password" id="password" class="input input-bordered w-full w-full" required />
+          </div>
+
           <button
             type="submit"
             class="btn-md btn btn-primary text-white w-full mt-4"
@@ -34,6 +39,7 @@
             <span v-if="!isLoading">Registrarme y entrar</span>
             <span v-else class="loading loading-dots loading-sm"></span>
           </button>
+          <p v-if="errorMessage" class="text-red-500 text-sm mt-1">{{ errorMessage }}</p>
         </form>
       </div>
     </div>
@@ -42,27 +48,31 @@
 
 <script setup>
 import { ref } from 'vue';
+import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
 import { collection, query, where, getDocs, addDoc } from 'firebase/firestore';
 import { db } from '@/firebase'; // Asegúrate de que tienes tu instancia de Firestore
-import { useRouter } from 'vue-router';
+import { useRouter, useRoute } from 'vue-router';
 
 
 const email = ref('');
 const name = ref('');
 const lastName = ref('');
 const phone = ref('+56');
+const password = ref();
 const numberOfPeople = ref(1);
 const isChecked = ref(false);
 const isCheckinActive = ref(true);
 const uniquePaymentForGroup = ref(true);
-const subscribedEventsId = ref('4Ms88Hw9i3okcTHI7AV6');
 
 const emailError = ref('');
 const phoneError = ref('');
+const errorMessage = ref('')
 
 const isLoading = ref(false);
 
+const auth = getAuth();
 const router = useRouter();
+const route = useRoute();
 
 const checkExistingPhoneNumber = async () => {
   const q = query(collection(db, 'spectators'), where('phone', '==', phone.value));
@@ -91,15 +101,19 @@ const submitForm = async () => {
     }
 
     try {
+      // Crear el usuario en Authentication
+      const userCredential = await createUserWithEmailAndPassword(auth, email.value, password.value);
+      const user = userCredential.user;
       const spectatorData = {
         email: email.value,
+        uId: user.uid,
         name: name.value,
         phone: phone.value,
         numberOfPeople: numberOfPeople.value,
         isChecked: isChecked.value,
         isCheckinActive: isCheckinActive.value,
         uniquePaymentForGroup: uniquePaymentForGroup.value,
-        subscribedEventsId: subscribedEventsId.value.split(',').map(id => id.trim()),
+        subscribedEventsId: route.params.idEvent.split(',').map(id => id.trim()),
       };
 
       // Guardar documento y obtener su ID
@@ -108,7 +122,11 @@ const submitForm = async () => {
       // Redirigir a la ruta /profile/{documentId}
       router.push(`/profile/${docRef.id}`);
     } catch (error) {
-      console.error('Error guardando el espectador: ', error);
+        if (error.code === 'auth/email-already-in-use') {
+        errorMessage.value = 'El email ya está en uso. Por favor, elige otro o intenta iniciar sesión.';
+      } else {
+        errorMessage.value = 'Error al crear usuario: ' + error.message;
+      }
     }
   }
   isLoading.value = false;

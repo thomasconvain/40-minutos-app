@@ -20,7 +20,7 @@ const routes = [
     component: Home,
   },
   {
-    path: '/booking',
+    path: '/booking/:idEvent',
     name: 'Booking',
     component: OnlineBooking,
   },
@@ -33,25 +33,30 @@ const routes = [
     path: '/profile/:idSpectator',
     name: 'Profile',
     component: SpectatorProfile,
+    meta: { requiresAuth: true }
   },
   {
     path: '/checkin/:idSpectator/:idEvent/:nameEvent?',
     name: 'CheckIn',
     component: CheckIn,
+    meta: { requiresAuth: true }
   },
   { path: '/event/:idSpectator/:idEvent/:nameEvent?', 
     name: 'EventDetail', 
     component: EventDetail,
+    meta: { requiresAuth: true }
   },
   {
     path: '/checkout/:idSpectator/:idEvent/:nameEvent?',
     name: 'Checkout',
     component: Checkout,
+    meta: { requiresAuth: true }
   },
   {
     path: '/thankyou',
     name: 'ThankYou',
     component: ThankYouPage,
+    meta: { requiresAuth: true }
   },
   {
     path: '/admin',
@@ -79,7 +84,7 @@ router.beforeEach((to, from, next) => {
       if (user) {
         next();
       } else {
-        next('/login');
+        next('/');
       }
     });
   } else {
