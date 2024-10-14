@@ -113,7 +113,7 @@ const login = async () => {
       alert('Usuario no encontrado.');
     }
   } catch (error) {
-    alert('Usuario no encontrado.', error.message);
+    alert('El usuario no existe o la contraseña está incorrecta.', error.message);
   }
 };
 </script>

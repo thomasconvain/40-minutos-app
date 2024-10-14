@@ -117,10 +117,10 @@ const submitForm = async () => {
       };
 
       // Guardar documento y obtener su ID
-      const docRef = setDoc(doc(db, 'spectators', user.uid), spectatorData);
+      await setDoc(doc(db, 'spectators', user.uid), spectatorData);
 
       // Redirigir a la ruta /profile/{documentId}
-      router.push(`/profile/${docRef.id}`);
+      router.push(`/profile/${user.uid}`);
     } catch (error) {
         if (error.code === 'auth/email-already-in-use') {
         errorMessage.value = 'El email ya está en uso. Por favor, elige otro o intenta iniciar sesión.';
