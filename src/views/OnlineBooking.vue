@@ -49,7 +49,7 @@
 <script setup>
 import { ref } from 'vue';
 import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
-import { collection, query, where, getDocs, addDoc } from 'firebase/firestore';
+import { collection, query, where, getDocs, doc, setDoc } from 'firebase/firestore';
 import { db } from '@/firebase'; // Asegúrate de que tienes tu instancia de Firestore
 import { useRouter, useRoute } from 'vue-router';
 
@@ -117,7 +117,7 @@ const submitForm = async () => {
       };
 
       // Guardar documento y obtener su ID
-      const docRef = await addDoc(collection(db, 'spectators'), spectatorData);
+      const docRef = setDoc(doc(db, 'spectators', user.uid), spectatorData);
 
       // Redirigir a la ruta /profile/{documentId}
       router.push(`/profile/${docRef.id}`);
