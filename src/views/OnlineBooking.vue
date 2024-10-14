@@ -123,7 +123,7 @@ const submitForm = async () => {
       router.push(`/profile/${user.uid}`);
     } catch (error) {
         if (error.code === 'auth/email-already-in-use') {
-        errorMessage.value = 'El email ya está en uso. Por favor, elige otro o intenta iniciar sesión.';
+        emailError.value = 'El email ya está en uso. Por favor, elige otro o intenta iniciar sesión.';
       } else {
         errorMessage.value = 'Error al crear usuario: ' + error.message;
       }
