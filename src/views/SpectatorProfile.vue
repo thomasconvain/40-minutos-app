@@ -7,15 +7,15 @@
       <p class="my-4"><strong>Estás inscrito para los siguientes eventos:</strong></p>
       <div v-if="events.length">
         <div class="indicator w-full flex flex-col gap-4">
-          <span v-if="!spectator.isCheckinActive" class="indicator-item badge badge-primary">Pronto</span>
           <div v-for="event in events" :key="event.id" class="card w-full bg-base-100 border border-base-600">
+            <span v-if="!event?.isCheckinActive" class="indicator-item badge badge-primary">Pronto</span>
             <div class="card-body">
               <h2 class="card-title">{{ event.name }}</h2>
               <p><strong>Lugar:</strong> {{ event.place }}</p>
               <p><strong>Fecha:</strong> {{ formatDate(event.date) }}</p>
               <p><strong>Número de personas:</strong> {{ spectator.numberOfPeople }}</p>
               <div class="card-actions justify-start mt-4">
-                <div v-if="!spectator.isCheckinActive" class="alert alert-info rounded-none flex text-left">
+                <div v-if="!event.isCheckinActive" class="alert alert-info rounded-none flex text-left">
                   <InformationCircleIcon class="-ml-1 mr-3 h-5 min-w-5" aria-hidden="true" />
                   <span class="text-xs">El día del concierto se habilitará el acceso a tu checkin. </span>
                 </div>
