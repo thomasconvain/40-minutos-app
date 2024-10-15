@@ -15,11 +15,11 @@
               <p><strong>Fecha:</strong> {{ formatDate(event.date) }}</p>
               <p><strong>Número de personas:</strong> {{ spectator.numberOfPeople }}</p>
               <div class="card-actions justify-start mt-4">
-                <div v-if="!event.isCheckinActive" class="alert alert-info rounded-none flex text-left">
+                <button v-if="event.isCheckinActive || spectator.forceCheckinActive" class="btn-md btn btn-primary text-white w-full" @click="goToEvent(event)">{{ spectator.isChecked ? 'Entrar' : 'Hacer checkin'}}</button>
+                <div v-else class="alert alert-info rounded-none flex text-left">
                   <InformationCircleIcon class="-ml-1 mr-3 h-5 min-w-5" aria-hidden="true" />
                   <span class="text-xs">El día del concierto se habilitará el acceso a tu checkin. </span>
                 </div>
-                <button v-else class="btn-md btn btn-primary text-white w-full" @click="goToEvent(event)">{{ spectator.isChecked ? 'Entrar' : 'Hacer checkin'}}</button>
                 <div class="w-full" v-if="(!event.isFreeEntrance && spectator.isHost) || event.isFreeEntrance">
                   <a :href='`https://wa.me/?text=https://cuarenta-minutos.web.app/booking/${event.id}/?referenceLink=true%26hostId=${spectator.uId}`'>
                     <button class="btn btn-active mt-2 w-full"><ShareIcon class="-ml-1 mr-3 h-4 w-4" aria-hidden="true" />Compartir evento</button>
