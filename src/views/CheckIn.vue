@@ -27,7 +27,7 @@
         <div class="card bg-base-100 border border-base-600 mt-6">
           <div v-if="spectator" class="card-body">
             <h2 class="card-title">Tu grupo</h2>
-            <p class="">Confirma el número de participantes en tu reserva:</p>
+            <p class="">Confirma el número de participantes:</p>
             <input v-model="spectator.numberOfPeople" type="number" min="1" placeholder="Ingresa el número de participantes" class="input input-bordered w-full" />
             <div v-if="spectator.numberOfPeople > 1">
               <label class="label cursor-pointer flex justify-start gap-2">
@@ -37,7 +37,7 @@
               <div class="mt-4 alert alert-info rounded-none">
                 <span class="text-xs">Comparte al link del programa del concierto a tu grupo para que puedan seguir con la experiencia en sus propios dispositivos</span>
               </div>
-              <a :href='`https://wa.me/?text=https://cuarenta-minutos.web.app/event/${spectatorParams}/${eventParams}/?referenceLink=true%26idVisitor=visitor-${randomId}`'>
+              <a :href='`https://wa.me/?text=https://cuarenta-minutos.web.app/booking/${eventParams}/?referenceLink=true%26hostId=${spectator.uId}`'>
                 <button class="btn btn-active mt-2 w-full"><ShareIcon class="-ml-1 mr-3 h-4 w-4" aria-hidden="true" />Compartir link</button>
               </a>
             </div>

@@ -107,6 +107,7 @@ const submitForm = async () => {
       const spectatorData = {
         email: email.value,
         uId: user.uid,
+        hostId: route.query.hostId ? route.query.hostId : 'none',
         name: name.value,
         phone: phone.value,
         numberOfPeople: numberOfPeople.value,

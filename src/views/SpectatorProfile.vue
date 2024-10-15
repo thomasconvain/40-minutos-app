@@ -20,6 +20,11 @@
                   <span class="text-xs">El día del concierto se habilitará el acceso a tu checkin. </span>
                 </div>
                 <button v-else class="btn-md btn btn-primary text-white w-full" @click="goToEvent(event)">{{ spectator.isChecked ? 'Entrar' : 'Hacer checkin'}}</button>
+                <div class="w-full" v-if="(!event.isFreeEntrance && spectator.isHost) || event.isFreeEntrance">
+                  <a :href='`https://wa.me/?text=https://cuarenta-minutos.web.app/booking/${event.id}/?referenceLink=true%26hostId=${spectator.uId}`'>
+                    <button class="btn btn-active mt-2 w-full"><ShareIcon class="-ml-1 mr-3 h-4 w-4" aria-hidden="true" />Compartir evento</button>
+                  </a>
+                </div>
               </div>
             </div>
           </div>
@@ -40,7 +45,7 @@
 import { ref, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { getFirestore, doc, getDoc, collection } from 'firebase/firestore';
-import { InformationCircleIcon } from '@heroicons/vue/24/outline'
+import { InformationCircleIcon, ShareIcon } from '@heroicons/vue/24/outline'
 
 
 // Obtener el ID del espectador desde la ruta
