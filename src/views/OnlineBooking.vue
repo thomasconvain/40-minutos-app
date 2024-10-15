@@ -61,7 +61,6 @@ const phone = ref('+56');
 const password = ref();
 const numberOfPeople = ref(1);
 const isChecked = ref(false);
-const isCheckinActive = ref(true);
 const uniquePaymentForGroup = ref(true);
 
 const emailError = ref('');
@@ -112,7 +111,6 @@ const submitForm = async () => {
         phone: phone.value,
         numberOfPeople: numberOfPeople.value,
         isChecked: isChecked.value,
-        isCheckinActive: isCheckinActive.value,
         uniquePaymentForGroup: uniquePaymentForGroup.value,
         subscribedEventsId: route.params.idEvent.split(',').map(id => id.trim()),
       };
