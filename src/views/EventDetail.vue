@@ -49,7 +49,6 @@
       <span v-if="!isLoading">Checkout</span>
       <span v-else class="loading loading-dots loading-sm"></span>
     </button>
-    {{ isFreeEntrance }}
   </div>
 </template>
 

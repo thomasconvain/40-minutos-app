@@ -8,47 +8,49 @@
         <button class="btn bg-white my-4 w-full" @click="$router.go(-1)">Volver a pantalla de pago</button>
       </div>
       <p v-else class="text-xl">Gracias por asistir!</p>
-      <p v-if="formattedAmount">Tu aporte: {{ formattedAmount }}</p>
-      <div v-if="route.query.paymentMethod === 'bankTransfer'" class="w-full">
-        <div class="alert alert-info rounded-none">
-        <InformationCircleIcon class="-ml-1 mr-3 h-5 w-5" aria-hidden="true" />
-        <span class="text-xs">Realiza tu transferencia con los siguientes datos:</span>
-      </div>
-        <div class="overflow-x-auto flex flex-col items-end mt-4">
-          <button class="btn btn-sm max-w-40 mr-0" @click="copyToClipboard"><DocumentDuplicateIcon class="-ml-1 mr-3 h-4 w-4" aria-hidden="true" />Copiar datos </button>
-          <p class="text-sm text-gray-600">{{ copiedMessage }}</p>
-          <table class="table">
-            <tbody>
-              <!-- row 1 -->
-              <tr>
-                <td>Nombre</td>
-                <td>{{ event?.bankTransferData.name }}</td>
-              </tr>
-              <!-- row 2 -->
-              <tr>
-                <td>RUT</td>
-                <td>{{ event?.bankTransferData.id }}</td>
-              </tr>
-              <!-- row 3 -->
-              <tr>
-                <td>Banco</td>
-                <td>{{ event?.bankTransferData.bank }}</td>
-              </tr>
-              <!-- row 4 -->
-              <tr>
-                <td>Tipo</td>
-                <td>{{ event?.bankTransferData.type }}</td>
-              </tr>
-              <!-- row 5 -->
-              <tr>
-                <td>Cuenta</td>
-                <td>{{ event?.bankTransferData.bankAccount }}</td>
-              </tr>
-            </tbody>
-          </table>
+      <div v-if="event?.isFreeEntrance">
+        <p v-if="formattedAmount">Tu aporte: {{ formattedAmount }}</p>
+        <div v-if="route.query.paymentMethod === 'bankTransfer'" class="w-full">
+          <div class="alert alert-info rounded-none">
+          <InformationCircleIcon class="-ml-1 mr-3 h-5 w-5" aria-hidden="true" />
+          <span class="text-xs">Realiza tu transferencia con los siguientes datos:</span>
         </div>
+          <div class="overflow-x-auto flex flex-col items-end mt-4">
+            <button class="btn btn-sm max-w-40 mr-0" @click="copyToClipboard"><DocumentDuplicateIcon class="-ml-1 mr-3 h-4 w-4" aria-hidden="true" />Copiar datos </button>
+            <p class="text-sm text-gray-600">{{ copiedMessage }}</p>
+            <table class="table">
+              <tbody>
+                <!-- row 1 -->
+                <tr>
+                  <td>Nombre</td>
+                  <td>{{ event?.bankTransferData.name }}</td>
+                </tr>
+                <!-- row 2 -->
+                <tr>
+                  <td>RUT</td>
+                  <td>{{ event?.bankTransferData.id }}</td>
+                </tr>
+                <!-- row 3 -->
+                <tr>
+                  <td>Banco</td>
+                  <td>{{ event?.bankTransferData.bank }}</td>
+                </tr>
+                <!-- row 4 -->
+                <tr>
+                  <td>Tipo</td>
+                  <td>{{ event?.bankTransferData.type }}</td>
+                </tr>
+                <!-- row 5 -->
+                <tr>
+                  <td>Cuenta</td>
+                  <td>{{ event?.bankTransferData.bankAccount }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <p>Si tienes dudas con tu pago, puedes escribirnos <a class="underline" href="https://wa.me/56989612263">acá</a>.</p>
       </div>
-      <p>Si tienes dudas con tu pago, puedes escribirnos <a class="underline" href="https://wa.me/56989612263">acá</a>.</p>
     </div>
   </div>
 </template>
