@@ -44,7 +44,6 @@ const routes = [
   { path: '/event/:idSpectator/:idEvent/:nameEvent?', 
     name: 'EventDetail', 
     component: EventDetail,
-    meta: { requiresAuth: true }
   },
   {
     path: '/checkout/:idSpectator/:idEvent/:nameEvent?',
