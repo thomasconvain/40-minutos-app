@@ -14,6 +14,7 @@
               <p><strong>Lugar:</strong> {{ event.place }}</p>
               <p><strong>Fecha:</strong> {{ formatDate(event.date) }}</p>
               <p><strong>Número de personas:</strong> {{ spectator.numberOfPeople }}</p>
+              <p v-if="event.hostName"><strong>Anfitrión:</strong> {{ event.hostName }}</p>
               <div class="card-actions justify-start mt-4">
                 <button v-if="event.isCheckinActive || spectator.forceCheckinActive" class="btn-md btn btn-primary text-white w-full" @click="goToEvent(event)">{{ spectator.isChecked ? 'Entrar' : 'Hacer checkin'}}</button>
                 <div v-else class="alert alert-info rounded-none flex text-left">
