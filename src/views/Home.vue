@@ -37,11 +37,16 @@
     </section>
     <div class="card w-full bg-base-100 border border-base-600 rounded-lg lg:p-8">
       <div class="card-body">
-        <h2 class="card-title">¿Quieres este evento en tu casa, colegio u oficina?</h2>
-        <div class="card-actions justify-start mt-4">
-          <a href="https://wa.me/56989612263">
-            <button class="btn btn-active mt-2">Contáctanos</button>
-          </a>
+        <div class="flex items-center gap-6 flex-wrap md:flex-nowrap">
+          <div v-html="instagramIframe"></div>
+          <div>
+            <h2 class="card-title">¿Quieres este evento en tu casa, colegio u oficina?</h2>
+            <div class="card-actions justify-start mt-4">
+              <a href="https://wa.me/56989612263">
+                <button class="btn btn-active mt-2">Contáctanos</button>
+              </a>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -57,6 +62,19 @@ import { format } from 'date-fns'
 import { es } from 'date-fns/locale'
 
 const events = ref([])
+
+// Código del iframe del reel de Instagram
+const instagramIframe = ref(`
+  <iframe 
+    src="https://www.instagram.com/reel/C_k7JOCOj2I/embed" 
+    width="400" 
+    height="480" 
+    frameborder="0" 
+    scrolling="no" 
+    allowtransparency="true"
+    allowfullscreen="true">
+  </iframe>
+`);
 
 
 const router = useRouter(); // Importar el enrutador
