@@ -41,8 +41,9 @@ const routes = [
     component: CheckIn,
     meta: { requiresAuth: true }
   },
-  { path: '/event/:idSpectator/:idEvent/:nameEvent?', 
-    name: 'EventDetail', 
+  {
+    path: '/event/:idSpectator/:idEvent/:nameEvent?',
+    name: 'EventDetail',
     component: EventDetail,
   },
   {
@@ -75,17 +76,34 @@ const router = createRouter({
   routes,
 });
 
-router.beforeEach((to, from, next) => {
-  const requiresAuth = to.matched.some((record) => record.meta.requiresAuth);
-  
-  if (requiresAuth) {
-    onAuthStateChanged(auth, (user) => {
-      if (user) {
-        next();
-      } else {
-        next('/');
-      }
-    });
+// Función auxiliar para obtener el usuario actual en forma de promesa
+function getCurrentUser() {
+  return new Promise((resolve, reject) => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      unsubscribe();
+      resolve(user);
+    }, reject);
+  });
+}
+
+router.beforeEach(async (to, from, next) => {
+  // Si se intenta acceder a la raíz '/'
+  if (to.path === '/') {
+    const user = await getCurrentUser();
+    if (user) {
+      // Redirigir a /profile/:idSpectator, usando el uid del usuario logueado
+      next(`/profile/${user.uid}`);
+    } else {
+      next();
+    }
+  } else if (to.matched.some(record => record.meta.requiresAuth)) {
+    // Para rutas que requieren autenticación
+    const user = await getCurrentUser();
+    if (user) {
+      next();
+    } else {
+      next('/');
+    }
   } else {
     next();
   }

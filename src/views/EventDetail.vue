@@ -209,6 +209,10 @@ onMounted(() => {
 });
 </script>
 
-<style scoped>
-/* Estilos adicionales si es necesario */
+<style>
+
+.background-circle {
+  background-image: url("../assets/gradient_bg.png");
+}
+
 </style>

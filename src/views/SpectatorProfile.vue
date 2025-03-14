@@ -3,10 +3,10 @@
     <button class="btn bg-white border-none mb-4" @click="$router.go(-1)">
       Volver
     </button>
-    <h1 class="text-2xl font-bold mb-6">Hola {{ spectator?.name }} 👋</h1>
-    <p>Gracias por inscribirte a uno de nuestros eventos.</p>
+    <h1 class="text-2xl font-bold mb-6">Hola {{ spectator?.name }}👋</h1>
+    <p v-if="events.length">Gracias por inscribirte a uno de nuestros eventos.</p>
     <div class="mt-4" v-if="spectator">
-      <p class="my-4">
+      <p v-if="events.length" class="my-4">
         <strong>Estás inscrito para los siguientes eventos:</strong>
       </p>
       <div v-if="events.length">
@@ -79,10 +79,17 @@
           tu reserva.
         </p>
       </div>
-      <div v-else class="flex justify-center w-full">
+      <div v-else-if="isLoading" class="flex justify-center w-full">
         <span class="loading loading-spinner loading-md"></span>
       </div>
-    </div>
+      <p v-else class="my-4">
+        <strong>No estás inscrito a ningún evento.</strong>
+      </p>
+      <p class="my-4">
+        <strong>Revisa nuestros próximos eventos:</strong>
+      </p>
+      <ActiveEvents :isSpectatorSubscribed="checkSubscription" @updateSubscribedEvents="(eventId) => addSubscribedEventId(spectator.uId, eventId)" />
+      </div>
     <div v-else class="flex justify-center w-full">
       <span class="loading loading-spinner loading-md"></span>
     </div>
@@ -92,12 +99,19 @@
 <script setup>
 import { ref, onMounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
-import { getFirestore, doc, getDoc, collection } from "firebase/firestore";
+import { getFirestore, doc, getDoc, updateDoc, collection, arrayUnion  } from "firebase/firestore";
+import { auth } from '@/firebase';
+import { onAuthStateChanged } from 'firebase/auth';
 import { InformationCircleIcon, ShareIcon } from "@heroicons/vue/24/outline";
+import ActiveEvents from "@/components/ActiveEvents.vue";
 
 // Obtener el ID del espectador desde la ruta
 const route = useRoute();
 const idSpectator = route.params.idSpectator;
+
+const currentUser = ref(null);
+
+const isLoading = ref(true); // Variable reactiva para mostrar un spinner de carga
 
 // Variables reactivas para almacenar los datos del espectador y los eventos
 const spectator = ref(null);
@@ -106,6 +120,7 @@ const router = useRouter(); // Instancia de Vue Router
 
 // Función para obtener los datos del espectador desde Firestore
 const fetchSpectator = async () => {
+  isLoading.value = true
   const db = getFirestore();
   const docRef = doc(db, "spectators", idSpectator);
 
@@ -134,12 +149,33 @@ const fetchEvents = async (eventIds) => {
     );
     const eventDocs = await Promise.all(eventDocsPromises);
 
-    // Mapeamos los resultados válidos en la variable `events`
+    // Filtramos los documentos que existen y tienen isActive === true, y luego mapeamos los resultados
     events.value = eventDocs
-      .filter((eventDoc) => eventDoc.exists())
+      .filter((eventDoc) => eventDoc.exists() && eventDoc.data().isActive === true)
       .map((eventDoc) => ({ id: eventDoc.id, ...eventDoc.data() }));
   } catch (error) {
     console.error("Error al obtener los detalles de los eventos:", error);
+  }
+};
+
+const checkSubscription = (eventId) => {
+  return spectator.value.subscribedEventsId.includes(eventId);
+};
+
+const addSubscribedEventId = async (spectatorId, eventId) => {
+  const db = getFirestore();
+  console.log('spectaroId', spectatorId);
+  console.log('newEventId', eventId);
+  const spectatorDocRef = doc(db, "spectators", spectatorId);
+
+  try {
+    await updateDoc(spectatorDocRef, {
+      subscribedEventsId: arrayUnion(eventId)
+    });
+    console.log("Evento agregado correctamente.");
+    fetchSpectator();
+  } catch (error) {
+    console.error("Error al agregar el evento:", error);
   }
 };
 
@@ -161,7 +197,13 @@ const goToEvent = (event) => {
   });
 };
 
-onMounted(fetchSpectator);
+onMounted(
+  onAuthStateChanged(auth, (user) => {
+    currentUser.value = user;
+  }),
+  fetchSpectator(),
+  isLoading.value = false
+  );
 </script>
 
 <style scoped></style>
