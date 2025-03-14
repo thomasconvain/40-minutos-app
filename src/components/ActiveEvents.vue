@@ -37,7 +37,7 @@
             >
               <span>Consigue tu ticket en un click</span>
             </button>
-            <div v-else class="text-white flex items-center">
+            <div v-if="isSpectatorSubscribed(event.id)" class="text-white flex items-center">
                 <CheckCircleIcon v-if="!isLoading" class="-ml-1 mr-3 h-5 w-5" aria-hidden="true" />
                 Ya estas inscrito a este evento</div>
             <button
