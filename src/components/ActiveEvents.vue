@@ -33,10 +33,26 @@
               v-if="!event.isOver && event.isFreeEntrance && currentUser && !isSpectatorSubscribed(event.id)"
               type="button"
               class="btn-md mt-2 sm:w-auto w-full inline-flex justify-center items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-black bg-white hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 disabled:opacity-50 disabled:cursor-not-allowed"
-              @click="addSubscribedEvent(event.id)"
+              onclick="my_modal_2.showModal()"
             >
               <span>Consigue tu ticket en un click</span>
             </button>
+            <dialog id="my_modal_2" class="modal">
+                <div class="modal-box">
+                    <h3 class="text-lg font-bold">¿Cuantas personas asistirán en total?</h3>
+                    <input v-model="numberOfPeople" type="number" min="1" placeholder="Ingresa el número de participantes" class="input input-bordered w-full mt-4" />
+                    <form method="dialog">
+                        <button
+                            class="btn-md btn btn-primary text-white w-full mt-4"
+                            @click="addSubscribedEvent(event.id)">
+                            Me inscribo
+                        </button>
+                    </form>
+                </div>
+                <form method="dialog" class="modal-backdrop">
+                    <button>close</button>
+                </form>
+            </dialog>
             <div v-if="isSpectatorSubscribed(event.id)" class="text-white flex items-center">
                 <CheckCircleIcon v-if="!isLoading" class="-ml-1 mr-3 h-5 w-5" aria-hidden="true" />
                 Ya estas inscrito a este evento</div>
@@ -78,6 +94,7 @@ const events = ref([]);
 const router = useRouter();
 
 const currentUser = ref(null);
+const numberOfPeople = ref(1);
 
 const fetchActiveEvents = async () => {
   try {
@@ -105,7 +122,7 @@ const convertTimestamp = (timestamp) => {
 const emit = defineEmits(["updateSubscribedEvents"]);
 
 const addSubscribedEvent = async (eventId) => {
-  emit("updateSubscribedEvents", eventId);
+  emit("updateSubscribedEvents", { eventId, numberOfPeople: numberOfPeople.value });
 };
 
 onMounted(() => {

@@ -4,6 +4,7 @@ import { onAuthStateChanged } from 'firebase/auth';
 
 import Home from '@/views/Home.vue';
 import OnlineBooking from '@/views/OnlineBooking.vue';
+import PasswordReset from '@/views/PasswordReset.vue';
 import SignIn from '@/views/SignIn.vue';
 import SpectatorProfile from '@/views/SpectatorProfile.vue';
 import EventDetail from '@/views/EventDetail.vue';
@@ -23,6 +24,11 @@ const routes = [
     path: '/booking/:idEvent',
     name: 'Booking',
     component: OnlineBooking,
+  },
+  {
+    path: '/password-reset',
+    name: 'PasswordReset',
+    component: PasswordReset,
   },
   {
     path: '/signin',

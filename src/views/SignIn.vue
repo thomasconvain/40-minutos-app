@@ -35,6 +35,12 @@
         <span>Entrar</span>
       </button>
     </form>
+    <button
+        @click="router.push({name:'PasswordReset'})"
+        class="btn-md btn btn-link btn-primary text-black w-full mt-4"
+      >
+        <span>Olvidé contraseña</span>
+      </button>
 
     <!-- <div class="flex flex-col items-center">
       <button

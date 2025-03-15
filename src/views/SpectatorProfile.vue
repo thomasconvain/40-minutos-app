@@ -1,7 +1,7 @@
 <template>
   <div>
-    <button class="btn bg-white border-none mb-4" @click="$router.go(-1)">
-      Volver
+    <button class="btn bg-white border-none mb-4" @click="logout">
+      Cerrar sesión
     </button>
     <h1 class="text-2xl font-bold mb-6">Hola {{ spectator?.name }}👋</h1>
     <p v-if="events.length">Gracias por inscribirte a uno de nuestros eventos.</p>
@@ -88,7 +88,7 @@
       <p class="my-4">
         <strong>Revisa nuestros próximos eventos:</strong>
       </p>
-      <ActiveEvents :isSpectatorSubscribed="checkSubscription" @updateSubscribedEvents="(eventId) => addSubscribedEventId(spectator.uId, eventId)" />
+      <ActiveEvents :isSpectatorSubscribed="checkSubscription" @updateSubscribedEvents="({ eventId, numberOfPeople }) => addSubscribedEventId(spectator.uId, eventId, numberOfPeople)" />
       </div>
     <div v-else class="flex justify-center w-full">
       <span class="loading loading-spinner loading-md"></span>
@@ -101,7 +101,7 @@ import { ref, onMounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { getFirestore, doc, getDoc, updateDoc, collection, arrayUnion  } from "firebase/firestore";
 import { auth } from '@/firebase';
-import { onAuthStateChanged } from 'firebase/auth';
+import { onAuthStateChanged, signOut } from 'firebase/auth';
 import { InformationCircleIcon, ShareIcon } from "@heroicons/vue/24/outline";
 import ActiveEvents from "@/components/ActiveEvents.vue";
 
@@ -162,15 +162,17 @@ const checkSubscription = (eventId) => {
   return spectator.value.subscribedEventsId.includes(eventId);
 };
 
-const addSubscribedEventId = async (spectatorId, eventId) => {
+const addSubscribedEventId = async (spectatorId, eventId, numberOfPeople) => {
   const db = getFirestore();
+  console.log('numberOfPeople', numberOfPeople); 
   console.log('spectaroId', spectatorId);
   console.log('newEventId', eventId);
   const spectatorDocRef = doc(db, "spectators", spectatorId);
 
   try {
     await updateDoc(spectatorDocRef, {
-      subscribedEventsId: arrayUnion(eventId)
+      subscribedEventsId: arrayUnion(eventId),
+      numberOfPeople: numberOfPeople,
     });
     console.log("Evento agregado correctamente.");
     fetchSpectator();
@@ -195,6 +197,16 @@ const goToEvent = (event) => {
       nameEvent: event.name,
     },
   });
+};
+
+const logout = async () => {
+  try {
+    await signOut(auth);
+    // Redirigir a la ruta que prefieras tras el logout
+    router.push('/');
+  } catch (error) {
+    console.error("Error al cerrar sesión:", error);
+  }
 };
 
 onMounted(
