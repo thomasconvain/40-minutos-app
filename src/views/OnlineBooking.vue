@@ -3,19 +3,28 @@
     <button class="btn bg-white border-none mb-4" @click="router.push({name:'Home'})">Volver</button>
     <div class="card bg-base-100 border border-base-600 mt-6">
       <div class="card-body">
+        <h1 class="card-title mt-8">
+          ¿Ya tienes una cuenta?
+        </h1>
         <button
             @click="router.push({name:'SignIn'})"
             type="submit"
             class="btn-md btn btn-primary text-white w-full mt-4"
           >
-            <span>Ya tengo una cuenta</span>
+            <span>Ingresar</span>
         </button>
-        <h2 class="card-title mt-8">
+        <h1 class="card-title mt-8">
           ¿Es tu primera vez asistiendo a nuestros eventos? <br />
           Ingresa tus datos
-        </h2>
+        </h1>
         <form @submit.prevent="submitForm">
           <div class="flex flex-col">
+            <label class="text-sm" for="email"><strong>¿Cuantas personas asistirán?</strong></label>
+            <input v-model="numberOfPeople" type="number" min="1" placeholder="Ingresa el número total de participantes" id="numberOfPeople" class="input input-bordered w-full" required />
+            <p v-if="emailError" class="text-red-500 text-sm mt-1">{{ emailError }}</p>
+          </div>
+
+          <div class="flex flex-col mt-4">
             <label class="text-sm" for="email"><strong>Email</strong></label>
             <input v-model="email" type="string" id="email" class="input input-bordered w-full" required />
             <p v-if="emailError" class="text-red-500 text-sm mt-1">{{ emailError }}</p>
