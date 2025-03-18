@@ -33,11 +33,11 @@
               v-if="!event.isOver && event.isFreeEntrance && currentUser && !isSpectatorSubscribed(event.id)"
               type="button"
               class="btn-md mt-2 sm:w-auto w-full inline-flex justify-center items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-black bg-white hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 disabled:opacity-50 disabled:cursor-not-allowed"
-              onclick="my_modal_2.showModal()"
+              @click="openModal"
             >
               <span>Consigue tu ticket en un click</span>
             </button>
-            <dialog id="my_modal_2" class="modal">
+            <dialog id="modalValidation" class="modal">
                 <div class="modal-box">
                     <h3 class="text-lg font-bold">¿Cuantas personas asistirán en total?</h3>
                     <input v-model="numberOfPeople" type="number" min="1" placeholder="Ingresa el número de participantes" class="input input-bordered w-full mt-4" />
@@ -95,6 +95,7 @@ const router = useRouter();
 
 const currentUser = ref(null);
 const numberOfPeople = ref(1);
+const modalValidation = ref(null);
 
 const fetchActiveEvents = async () => {
   try {
@@ -123,6 +124,11 @@ const emit = defineEmits(["updateSubscribedEvents"]);
 
 const addSubscribedEvent = async (eventId) => {
   emit("updateSubscribedEvents", { eventId, numberOfPeople: numberOfPeople.value });
+};
+
+const openModal = () => {
+  modalValidation.value = document.getElementById("modalValidation");
+  modalValidation.value.showModal();
 };
 
 onMounted(() => {
