@@ -88,7 +88,7 @@
       <p class="my-4">
         <strong>Revisa nuestros próximos eventos:</strong>
       </p>
-      <ActiveEvents :isSpectatorSubscribed="checkSubscription" @updateSubscribedEvents="({ eventId, numberOfPeople }) => addSubscribedEventId(spectator.uId, eventId, numberOfPeople)" />
+      <ActiveEvents :isSpectatorSubscribed="checkSubscription" @updateSubscribedEvents="({ eventId, numberOfPeople }) => addSubscribedEventId(auth.currentUser.uid, eventId, numberOfPeople)" />
       </div>
     <div v-else class="flex justify-center w-full">
       <span class="loading loading-spinner loading-md"></span>
