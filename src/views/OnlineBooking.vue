@@ -14,7 +14,7 @@
             <span>Ingresar</span>
         </button>
         <h1 class="card-title mt-8">
-          ¿Es tu primera vez asistiendo a nuestros eventos? <br />
+          Crear una cuenta <br />
           Ingresa tus datos
         </h1>
         <form @submit.prevent="submitForm">
