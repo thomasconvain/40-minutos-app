@@ -8,7 +8,7 @@
     <div
       class="card w-full bg-base-100 border border-base-600 rounded-lg lg:p-8"
     >
-      <div class="card-body">
+      <!-- <div class="card-body">
         <div class="flex items-center gap-6 flex-wrap md:flex-nowrap">
           <div class="responsive-iframe">
             <iframe
@@ -31,7 +31,7 @@
             </div>
           </div>
         </div>
-      </div>
+      </div> -->
     </div>
   </div>
 </template>
