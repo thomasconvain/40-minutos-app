@@ -14,15 +14,14 @@
             <span>Ingresar</span>
         </button>
         <h1 class="card-title mt-8">
-          ¿Es tu primera vez asistiendo a nuestros eventos? <br />
-          Ingresa tus datos
+          Crear una cuenta <br/>
         </h1>
         <form @submit.prevent="submitForm">
-          <div class="flex flex-col">
+          <!-- <div class="flex flex-col">
             <label class="text-sm" for="email"><strong>¿Cuantas personas asistirán?</strong></label>
             <input v-model="numberOfPeople" type="number" min="1" placeholder="Ingresa el número total de participantes" id="numberOfPeople" class="input input-bordered w-full" required />
             <p v-if="emailError" class="text-red-500 text-sm mt-1">{{ emailError }}</p>
-          </div>
+          </div> -->
 
           <div class="flex flex-col mt-4">
             <label class="text-sm" for="email"><strong>Email</strong></label>
