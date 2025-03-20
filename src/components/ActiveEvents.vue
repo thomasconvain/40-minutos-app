@@ -24,7 +24,7 @@
               type="button"
               class="btn-md mt-2 sm:w-auto w-full inline-flex justify-center items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-black bg-white hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 disabled:opacity-50 disabled:cursor-not-allowed"
               @click="
-                router.push({ name: 'Booking', params: { idEvent: event.id } })
+                router.push({ name: 'SignIn', params: { idEvent: event.id } })
               "
             >
               <span>Consigue tu ticket aquí</span>
@@ -74,7 +74,7 @@
 <script setup>
 import { useRouter } from "vue-router";
 import { ref, onMounted, defineEmits, defineProps } from "vue";
-import { collection, getDocs, query, where } from "firebase/firestore";
+import { collection, getDocs, query, where, orderBy } from "firebase/firestore";
 import { auth } from '@/firebase';
 import { onAuthStateChanged } from 'firebase/auth';
 import { db } from "@/firebase";
@@ -99,13 +99,17 @@ const modalValidation = ref(null);
 
 const fetchActiveEvents = async () => {
   try {
-    const q = query(collection(db, "events"), where("isActive", "==", true));
+    const q = query(
+      collection(db, "events"),
+      where("isActive", "==", true),
+      orderBy("date", "asc") // Cambia a "desc" para orden descendente
+    );
 
     const querySnapshot = await getDocs(q);
     events.value = querySnapshot.docs.map((doc) => ({
       id: doc.id,
       ...doc.data(),
-      // agrega booleano para definir si el spectator ya esta suscrito al evento o no
+      // agrega booleano para definir si el spectator ya está suscrito al evento o no
       isSubscribed: props.isSpectatorSubscribed,
     }));
   } catch (error) {

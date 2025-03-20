@@ -31,7 +31,7 @@ const routes = [
     component: PasswordReset,
   },
   {
-    path: '/signin',
+    path: '/signin/:idEvent?',
     name: 'SignIn',
     component: SignIn,
   },

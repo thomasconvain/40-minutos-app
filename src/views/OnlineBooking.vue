@@ -7,7 +7,7 @@
           ¿Ya tienes una cuenta?
         </h1>
         <button
-            @click="router.push({name:'SignIn'})"
+            @click="router.push({name:'SignIn', params: { idEvent: route.params.idEvent }})"
             type="submit"
             class="btn-md btn btn-primary text-white w-full mt-4"
           >

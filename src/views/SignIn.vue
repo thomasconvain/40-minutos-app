@@ -36,6 +36,13 @@
       </button>
     </form>
     <button
+        @click="router.push({name:'Booking', params: { idEvent: eventId }})"
+        type="submit"
+        class="btn-md btn btn-primary btn-outline text-white w-full mt-4"
+      >
+        <span>Aún no tengo cuenta</span>
+      </button>
+    <button
         @click="router.push({name:'PasswordReset'})"
         class="btn-md btn btn-link btn-primary text-black w-full mt-4"
       >
@@ -57,7 +64,7 @@
 
 <script setup>
 import { ref } from 'vue';
-import { useRouter } from 'vue-router';
+import { useRouter, useRoute } from 'vue-router';
 import { getFirestore, collection, query, where, getDocs } from 'firebase/firestore';
 import { auth } from '@/firebase';
 import { signInWithEmailAndPassword } from 'firebase/auth';
@@ -70,6 +77,9 @@ import { signInWithEmailAndPassword } from 'firebase/auth';
 const email = ref('');
 const password = ref('');
 const router = useRouter(); // Importar el enrutador
+const route = useRoute();
+
+const eventId = route.params.idEvent;
 
 // // Función para validar el número de teléfono
 // const validatePhone = () => {
