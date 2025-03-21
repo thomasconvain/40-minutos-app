@@ -88,7 +88,12 @@
       <p class="my-4">
         <strong>Revisa nuestros próximos eventos:</strong>
       </p>
-      <ActiveEvents :isSpectatorSubscribed="checkSubscription" @updateSubscribedEvents="({ eventId, numberOfPeople }) => addSubscribedEventId(auth.currentUser.uid, eventId, numberOfPeople)" />
+      <ActiveEvents 
+        :isSpectatorSubscribed="checkSubscription"
+        :openModalSuccessAfterLogin="subscriptionAfterLogin"
+        :routerQueryIdEvent="route.query.idEvent"
+        @updateSubscribedEvents="({ eventId, numberOfPeople }) => addSubscribedEventId(auth.currentUser.uid, eventId, numberOfPeople)"
+      />
       </div>
     <div v-else class="flex justify-center w-full">
       <span class="loading loading-spinner loading-md"></span>
@@ -110,6 +115,8 @@ const route = useRoute();
 const idSpectator = route.params.idSpectator;
 
 const currentUser = ref(null);
+
+const subscriptionAfterLogin = ref(false);
 
 const isLoading = ref(true); // Variable reactiva para mostrar un spinner de carga
 
@@ -209,13 +216,17 @@ const logout = async () => {
   }
 };
 
-onMounted(
+onMounted(() => {
   onAuthStateChanged(auth, (user) => {
     currentUser.value = user;
-  }),
-  fetchSpectator(),
-  isLoading.value = false
-  );
+  });
+  fetchSpectator();
+  if (route.query.idEvent) {
+    subscriptionAfterLogin.value = true;
+    addSubscribedEventId(idSpectator, route.query.idEvent, 1);
+  }
+  isLoading.value = false;
+});
 </script>
 
 <style scoped></style>

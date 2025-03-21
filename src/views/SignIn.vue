@@ -4,20 +4,6 @@
     <div class="flex flex-col items-center mb-10">
       <img src="../assets/logo.png" width="150">
     </div>
-    <!-- <h1 class="text-lg mb-4">Ingresa con el número de teléfono que indicaste para obtener tus tickets</h1>
-    <div>
-      <div class="mt-1 flex rounded-md shadow-sm">
-        <input
-          v-model="phone"
-          @input="validatePhone"
-          type="tel"
-          name="phone-number"
-          id="phone-number"
-          class="input-md grow block w-full px-3 py-2 rounded-md focus:ring-gray-500 focus:border-gray-500 sm:text-sm border-gray-300"
-          placeholder="" />
-      </div>
-    </div>
-    <p v-if="phoneError" class="text-red-500 text-sm">{{ phoneError }}</p> -->
 
     <form @submit.prevent="login">
       <div class="flex flex-col mt-4">
@@ -48,17 +34,6 @@
       >
         <span>Olvidé contraseña</span>
       </button>
-
-    <!-- <div class="flex flex-col items-center">
-      <button
-        type="button"
-        :disabled="isButtonDisabled"
-        class="btn-md mt-2 inline-flex justify-center w-full items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-gray-800 hover:bg-black focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 disabled:opacity-50 disabled:cursor-not-allowed"
-        @click="checkSpectatorSubscriptions"
-      >
-        <span>Entrar</span>
-      </button>
-    </div> -->
   </div>
 </template>
 
@@ -70,18 +45,12 @@ import { auth } from '@/firebase';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 
 
-// Variables reactivas
-// const phone = ref('+56');
-// const phoneError = ref('');
-// const isButtonDisabled = ref(true);
 const email = ref('');
 const password = ref('');
 const router = useRouter(); // Importar el enrutador
 const route = useRoute();
 
 const eventId = route.params.idEvent;
-
-// // Función para validar el número de teléfono
 // const validatePhone = () => {
 //   const phonePattern = /^\+56\d{9}$/; // Formato para números de teléfono en Chile: +56XXXXXXXXX
 //   if (!phonePattern.test(phone.value)) {
@@ -124,7 +93,7 @@ const login = async () => {
     if (!querySnapshot.empty) {
       const doc = querySnapshot.docs[0];
       console.log('Usuario logueado:', userCredential.user);
-      router.push({ name: 'Profile', params: { idSpectator: doc.id } });
+      router.push({ name: 'Profile', params: { idSpectator: doc.id }, query: { idEvent: eventId } });
     } else {
       alert('Usuario no encontrado.');
     }
