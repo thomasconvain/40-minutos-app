@@ -177,7 +177,7 @@ const submitForm = async () => {
       await setDoc(doc(db, 'spectators', user.uid), spectatorData);
 
       // Redirigir a la ruta /profile/{user.uid}
-      router.push(`/profile/${user.uid}`);
+      router.push({ name: 'Profile', params: { idSpectator: user.uid }, query: { idEvent: route.params.idEvent } });
     } catch (error) {
       if (error.code === 'auth/email-already-in-use') {
         emailError.value = 'El email ya está en uso. Por favor, elige otro o intenta iniciar sesión.';

@@ -221,8 +221,7 @@ onMounted(() => {
   }),
   fetchActiveEvents();
   if (props.openModalSuccessAfterLogin) {
-    codeIdForPrivateEvents.value = props.routerQueryIdEvent;
-    openModal(codeIdForPrivateEvents, 'modalSuccess');
+    openModal(null, 'modalSuccess');
   }
 });
 </script>
