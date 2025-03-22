@@ -8,7 +8,7 @@
         <button class="btn bg-white my-4 w-full" @click="$router.go(-1)">Volver a pantalla de pago</button>
       </div>
       <p v-else class="text-xl">Gracias por asistir!</p>
-      <div v-if="event?.isFreeEntrance">
+      <div v-if="event?.spectatorsShouldPayInTheApp">
         <p v-if="formattedAmount">Tu aporte: {{ formattedAmount }}</p>
         <div v-if="route.query.paymentMethod === 'bankTransfer'" class="w-full">
           <div class="alert alert-info rounded-none">
