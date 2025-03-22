@@ -82,13 +82,13 @@
               </p>
               <div class="flex flex-wrap gap-3">
                 <div class="flex items-center flex-wrap gap-3">
-                  <input v-model="codeIdForPrivateEvents" type="text" id="name" class="input input-bordered w-full sm:w-auto" required />
+                  <input v-model="codeIdForPrivateEvents" type="text" id="name" placeholder="Ingresa tu código" class="input input-bordered w-full sm:w-auto" required />
                   <button
                     @click="checkIdAndRedirect()"
                     type="button"
                     class="btn-md w-full sm:w-auto inline-flex justify-center items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-black bg-white hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    <span>Me inscribo</span>
+                    <span>Validar</span>
                   </button>
                 </div>
               </div>

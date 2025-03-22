@@ -4,11 +4,12 @@
     <div class="flex flex-col items-center mb-10">
       <img src="../assets/logo.png" width="150" />
     </div>
+    <h1 class="justify-self-center text-2xl text-gray-900 font-bold">Inscríbete a nuestro próximos eventos</h1>
     <ActiveEvents />
-    <div
+    <!-- <div
       class="card w-full bg-base-100 border border-base-600 rounded-lg lg:p-8"
     >
-      <!-- <div class="card-body">
+      <div class="card-body">
         <div class="flex items-center gap-6 flex-wrap md:flex-nowrap">
           <div class="responsive-iframe">
             <iframe
@@ -31,8 +32,8 @@
             </div>
           </div>
         </div>
-      </div> -->
-    </div>
+      </div> 
+    </div>-->
   </div>
 </template>
 

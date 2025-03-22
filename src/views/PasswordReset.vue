@@ -1,6 +1,6 @@
 <template>
   <div>
-    <button class="btn bg-white border-none mb-4" @click="router.push({name:'Home'})">Volver</button>
+    <button class="btn bg-white border-none mb-4" @click="$router.go(-1)">Volver</button>
     <div class="card bg-base-100 border border-base-600 mt-6">
       <div class="card-body">
         <h2 class="card-title mt-8">
@@ -29,9 +29,6 @@
 <script setup>
 import { ref } from 'vue';
 import { getAuth, sendPasswordResetEmail } from "firebase/auth";
-import { useRouter } from 'vue-router';
-
-const router = useRouter();
 
 const email = ref('');
 const message = ref('');

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <button class="btn bg-white border-none mb-4" @click="router.push({name:'Home'})">Volver</button>
+    <button class="btn bg-white border-none mb-4" @click="router.push({name:'Home'})">Inicio</button>
     <div class="flex flex-col items-center mb-10">
       <img src="../assets/logo.png" width="150">
     </div>
@@ -26,13 +26,13 @@
         type="submit"
         class="btn-md btn btn-primary btn-outline text-white w-full mt-4"
       >
-        <span>Aún no tengo cuenta</span>
+        <span>¿Aún no tienes cuenta?</span>
       </button>
     <button
         @click="router.push({name:'PasswordReset'})"
         class="btn-md btn btn-link btn-primary text-black w-full mt-4"
       >
-        <span>Olvidé contraseña</span>
+        <span>Recuperar contraseña</span>
       </button>
   </div>
 </template>

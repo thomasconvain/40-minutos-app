@@ -73,7 +73,7 @@ const id = route.params.idSpectator;
 const randomId = ref('');
 const spectatorParams = ref('');
 const eventParams = ref('');
-const isFreeEntrance = ref(true)
+const spectatorsShouldPayInTheApp = ref(true)
 
 const themes = ref([]);
 const ratings = ref([]); // Usar un arreglo para los ratings
@@ -103,7 +103,7 @@ const fetchEventThemes = async () => {
     const eventDocSnap = await getDoc(eventDocRef);
     if (eventDocSnap.exists()) {
       const themesIds = eventDocSnap.data().themes_id;
-      isFreeEntrance.value = eventDocSnap.data().isFreeEntrance;
+      spectatorsShouldPayInTheApp.value = eventDocSnap.data().spectatorsShouldPayInTheApp;
 
       // Para cada theme_id, obtenemos los detalles del tema
       const themeDocsPromises = themesIds.map(themeId => getDoc(doc(db, 'themes', themeId)));
@@ -160,7 +160,7 @@ const goToCheckout = async () => {
         });
       }
     }
-    if(isFreeEntrance.value) {
+    if(spectatorsShouldPayInTheApp.value) {
     // Una vez que se actualizan los ratings, redirigir al checkout
     router.push({
       name: 'Checkout',

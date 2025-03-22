@@ -4,16 +4,6 @@
     <div class="card bg-base-100 border border-base-600 mt-6">
       <div class="card-body">
         <h1 class="card-title mt-8">
-          ¿Ya tienes una cuenta?
-        </h1>
-        <button
-            @click="router.push({name:'SignIn', params: { idEvent: route.params.idEvent }})"
-            type="submit"
-            class="btn-md btn btn-primary text-white w-full mt-4"
-          >
-            <span>Ingresar</span>
-        </button>
-        <h1 class="card-title mt-8">
           Crear una cuenta <br/>
         </h1>
         <form @submit.prevent="submitForm">
@@ -66,6 +56,13 @@
           </button>
           <p v-if="errorMessage" class="text-red-500 text-sm mt-1">{{ errorMessage }}</p>
         </form>
+        <button
+            @click="router.push({name:'SignIn', params: { idEvent: route.params.idEvent }})"
+            type="submit"
+            class="btn-md btn btn-link text-black w-full mt-2"
+          >
+            <span>Ingresa acá si ya tienes una cuenta</span>
+        </button>
       </div>
     </div>
   </div>
