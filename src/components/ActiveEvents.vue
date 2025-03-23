@@ -69,32 +69,38 @@
           </div>
         </section>
         <div
-            class="mx-auto grid max-w-screen-xl rounded-lg bg-black p-8 md:p-8 lg:grid-cols-12 lg:gap-8 lg:p-16 xl:gap-16"
-          >
-            <div class="me-auto place-self-center lg:col-span-7">
-              <h1
-                class="mb-3 text-2xl font-bold leading-tight tracking-tight text-white md:text-4xl"
-              >
-                ¿Te invitaron a un evento privado?
-              </h1>
-              <p class="mb-6 text-gray-100">
-                Ingresa tu código de acceso acá
-              </p>
-              <div class="flex flex-wrap gap-3">
-                <div class="flex items-center flex-wrap gap-3">
-                  <input v-model="codeIdForPrivateEvents" type="text" id="name" placeholder="Ingresa tu código" class="input input-bordered w-full sm:w-auto" required />
-                  <button
-                    @click="checkIdAndRedirect()"
-                    type="button"
-                    class="btn-md w-full sm:w-auto inline-flex justify-center items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-black bg-white hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    <span>Validar</span>
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-          <dialog id="modalSuccess" class="modal">
+  class="mx-auto grid max-w-screen-xl rounded-lg bg-white p-8 md:p-8 lg:grid-cols-12 lg:gap-8 lg:p-16 xl:gap-16"
+>
+  <div class="me-auto place-self-center lg:col-span-7">
+    <h1
+      class="mb-3 text-2xl font-bold leading-tight tracking-tight text-black md:text-4xl"
+    >
+      ¿Te invitaron a un evento privado?
+    </h1>
+    <p class="mb-6 text-gray-800">
+      Ingresa tu código de acceso acá
+    </p>
+    <div class="flex flex-wrap gap-3">
+      <div class="flex items-center flex-wrap gap-3">
+        <input
+          v-model="codeIdForPrivateEvents"
+          type="text"
+          id="name"
+          placeholder="Ingresa tu código"
+          class="input input-bordered w-full sm:w-auto"
+          required
+        />
+        <button
+          @click="checkIdAndRedirect()"
+          type="button"
+          class="btn-md w-full sm:w-auto inline-flex justify-center items-center px-4 py-2 border border-transparent shadow-sm text-white bg-black hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 disabled:opacity-50 disabled:cursor-not-allowed rounded-md"
+        >
+          <span>Validar</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>          <dialog id="modalSuccess" class="modal">
             <div class="modal-box">
               <h3 class="text-lg font-bold">¡Muchas gracias!</h3>
               <p class="py-4">Tu inscripción ha sido exitosa. En esta pantalla encontrarás todos los detalles del evento.</p>

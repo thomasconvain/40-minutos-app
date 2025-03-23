@@ -1,8 +1,8 @@
 <!-- eslint-disable vue/multi-word-component-names -->
 <template>
   <div>
-    <div class="flex flex-col items-center mb-10">
-      <img src="../assets/logo.png" width="150" />
+    <div class="flex flex-col items-start mb-10">
+      <img src="../assets/logo_horizontal.png" width="150" />
     </div>
     <h1 class="justify-self-center text-2xl text-gray-900 font-bold">Inscríbete a nuestro próximos eventos</h1>
     <ActiveEvents />
