@@ -117,7 +117,7 @@
 <script setup>
 import { useRouter } from "vue-router";
 import { ref, onMounted, defineEmits, defineProps } from "vue";
-import { collection, getDocs, getDoc, doc, query, where, orderBy } from "firebase/firestore";
+import { collection, getDocs, query, where, orderBy } from "firebase/firestore";
 import { auth } from '@/firebase';
 import { onAuthStateChanged } from 'firebase/auth';
 import { db } from "@/firebase";
@@ -199,21 +199,25 @@ const checkIdAndRedirect = async () => {
       return;
     }
 
-    // Obtiene el documento de la colección 'events' con el ID ingresado
-    const eventDocRef = doc(db, "events", codeIdForPrivateEvents.value);
-    const eventDocSnap = await getDoc(eventDocRef);
+    // Consulta Firebase usando el campo "invitationCode"
+    const eventsCollection = collection(db, "events");
+    const q = query(eventsCollection, where("invitationCode", "==", codeIdForPrivateEvents.value));
+    const querySnapshot = await getDocs(q);
 
-    if (eventDocSnap.exists()) {
+    if (!querySnapshot.empty) {
+      // Se encontró un documento
+      const eventDoc = querySnapshot.docs[0]; // Obtiene el primer documento encontrado
+      const eventId = eventDoc.id; // Obtiene el ID del documento
       if (currentUser.value) {
-        addSubscribedEvent(codeIdForPrivateEvents.value);
-        openModal(codeIdForPrivateEvents.value, 'modalSuccess');
+        addSubscribedEvent(eventId);
+        openModal(eventId, 'modalSuccess');
         codeIdForPrivateEvents.value = null;
         window.scrollTo({top: 0, behavior: "smooth"});
       } else {
-        router.push({ name: 'SignIn', params: { idEvent: codeIdForPrivateEvents.value } });
+        router.push({ name: 'SignIn', params: { idEvent: eventId } });
       }
     } else {
-      // Si no existe, muestra un error en la consola o implementa un mensaje al usuario
+      // No se encontró ningún documento
       window.alert("El código de evento ingresado no existe");
     }
   } catch (error) {
