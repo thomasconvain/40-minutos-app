@@ -4,7 +4,7 @@
     <div class="flex flex-col items-start mb-10">
       <img src="../assets/logo_horizontal.png" width="150" />
     </div>
-    <h1 class="justify-self-center text-2xl text-gray-900 font-bold">Inscríbete a nuestro próximos eventos</h1>
+    <h1 class="justify-self-start text-2xl text-gray-900 font-bold">Inscríbete a nuestro próximos eventos abiertos</h1>
     <ActiveEvents />
     <!-- <div
       class="card w-full bg-base-100 border border-base-600 rounded-lg lg:p-8"

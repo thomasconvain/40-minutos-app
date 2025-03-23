@@ -3,7 +3,7 @@
     <footer class="footer footer-center bg-transparent text-primary-content pt-10">
       <div class="w-full flex justify-between">
         <aside>
-          <img class="footer-logo" src="../assets/logo.png" width="50">
+          <img class="footer-logo" src="../assets/logo_horizontal.png" width="50">
         </aside>
         <nav>
           <div class="grid grid-flow-col gap-4">

@@ -95,7 +95,7 @@
           type="button"
           class="btn-md w-full sm:w-auto inline-flex justify-center items-center px-4 py-2 border border-transparent shadow-sm text-white bg-black hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 disabled:opacity-50 disabled:cursor-not-allowed rounded-md"
         >
-          <span>Validar</span>
+          <span>Confirmar asistencia</span>
         </button>
       </div>
     </div>

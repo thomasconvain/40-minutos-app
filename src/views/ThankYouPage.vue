@@ -2,7 +2,7 @@
   <div>
     <button v-if="!paymentId" class="btn bg-white border-none mb-4"  @click="$router.go(-1)">Volver</button>
     <div class="flex flex-col items-center gap-10">
-      <img src="../assets/logo.png" width="150">
+      <img src="../assets/logo_horizontal.png" width="150">
       <div v-if="paymentId === 'null'">
         <p>Hubó un problema con tu pago.<br>Asegurate de completar todo el proceso de pago o que tu medio de pago haya sido ingresado correctamente.</p>
         <button class="btn bg-white my-4 w-full" @click="$router.go(-1)">Volver a pantalla de pago</button>

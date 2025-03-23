@@ -2,7 +2,7 @@
   <div>
     <button class="btn bg-white border-none mb-4"  @click="$router.go(-1)">Volver</button>
     <div class="flex flex-col items-center gap-10">
-      <img src="../assets/logo.png" width="150">
+      <img src="../assets/logo_horizontal.png" width="150">
       <GeneratePayment />
     </div>
   </div>
