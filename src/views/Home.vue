@@ -1,11 +1,13 @@
 <!-- eslint-disable vue/multi-word-component-names -->
 <template>
   <div>
-    <div class="flex flex-col items-start mb-10">
+    <div class="flex flex-row items-center justify-between mb-10">
       <img src="../assets/logo_horizontal.png" width="150" />
+      <router-link to="/signin" class="btn bg-white border-none">Iniciar sesión</router-link>
     </div>
     <h1 class="justify-self-start text-2xl text-gray-900 font-bold">Inscríbete a nuestro próximos eventos abiertos</h1>
     <ActiveEvents />
+  </div>
     <!-- <div
       class="card w-full bg-base-100 border border-base-600 rounded-lg lg:p-8"
     >
@@ -34,7 +36,6 @@
         </div>
       </div> 
     </div>-->
-  </div>
 </template>
 
 <script setup>
