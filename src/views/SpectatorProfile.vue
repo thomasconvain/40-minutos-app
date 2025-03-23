@@ -4,11 +4,11 @@
       Cerrar sesión
     </button>
     <h1 class="text-2xl font-bold mb-6">Hola {{ spectator?.name }}👋</h1>
-    <p v-if="events.length">Gracias por inscribirte a uno de nuestros eventos.</p>
+    <p v-if="events.length">Acá podrás ver todos los eventos en los que estás inscrito.</p>
     <div class="mt-4" v-if="spectator">
-      <p v-if="events.length" class="my-4">
+      <!-- <p v-if="events.length" class="my-4">
         <strong>Estás inscrito para los siguientes eventos:</strong>
-      </p>
+      </p> -->
       <div v-if="events.length">
         <div class="indicator w-full flex flex-col gap-4">
           <div
@@ -26,7 +26,7 @@
               <p><strong>Lugar:</strong> {{ event.place }}</p>
               <p><strong>Fecha:</strong> {{ formatDate(event.date) }}</p>
               <p>
-                <strong>Número de personas:</strong>
+                <strong>Inscritos:</strong>
                 {{ spectator.numberOfPeople }}
               </p>
               <p v-if="event.hostName">
