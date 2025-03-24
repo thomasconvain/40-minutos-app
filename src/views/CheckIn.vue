@@ -27,7 +27,7 @@
         <div class="card bg-base-100 border border-base-600 mt-6">
           <div v-if="spectator" class="card-body">
             <h2 class="card-title">Tu grupo</h2>
-            <p class="">Confirma el número de participantes:</p>
+            <p class="">Confirma el número de acompañantes:</p>
             <input v-model="spectator.numberOfPeople" type="number" min="1" placeholder="Ingresa el número de participantes" class="input input-bordered w-full" />
             <div v-if="spectator.numberOfPeople > 1">
               <label class="label cursor-pointer flex justify-start gap-2">
