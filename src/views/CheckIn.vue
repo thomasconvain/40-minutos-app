@@ -28,11 +28,11 @@
           <div v-if="spectator" class="card-body">
             <h2 class="card-title">Tu grupo</h2>
             <p class="">Confirma el número de acompañantes:</p>
-            <input v-model="spectator.numberOfPeople" type="number" min="1" placeholder="Ingresa el número de participantes" class="input input-bordered w-full" />
-            <div v-if="spectator.numberOfPeople > 1">
+            <input v-model="numberOfCompanions" type="number" min="0" placeholder="Ingresa el número de participantes" class="input input-bordered w-full" />
+            <div v-if="numberOfCompanions >= 1">
               <label class="label cursor-pointer flex justify-start gap-2">
                 <input type="checkbox" class="checkbox checkbox-primary" :checked="uniquePaymentForGroup" @change="uniquePaymentForGroup = !uniquePaymentForGroup" />
-                <span class="label-text">Quiero pagar para todo mi grupo al final del concierto</span>
+                <span class="label-text">Quiero pagar para todo mi grupo al final del concierto ({{ numberOfCompanions + 1 }} personas en total)</span>
               </label>
               <div class="mt-4 alert alert-info rounded-none">
                 <span class="text-xs">Comparte al link del programa del concierto a tu grupo para que puedan seguir con la experiencia en sus propios dispositivos</span>
@@ -70,6 +70,7 @@ import { ShareIcon } from '@heroicons/vue/24/outline'
 
 const activeStep = ref(1);
 const spectator = ref(null);
+const numberOfCompanions = ref(0);
 const event = ref(null);
 const uniquePaymentForGroup = ref(true);
 const emailError = ref('');
@@ -91,6 +92,7 @@ const fetchSpectator = async () => {
     const docSnap = await getDoc(docRef);
     if (docSnap.exists()) {
       spectator.value = docSnap.data();
+      numberOfCompanions.value = spectator.value.numberOfPeople - 1 ;
     } else {
       console.error('No se encontró el documento con el ID proporcionado');
     }
@@ -123,7 +125,7 @@ const validateCheckin = async () => {
     await updateDoc(docRef, {
       email: spectator.value.email,
       phone: spectator.value.phone,
-      numberOfPeople: spectator.value.numberOfPeople,
+      numberOfPeople: numberOfCompanions.value + 1,
       uniquePaymentForGroup: uniquePaymentForGroup.value,
       isChecked: true,
     });
