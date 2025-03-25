@@ -17,6 +17,7 @@ import { db } from '@/firebase'; // Asegúrate de tener configurada tu instancia
 import { signOut } from 'firebase/auth'; // Importar la función para cerrar sesión
 import { auth } from '@/firebase'; // Tu configuración de Firebase
 import { useRouter } from 'vue-router'; // Para redirigir al usuario
+import { fetchSpectators } from '@/utils'
 
 const totalNumberOfPeople = ref(0);
 const totalMercadoPago = ref(0);
@@ -37,22 +38,8 @@ const logout = async () => {
   }
 };
 
-const fetchSpectators = async () => {
-  try {
-    const querySnapshot = await getDocs(collection(db, 'spectators'));
-    let total = 0;
-    
-    querySnapshot.forEach(doc => {
-      const data = doc.data();
-      if (data.numberOfPeople) {
-        total += data.numberOfPeople;
-      }
-    });
-
-    totalNumberOfPeople.value = total;
-  } catch (error) {
-    console.error('Error obteniendo los documentos: ', error);
-  }
+const fetchTotalNumberOfPeople = async () => { // Renombra la función local para evitar conflictos
+  totalNumberOfPeople.value = await fetchSpectators();
 };
 
 const fetchTotalNumberOfPeopleChecked = async () => {
@@ -94,8 +81,6 @@ const fetchTotalNumberOfPeopleWithoutPayments = async () => {
   }
 };
 
-
-
 const fetchSpectatorsPayments = async () => {
   try {
     const querySnapshot = await getDocs(collection(db, 'spectators'));
@@ -134,9 +119,8 @@ const fetchSpectatorsPayments = async () => {
   }
 };
 
-
 onMounted(() => {
-  fetchSpectators();
+  fetchTotalNumberOfPeople();
   fetchTotalNumberOfPeopleChecked();
   fetchSpectatorsPayments();
   fetchTotalNumberOfPeopleWithoutPayments();

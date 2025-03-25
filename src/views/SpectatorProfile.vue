@@ -26,8 +26,12 @@
               <p><strong>Lugar:</strong> {{ event.place }}</p>
               <p><strong>Fecha:</strong> {{ formatDate(event.date) }}</p>
               <p>
-                <strong>Inscritos:</strong>
-                {{ spectator.numberOfPeople }}
+                <strong>Te acompañan:</strong>
+                {{ spectator.numberOfPeople -1 }} personas
+              </p>
+              <p>
+                <strong>Total de inscritos:</strong>
+                {{totalNumberOfPeople}} personas
               </p>
               <p v-if="event.hostName">
                 <strong>Anfitrión:</strong> {{ event.hostName }}
@@ -109,6 +113,13 @@ import { auth } from '@/firebase';
 import { onAuthStateChanged, signOut } from 'firebase/auth';
 import { InformationCircleIcon, ShareIcon } from "@heroicons/vue/24/outline";
 import ActiveEvents from "@/components/ActiveEvents.vue";
+import { fetchSpectators } from '@/utils'
+
+const totalNumberOfPeople = ref(0);
+
+const fetchTotalNumberOfPeople = async () => { // Renombra la función local para evitar conflictos
+  totalNumberOfPeople.value = await fetchSpectators();
+};
 
 // Obtener el ID del espectador desde la ruta
 const route = useRoute();
@@ -217,6 +228,7 @@ const logout = async () => {
 };
 
 onMounted(() => {
+  fetchTotalNumberOfPeople();
   onAuthStateChanged(auth, (user) => {
     currentUser.value = user;
   });
