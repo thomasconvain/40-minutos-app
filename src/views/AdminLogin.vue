@@ -14,7 +14,7 @@
         type="submit"
         class="btn-md btn btn-primary text-white w-full mt-4"
       >
-        <span>Iniciar sesión</span>
+        <span>Login</span>
       </button>
     </form>
   </div>

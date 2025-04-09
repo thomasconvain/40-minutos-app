@@ -26,7 +26,7 @@
                     router.push({ name: 'SignIn', params: { idEvent: event.id } })
                   "
                 >
-                  <span>Consigue tu ticket aquí</span>
+                  <span>Quiero asistir</span>
                 </button>
                 <button
                   v-if="!event.isOver && event.isFreeEntrance && currentUser && !isSpectatorSubscribed(event.id)"

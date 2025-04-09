@@ -1,7 +1,7 @@
 <template>
   <div>
-    <button class="btn bg-white border-none mb-4" @click="logout">
-      Cerrar sesión
+    <button class="btn bg-white bg-opacity-30 border-none mb-4" @click="logout">
+      Salir
     </button>
     <h1 class="text-2xl font-bold mb-6">Hola {{ spectator?.name }}👋</h1>
     <p v-if="events.length">Acá podrás ver todos los eventos en los que estás inscrito.</p>
