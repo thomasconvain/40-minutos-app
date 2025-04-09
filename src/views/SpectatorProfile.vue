@@ -31,7 +31,7 @@
               </p>
               <p>
                 <strong>Total de inscritos:</strong>
-                {{totalNumberOfPeople}} personas
+                {{ eventAttendees[event.id] || 0 }} personas
               </p>
               <p v-if="event.hostName">
                 <strong>Anfitrión:</strong> {{ event.hostName }}
@@ -115,20 +115,20 @@ import { InformationCircleIcon, ShareIcon } from "@heroicons/vue/24/outline";
 import ActiveEvents from "@/components/ActiveEvents.vue";
 import { fetchSpectators } from '@/utils'
 
-const totalNumberOfPeople = ref(0);
+// Cambia de un valor simple a un objeto que mapea eventId -> número de personas
+const eventAttendees = ref({}); 
 
-const fetchTotalNumberOfPeople = async () => { // Renombra la función local para evitar conflictos
-  totalNumberOfPeople.value = await fetchSpectators();
+// Obtiene cantidad de asistentes por evento
+const fetchEventAttendees = async (eventId) => {
+  const count = await fetchSpectators(eventId);
+  eventAttendees.value[eventId] = count;
 };
 
 // Obtener el ID del espectador desde la ruta
 const route = useRoute();
 const idSpectator = route.params.idSpectator;
-
 const currentUser = ref(null);
-
 const subscriptionAfterLogin = ref(false);
-
 const isLoading = ref(true); // Variable reactiva para mostrar un spinner de carga
 
 // Variables reactivas para almacenar los datos del espectador y los eventos
@@ -161,16 +161,19 @@ const fetchEvents = async (eventIds) => {
   const eventsCollection = collection(db, "events");
 
   try {
-    // Para cada ID de evento, obtenemos el documento correspondiente
     const eventDocsPromises = eventIds.map((eventId) =>
       getDoc(doc(eventsCollection, eventId))
     );
     const eventDocs = await Promise.all(eventDocsPromises);
 
-    // Filtramos los documentos que existen y tienen isActive === true, y luego mapeamos los resultados
     events.value = eventDocs
       .filter((eventDoc) => eventDoc.exists() && eventDoc.data().isActive === true)
       .map((eventDoc) => ({ id: eventDoc.id, ...eventDoc.data() }));
+    
+    // Para cada evento, obtener el número de asistentes
+    for (const event of events.value) {
+      fetchEventAttendees(event.id);
+    }
   } catch (error) {
     console.error("Error al obtener los detalles de los eventos:", error);
   }
@@ -228,7 +231,16 @@ const logout = async () => {
 };
 
 onMounted(() => {
-  fetchTotalNumberOfPeople();
+  // Obtiene el ID del evento de la URL
+  const eventIdFromUrl = route.query.idEvent;
+  
+  // Llama a la función con el ID del evento
+  if (eventIdFromUrl) {
+    fetchEventAttendees(eventIdFromUrl);
+  } else {
+    fetchEventAttendees(); // Sin parámetro para mantener compatibilidad
+  }
+  
   onAuthStateChanged(auth, (user) => {
     currentUser.value = user;
   });
