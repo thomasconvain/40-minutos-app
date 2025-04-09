@@ -12,8 +12,7 @@
                 {{ convertTimestamp(event.date) }}
               </h1>
               <p v-if="event.isOver" class="mb-6 text-gray-100">
-                Evento terminado. Si aún no realizaste tu aporte puedes hacerlo
-                haciendo click en el siguiente botón.
+                Evento terminado. Si aún no realizaste tu aporte puedes hacerlo haciendo click en el siguiente botón.
               </p>
               <p v-else-if="event.isFreeEntrance" class="mb-6 text-gray-100">
                 {{ event.place }}

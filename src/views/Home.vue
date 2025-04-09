@@ -5,7 +5,7 @@
       <img src="../assets/logo_horizontal.png" width="150" />
       <router-link to="/signin" class="btn bg-white border-none">Iniciar sesión</router-link>
     </div>
-    <h1 class="justify-self-start text-2xl text-gray-900 font-bold">Inscríbete a nuestro próximos eventos abiertos</h1>
+    <h1 class="justify-self-start text-2xl text-gray-900 font-bold">Inscríbete a nuestro próximos eventos</h1>
     <ActiveEvents />
   </div>
     <!-- <div
