@@ -236,7 +236,7 @@ const checkIdAndRedirect = async () => {
         codeIdForPrivateEvents.value = null;
         window.scrollTo({top: 0, behavior: "smooth"});
       } else {
-        router.push({ name: 'LogIn', params: { idEvent: eventId } });
+        router.push({ name: 'Booking', params: { idEvent: eventId } });
       }
     } else {
       // No se encontró ningún documento
