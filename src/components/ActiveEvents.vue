@@ -1,61 +1,67 @@
 <template>
     <div>
       <section class="py-8">
-        <div class="mx-auto max-w-screen-xl">
-          <h2 class="mb-6 text-2xl font-bold text-black">Eventos disponibles</h2>
-          
+        <div class="mx-auto max-w-screen-xl px-4">          
           <!-- Carrusel de daisyUI -->
-          <div class="carousel rounded-box">
-            <!-- Itera sobre cada evento dentro del carrusel -->
-            <div v-for="event in activeEvents" :key="event.id" class="carousel-item w-full md:w-1/2 lg:w-1/3 p-2">
-              <!-- Cada evento como una tarjeta dentro del carrusel -->
-              <div class="card bg-black text-white shadow-xl h-full w-full">
-                <div class="card-body">
-                  <h2 class="card-title text-xl md:text-2xl font-bold">{{ event.name }}</h2>
-                  <p class="text-sm md:text-base">{{ convertTimestamp(event.date) }}</p>
-            
-                  <p v-if="event.isOver" class="my-3 text-gray-300">
-                    Evento terminado. Si aún no realizaste tu aporte puedes hacerlo haciendo click en el siguiente botón.
-                  </p>
-                  <p v-else-if="event.isFreeEntrance" class="my-3 text-gray-300">
-                    {{ event.place }}
-                  </p>
-            
-                  <div class="card-actions mt-4">
-                    <button
-                      v-if="!event.isOver && event.isFreeEntrance && !currentUser"
-                      type="button"
-                      class="btn btn-sm md:btn-md bg-white text-black hover:bg-gray-200 border-transparent"
-                      @click="router.push({ name: 'SignIn', params: { idEvent: event.id } })"
-                    >
-                      <span>Quiero asistir</span>
-                    </button>
+          <div class="relative w-full overflow-hidden">
+            <div class="carousel carousel-center rounded-box gap-4" id="carousel">
+              <!-- Asegurando que cada tarjeta tenga el ancho adecuado -->
+              <div v-for="event in activeEvents" :key="event.id" class="carousel-item w-full max-w-4xl mx-auto px-2">
+                <!-- La tarjeta con ancho controlado -->
+                <div class="card bg-black text-white shadow-xl h-full w-full">
+                  <div class="card-body">
+                    <h2 class="card-title text-xl md:text-2xl font-bold">{{ event.name }}</h2>
+                    <p class="text-sm md:text-base">{{ convertTimestamp(event.date) }}</p>
               
-                    <button
-                      v-if="!event.isOver && event.isFreeEntrance && currentUser && !isSpectatorSubscribed(event.id)"
-                      type="button"
-                      class="btn btn-sm md:btn-md bg-white text-black hover:bg-gray-200 border-transparent"
-                      @click="openModal(event.id, 'modalValidation')"
-                    >
-                      <span>Consigue tu ticket en un click</span>
-                    </button>
+                    <p v-if="event.isOver" class="my-3 text-gray-300">
+                      Evento terminado. Si aún no realizaste tu aporte puedes hacerlo haciendo click en el siguiente botón.
+                    </p>
+                    <p v-else-if="event.isFreeEntrance" class="my-3 text-gray-300">
+                      {{ event.place }}
+                    </p>
               
-                    <div v-if="isSpectatorSubscribed(event.id)" class="flex items-center">
-                      <CheckCircleIcon v-if="!isLoading" class="-ml-1 mr-2 h-5 w-5" aria-hidden="true" />
-                      Ya estas inscrito a este evento
+                    <div class="card-actions mt-4">
+                      <button
+                        v-if="!event.isOver && event.isFreeEntrance && !currentUser"
+                        type="button"
+                        class="btn btn-sm md:btn-md bg-white text-black hover:bg-gray-200 border-transparent"
+                        @click="router.push({ name: 'SignIn', params: { idEvent: event.id } })"
+                      >
+                        <span>Quiero asistir</span>
+                      </button>
+                
+                      <button
+                        v-if="!event.isOver && event.isFreeEntrance && currentUser && !isSpectatorSubscribed(event.id)"
+                        type="button"
+                        class="btn btn-sm md:btn-md bg-white text-black hover:bg-gray-200 border-transparent"
+                        @click="openModal(event.id, 'modalValidation')"
+                      >
+                        <span>Consigue tu ticket en un click</span>
+                      </button>
+                
+                      <div v-if="isSpectatorSubscribed(event.id)" class="flex items-center">
+                        <CheckCircleIcon v-if="!isLoading" class="-ml-1 mr-2 h-5 w-5" aria-hidden="true" />
+                        Ya estas inscrito a este evento
+                      </div>
+                
+                      <button
+                        v-if="!currentUser && event.isOver"
+                        type="button"
+                        class="btn btn-sm md:btn-md btn-outline text-white hover:bg-white hover:text-black"
+                        @click="router.push({ name: 'SignIn' })"
+                      >
+                        <span>Realizar mi aporte</span>
+                      </button>
                     </div>
-              
-                    <button
-                      v-if="!currentUser && event.isOver"
-                      type="button"
-                      class="btn btn-sm md:btn-md btn-outline text-white hover:bg-white hover:text-black"
-                      @click="router.push({ name: 'SignIn' })"
-                    >
-                      <span>Realizar mi aporte</span>
-                    </button>
                   </div>
                 </div>
               </div>
+            </div>
+          
+            <!-- Botones de navegación centrados en la parte inferior (solo visibles en tablets y desktop) -->
+            <div class="hidden md:flex justify-center mt-4 gap-4">
+              <button class="btn btn-circle" onclick="document.getElementById('carousel').scrollBy({left: -300, behavior: 'smooth'})">❮</button>
+              <button class="btn btn-circle" onclick="document.getElementById('carousel').scrollBy({left: 300, behavior: 'smooth'})">❯</button>
             </div>
           </div>
         </div>
@@ -94,18 +100,18 @@
         </div>
       </div>
 
-    <dialog id="modalSuccess" class="modal">
-            <div class="modal-box">
-              <h3 class="text-lg font-bold">¡Muchas gracias!</h3>
-              <p class="py-4">Tu inscripción ha sido exitosa. En esta pantalla encontrarás todos los detalles del evento.</p>
-              <div class="modal-action">
-                <form method="dialog">
-                  <button class="btn hover:bg-black hover:text-white">Continuar</button>
-                </form>
+      <dialog id="modalSuccess" class="modal">
+              <div class="modal-box">
+                <h3 class="text-lg font-bold">¡Muchas gracias!</h3>
+                <p class="py-4">Tu inscripción ha sido exitosa. En esta pantalla encontrarás todos los detalles del evento.</p>
+                <div class="modal-action">
+                  <form method="dialog">
+                    <button class="btn hover:bg-black hover:text-white">Continuar</button>
+                  </form>
+                </div>
               </div>
-            </div>
-    </dialog>
-  </div>
+      </dialog>
+    </div>
 
   <dialog id="modalValidation" class="modal">
           <div class="modal-box">
@@ -123,7 +129,7 @@
               <button>close</button>
           </form>
         </dialog>
-        
+
 </template>
 
 <script setup>
