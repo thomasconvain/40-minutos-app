@@ -4,6 +4,17 @@
       Salir
     </button>
     <h1 class="text-2xl font-bold mb-6">Hola {{ spectator?.name }}👋</h1>
+    <div v-if="spectator && !spectator.passwordChanged" class="alert alert-warning rounded-none my-6 flex sm:justify-between justify-center flex-wrap">
+      <span class="text-m">Configura tu contraseña ahora para entrar facilmente al evento el día del concierto<br>
+        <span class="text-xs">¡No te preocupes! También lo podrás hacer más tarde.</span><br>
+        <span v-if="message !== ''" class="text-sm text-green-500">
+        {{ message }}
+      </span>
+      </span>
+      <button v-if="message === ''" class="btn bg-white hover:bg-white/80 text-black border-none md:w-auto w-full" @click="handleReset">
+          ¡Vamos!
+      </button>
+    </div>
     <p v-if="events.length">Acá podrás ver todos los eventos en los que estás inscrito.</p>
     <div class="mt-4" v-if="spectator">
       <!-- <p v-if="events.length" class="my-4">
@@ -110,7 +121,7 @@ import { ref, onMounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { getFirestore, doc, getDoc, updateDoc, collection, arrayUnion  } from "firebase/firestore";
 import { auth } from '@/firebase';
-import { onAuthStateChanged, signOut } from 'firebase/auth';
+import { onAuthStateChanged, signOut, sendPasswordResetEmail } from 'firebase/auth';
 import { InformationCircleIcon, ShareIcon } from "@heroicons/vue/24/outline";
 import ActiveEvents from "@/components/ActiveEvents.vue";
 import { fetchSpectators } from '@/utils'
@@ -130,6 +141,7 @@ const idSpectator = route.params.idSpectator;
 const currentUser = ref(null);
 const subscriptionAfterLogin = ref(false);
 const isLoading = ref(true); // Variable reactiva para mostrar un spinner de carga
+const message = ref(''); // Mensaje para mostrar al usuario cuando solicita configurar contraseña
 
 // Variables reactivas para almacenar los datos del espectador y los eventos
 const spectator = ref(null);
@@ -227,6 +239,15 @@ const logout = async () => {
     router.push('/');
   } catch (error) {
     console.error("Error al cerrar sesión:", error);
+  }
+};
+
+const handleReset = async () => {
+  try {
+    await sendPasswordResetEmail(auth, spectator.value.email);
+    message.value = "Te enviamos un correo para configurar tu contraseña.";
+  } catch (error) {
+    message.value = "Error al enviar el correo: " + error.message;
   }
 };
 

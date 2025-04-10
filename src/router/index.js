@@ -13,6 +13,8 @@ import CheckIn from '@/views/CheckIn.vue';
 import ThankYouPage from '@/views/ThankYouPage.vue';
 import AdminPage from '@/views/AdminPage.vue';
 import AdminLogin from '@/views/AdminLogin.vue';
+import OnlineBooking from '@/views/OnlineBooking.vue';
+import PasswordConfig from '@/views/PasswordConfig.vue';
 
 const routes = [
   {
@@ -26,9 +28,19 @@ const routes = [
     component: SignIn,
   },
   {
+    path: '/booking/:idEvent?',
+    name: 'Booking',
+    component: OnlineBooking,
+  },
+  {
     path: '/password-reset',
     name: 'PasswordReset',
     component: PasswordReset,
+  },
+  {
+    path: '/password-config/',
+    name: 'PasswordConfig',
+    component: PasswordConfig,
   },
   {
     path: '/login/:idEvent?',

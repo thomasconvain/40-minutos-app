@@ -25,7 +25,7 @@
                         v-if="!event.isOver && event.isFreeEntrance && !currentUser"
                         type="button"
                         class="btn btn-sm md:btn-md bg-white text-black hover:bg-gray-200 border-transparent"
-                        @click="router.push({ name: 'LogIn', params: { idEvent: event.id } })"
+                        @click="router.push({ name: 'Booking', params: { idEvent: event.id } })"
                       >
                         <span>Quiero asistir</span>
                       </button>

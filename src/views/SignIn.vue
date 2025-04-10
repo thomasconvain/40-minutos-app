@@ -71,7 +71,7 @@
 <script setup>
 import { ref } from 'vue';
 import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
-import { collection, query, where, getDocs, doc, setDoc } from 'firebase/firestore';
+import { doc, setDoc } from 'firebase/firestore';
 import { db } from '@/firebase';
 import { useRouter, useRoute } from 'vue-router';
 
@@ -96,19 +96,19 @@ const auth = getAuth();
 const router = useRouter();
 const route = useRoute();
 
-const checkExistingPhoneNumber = async () => {
-  const q = query(collection(db, 'spectators'), where('phone', '==', phone.value));
-  const querySnapshot = await getDocs(q);
+// const checkExistingPhoneNumber = async () => {
+//   const q = query(collection(db, 'spectators'), where('phone', '==', phone.value));
+//   const querySnapshot = await getDocs(q);
 
-  if (!querySnapshot.empty) {
-    phoneError.value = 'El número de teléfono ya está en uso';
-    isLoading.value = false;
-    return false;
-  }
+//   if (!querySnapshot.empty) {
+//     phoneError.value = 'El número de teléfono ya está en uso';
+//     isLoading.value = false;
+//     return false;
+//   }
 
-  phoneError.value = '';
-  return true;
-};
+//   phoneError.value = '';
+//   return true;
+// };
 
 const validateEmail = () => {
   const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -147,12 +147,12 @@ const submitForm = async () => {
 
   // Verificar que no existan errores
   if (emailError.value === '' && phoneError.value === '' && confirmPasswordError.value === '') {
-    const isPhoneAvailable = await checkExistingPhoneNumber();
+    // const isPhoneAvailable = await checkExistingPhoneNumber();
 
-    if (!isPhoneAvailable) {
-      isLoading.value = false;
-      return;
-    }
+    // if (!isPhoneAvailable) {
+    //   isLoading.value = false;
+    //   return;
+    // }
 
     try {
       // Crear el usuario en Authentication
@@ -167,7 +167,9 @@ const submitForm = async () => {
         numberOfPeople: numberOfPeople.value,
         isChecked: isChecked.value,
         uniquePaymentForGroup: uniquePaymentForGroup.value,
-        subscribedEventsId: route.params.idEvent.split(',').map(id => id.trim()),
+        subscribedEventsId: route.params.idEvent
+          ? route.params.idEvent.split(',').map(id => id.trim())
+          : [],
       };
 
       // Guardar documento en Firestore

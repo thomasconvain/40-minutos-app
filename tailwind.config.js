@@ -23,6 +23,9 @@ module.exports = {
            "secondary": "#f6d860",
            "accent": "#37cdbe",
            "neutral": "#1f2937",
+           "warning": "000000",
+           "warning-content": "ffffff",
+
           //  "--fallback-in": "#f7f7f7",
            "--fallback-in": "#ebebeb",
            "--fallback-b3": "#ebebeb",

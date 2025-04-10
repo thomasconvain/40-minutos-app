@@ -4,19 +4,12 @@
     <div class="card bg-base-100 border border-base-600 mt-6">
       <div class="card-body">
         <h1 class="card-title mt-8">
-          Crear una cuenta <br/>
+          Reserva tu cupo <br/>
         </h1>
         <form @submit.prevent="submitForm">
-          <!-- <div class="flex flex-col">
+          <div class="flex flex-col">
             <label class="text-sm" for="email"><strong>¿Cuantas personas asistirán?</strong></label>
             <input v-model="numberOfPeople" type="number" min="1" placeholder="Ingresa el número total de participantes" id="numberOfPeople" class="input input-bordered w-full" required />
-            <p v-if="emailError" class="text-red-500 text-sm mt-1">{{ emailError }}</p>
-          </div> -->
-
-          <div class="flex flex-col mt-4">
-            <label class="text-sm" for="email"><strong>Email</strong></label>
-            <input v-model="email" type="string" id="email" class="input input-bordered w-full" required />
-            <p v-if="emailError" class="text-red-500 text-sm mt-1">{{ emailError }}</p>
           </div>
 
           <div class="flex flex-col mt-4">
@@ -30,28 +23,22 @@
           </div>
 
           <div class="flex flex-col mt-4">
+            <label class="text-sm" for="email"><strong>Email</strong></label>
+            <input v-model="email" type="string" id="email" class="input input-bordered w-full" required />
+            <p v-if="emailError" class="text-red-500 text-sm mt-1">{{ emailError }}</p>
+          </div>
+
+          <div class="flex flex-col mt-4">
             <label class="text-sm" for="phone"><strong>Teléfono</strong></label>
             <input v-model="phone" type="text" id="phone" class="input input-bordered w-full" required />
             <p v-if="phoneError" class="text-red-500 text-sm mt-1">{{ phoneError }}</p>
-          </div>
-
-          <div class="flex flex-col mt-4">
-            <label class="text-sm" for="password"><strong>Contraseña</strong></label>
-            <input v-model="password" type="password" id="password" class="input input-bordered w-full" required />
-          </div>
-
-          <!-- Campo para confirmar la contraseña -->
-          <div class="flex flex-col mt-4">
-            <label class="text-sm" for="confirmPassword"><strong>Confirmar Contraseña</strong></label>
-            <input v-model="confirmPassword" type="password" id="confirmPassword" class="input input-bordered w-full" required />
-            <p v-if="confirmPasswordError" class="text-red-500 text-sm mt-1">{{ confirmPasswordError }}</p>
           </div>
 
           <button
             type="submit"
             class="btn-md btn btn-primary text-white w-full mt-4"
           >
-            <span v-if="!isLoading">Registrarme y entrar</span>
+            <span v-if="!isLoading">Reservar mi cupo</span>
             <span v-else class="loading loading-dots loading-sm"></span>
           </button>
           <p v-if="errorMessage" class="text-red-500 text-sm mt-1">{{ errorMessage }}</p>
@@ -69,9 +56,9 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
 import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
-import { collection, query, where, getDocs, doc, setDoc } from 'firebase/firestore';
+import { doc, setDoc } from 'firebase/firestore';
 import { db } from '@/firebase';
 import { useRouter, useRoute } from 'vue-router';
 
@@ -96,19 +83,25 @@ const auth = getAuth();
 const router = useRouter();
 const route = useRoute();
 
-const checkExistingPhoneNumber = async () => {
-  const q = query(collection(db, 'spectators'), where('phone', '==', phone.value));
-  const querySnapshot = await getDocs(q);
+onMounted(() => {
+  password.value = route.params.idEvent;
+  confirmPassword.value = route.params.idEvent;
+});
+// Se comenta porque el telefono ya no es el determinante para el registro, varios usuarios podrian tener el mismo telefono
 
-  if (!querySnapshot.empty) {
-    phoneError.value = 'El número de teléfono ya está en uso';
-    isLoading.value = false;
-    return false;
-  }
+// const checkExistingPhoneNumber = async () => {
+//   const q = query(collection(db, 'spectators'), where('phone', '==', phone.value));
+//   const querySnapshot = await getDocs(q);
 
-  phoneError.value = '';
-  return true;
-};
+//   if (!querySnapshot.empty) {
+//     phoneError.value = 'El número de teléfono ya está en uso';
+//     isLoading.value = false;
+//     return false;
+//   }
+
+//   phoneError.value = '';
+//   return true;
+// };
 
 const validateEmail = () => {
   const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -147,12 +140,15 @@ const submitForm = async () => {
 
   // Verificar que no existan errores
   if (emailError.value === '' && phoneError.value === '' && confirmPasswordError.value === '') {
-    const isPhoneAvailable = await checkExistingPhoneNumber();
 
-    if (!isPhoneAvailable) {
-      isLoading.value = false;
-      return;
-    }
+    // Se comenta porque el telefono ya no es el determinante para el registro, varios usuarios podrian tener el mismo telefono
+
+    // const isPhoneAvailable = await checkExistingPhoneNumber();
+
+    // if (!isPhoneAvailable) {
+    //   isLoading.value = false;
+    //   return;
+    // }
 
     try {
       // Crear el usuario en Authentication
