@@ -37,7 +37,7 @@
               <div class="mt-4 alert alert-info rounded-none">
                 <span class="text-xs">Comparte al link del programa del concierto a tu grupo para que puedan seguir con la experiencia en sus propios dispositivos</span>
               </div>
-              <a :href='`https://wa.me/?text=https://cuarenta-minutos.web.app/booking/${eventParams}/?referenceLink=true%26hostId=${spectator.uId}`'>
+              <a :href='`https://wa.me/?text=https://cuarenta-minutos.web.app/sign-in/${eventParams}/?referenceLink=true%26hostId=${spectator.uId}`'>
                 <button class="btn btn-active mt-2 w-full"><ShareIcon class="-ml-1 mr-3 h-4 w-4" aria-hidden="true" />Compartir link</button>
               </a>
             </div>

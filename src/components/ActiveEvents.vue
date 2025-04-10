@@ -1,12 +1,12 @@
 <template>
     <div>
       <section class="py-8">
-        <div class="mx-auto max-w-screen-xl px-4">          
+        <div class="mx-auto max-w-screen-xl">          
           <!-- Carrusel de daisyUI -->
           <div class="relative w-full overflow-hidden">
-            <div class="carousel carousel-center rounded-box gap-4" id="carousel">
+            <div class="carousel carousel-center w-full rounded-box gap-4" id="carousel">
               <!-- Asegurando que cada tarjeta tenga el ancho adecuado -->
-              <div v-for="event in activeEvents" :key="event.id" class="carousel-item w-full max-w-4xl mx-auto px-2">
+              <div v-for="event in activeEvents" :key="event.id" class="carousel-item w-full mx-auto">
                 <!-- La tarjeta con ancho controlado -->
                 <div class="card bg-black text-white shadow-xl h-full w-full">
                   <div class="card-body">
@@ -25,7 +25,7 @@
                         v-if="!event.isOver && event.isFreeEntrance && !currentUser"
                         type="button"
                         class="btn btn-sm md:btn-md bg-white text-black hover:bg-gray-200 border-transparent"
-                        @click="router.push({ name: 'SignIn', params: { idEvent: event.id } })"
+                        @click="router.push({ name: 'LogIn', params: { idEvent: event.id } })"
                       >
                         <span>Quiero asistir</span>
                       </button>
@@ -48,7 +48,7 @@
                         v-if="!currentUser && event.isOver"
                         type="button"
                         class="btn btn-sm md:btn-md btn-outline text-white hover:bg-white hover:text-black"
-                        @click="router.push({ name: 'SignIn' })"
+                        @click="router.push({ name: 'LogIn' })"
                       >
                         <span>Realizar mi aporte</span>
                       </button>
@@ -67,7 +67,7 @@
         </div>
       </section>
 
-      <div class="mx-auto grid max-w-screen-xl rounded-lg bg-white p-8 md:p-8 lg:grid-cols-12 lg:gap-8 lg:p-16 xl:gap-16"
+      <div class="mx-auto grid max-w-screen-xl rounded-2xl bg-white p-8 md:p-8 lg:grid-cols-12 lg:gap-8 lg:p-16 xl:gap-16"
       >
         <div class="me-auto place-self-center lg:col-span-7">
           <h1
@@ -236,7 +236,7 @@ const checkIdAndRedirect = async () => {
         codeIdForPrivateEvents.value = null;
         window.scrollTo({top: 0, behavior: "smooth"});
       } else {
-        router.push({ name: 'SignIn', params: { idEvent: eventId } });
+        router.push({ name: 'LogIn', params: { idEvent: eventId } });
       }
     } else {
       // No se encontró ningún documento

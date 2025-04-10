@@ -3,7 +3,7 @@
   <div>
     <div class="flex flex-row items-center justify-between mb-10">
       <img src="../assets/logo_horizontal.png" width="150" />
-      <router-link to="/signin" class="btn bg-white border-none">Entrar</router-link>
+      <router-link to="/login" class="btn bg-white border-none">Entrar</router-link>
     </div>
     <h1 class="justify-self-start text-2xl text-gray-900 font-bold">Inscríbete a nuestro próximos eventos</h1>
     <ActiveEvents />

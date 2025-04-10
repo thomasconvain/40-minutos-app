@@ -3,9 +3,9 @@ import { auth } from '@/firebase';
 import { onAuthStateChanged } from 'firebase/auth';
 
 import Home from '@/views/Home.vue';
-import OnlineBooking from '@/views/OnlineBooking.vue';
-import PasswordReset from '@/views/PasswordReset.vue';
 import SignIn from '@/views/SignIn.vue';
+import PasswordReset from '@/views/PasswordReset.vue';
+import LogIn from '@/views/LogIn.vue';
 import SpectatorProfile from '@/views/SpectatorProfile.vue';
 import EventDetail from '@/views/EventDetail.vue';
 import Checkout from '@/views/Checkout.vue';
@@ -21,9 +21,9 @@ const routes = [
     component: Home,
   },
   {
-    path: '/booking/:idEvent',
-    name: 'Booking',
-    component: OnlineBooking,
+    path: '/sign-in/:idEvent?',
+    name: 'SignIn',
+    component: SignIn,
   },
   {
     path: '/password-reset',
@@ -31,9 +31,9 @@ const routes = [
     component: PasswordReset,
   },
   {
-    path: '/signin/:idEvent?',
-    name: 'SignIn',
-    component: SignIn,
+    path: '/login/:idEvent?',
+    name: 'LogIn',
+    component: LogIn,
   },
   {
     path: '/profile/:idSpectator',

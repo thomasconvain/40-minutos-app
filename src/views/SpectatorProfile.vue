@@ -1,6 +1,6 @@
 <template>
   <div>
-    <button class="btn bg-white bg-opacity-30 border-none mb-4" @click="logout">
+    <button class="btn bg-white border-none mb-4" @click="logout">
       Salir
     </button>
     <h1 class="text-2xl font-bold mb-6">Hola {{ spectator?.name }}👋</h1>
@@ -64,7 +64,7 @@
                   "
                 >
                   <a
-                    :href="`https://wa.me/?text=https://cuarenta-minutos.web.app/booking/${event.id}/?referenceLink=true%26hostId=${spectator.uId}`"
+                    :href="`https://wa.me/?text=https://cuarenta-minutos.web.app/sign-in/${event.id}/?referenceLink=true%26hostId=${spectator.uId}`"
                   >
                     <button class="btn btn-active mt-2 w-full">
                       <ShareIcon

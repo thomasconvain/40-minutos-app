@@ -57,7 +57,7 @@
           <p v-if="errorMessage" class="text-red-500 text-sm mt-1">{{ errorMessage }}</p>
         </form>
         <button
-            @click="router.push({name:'SignIn', params: { idEvent: route.params.idEvent }})"
+            @click="router.push({name:'LogIn', params: { idEvent: route.params.idEvent }})"
             type="submit"
             class="btn-md btn btn-link text-black w-full mt-2"
           >
