@@ -167,6 +167,7 @@ const submitForm = async () => {
         numberOfPeople: numberOfPeople.value,
         isChecked: isChecked.value,
         uniquePaymentForGroup: uniquePaymentForGroup.value,
+        passwordChanged: true,
         subscribedEventsId: route.params.idEvent
           ? route.params.idEvent.split(',').map(id => id.trim())
           : [],
