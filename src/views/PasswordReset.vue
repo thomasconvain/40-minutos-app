@@ -57,7 +57,7 @@
               class="btn bg-white border-none" 
               @click="goToHome"
             >
-              Volver
+              Volver al home
             </button>
           </div>
         </form>
