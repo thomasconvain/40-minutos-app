@@ -48,6 +48,7 @@
             :class="messageType === 'success' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'"
           >
             <p>{{ message }}</p>
+            <p v-if="errorCode" class="text-sm mt-2">Código de error: {{ errorCode }}</p>
           </div>
           
           <!-- Botón para ir a Home, siempre visible -->
@@ -67,32 +68,19 @@
 
 <script setup>
 import { ref } from 'vue';
-import { getAuth, sendPasswordResetEmail, fetchSignInMethodsForEmail } from "firebase/auth";
+import { getAuth, sendPasswordResetEmail } from "firebase/auth";
 import { useRouter } from 'vue-router';
 
 // Estado del formulario
 const email = ref('');
 const message = ref('');
 const messageType = ref('');
+const errorCode = ref('');
 const isLoading = ref(false);
 
 // Servicio de autenticación
 const auth = getAuth();
 const router = useRouter();
-/**
- * Verifica si el email existe en Firebase Authentication
- * @param {string} email - El email a verificar
- * @returns {Promise<boolean>} - True si el email existe, false si no
- */
-const checkEmailExists = async (email) => {
-  try {
-    const methods = await fetchSignInMethodsForEmail(auth, email);
-    return methods.length > 0;
-  } catch (error) {
-    console.error("Error al verificar el email:", error);
-    return false;
-  }
-};
 
 /**
  * Navega a la página Home
@@ -110,32 +98,35 @@ const handleReset = async () => {
   
   isLoading.value = true;
   message.value = '';
+  errorCode.value = '';
   
   try {
-    // Verificar primero si el email existe en Firestore
-    const emailExists = await checkEmailExists(email.value);
-    
-    if (!emailExists) {
-      messageType.value = 'error';
-      message.value = `No existe una cuenta asociada a este correo`;
-      isLoading.value = false;
-      return;
-    }
-    
-    // Si el email existe, enviar el correo de recuperación
+    // Enviar directamente el correo de recuperación sin verificación previa
+    console.log('Enviando correo de restablecimiento a:', email.value);
     await sendPasswordResetEmail(auth, email.value);
+    
     messageType.value = 'success';
     message.value = "Se ha enviado un correo para restablecer tu contraseña.";
+    console.log('Correo de restablecimiento enviado con éxito');
   } catch (error) {
+    console.error('Error completo:', error);
+    console.error('Código de error:', error.code);
+    console.error('Mensaje de error:', error.message);
+    
     messageType.value = 'error';
+    errorCode.value = error.code || 'unknown-error';
     
     // Personalizar mensajes de error comunes para mejorar la experiencia de usuario
     if (error.code === 'auth/user-not-found') {
       message.value = "No existe una cuenta asociada a este correo. Debes hacer la reserva por primera vez.";
     } else if (error.code === 'auth/invalid-email') {
       message.value = "El formato del correo electrónico no es válido.";
+    } else if (error.code === 'auth/missing-email') {
+      message.value = "Por favor, ingresa tu dirección de correo electrónico.";
     } else if (error.code === 'auth/too-many-requests') {
       message.value = "Demasiados intentos. Por favor, inténtalo más tarde.";
+    } else if (error.code === 'auth/network-request-failed') {
+      message.value = "Error de conexión. Verifica tu conexión a internet e intenta nuevamente.";
     } else {
       message.value = "Error al enviar el correo: " + error.message;
     }
