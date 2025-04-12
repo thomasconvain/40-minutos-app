@@ -7,12 +7,6 @@
           Crear una cuenta <br/>
         </h1>
         <form @submit.prevent="submitForm">
-          <!-- <div class="flex flex-col">
-            <label class="text-sm" for="email"><strong>¿Cuantas personas asistirán?</strong></label>
-            <input v-model="numberOfPeople" type="number" min="1" placeholder="Ingresa el número total de participantes" id="numberOfPeople" class="input input-bordered w-full" required />
-            <p v-if="emailError" class="text-red-500 text-sm mt-1">{{ emailError }}</p>
-          </div> -->
-
           <div class="flex flex-col mt-4">
             <label class="text-sm" for="email"><strong>Email</strong></label>
             <input v-model="email" type="string" id="email" class="input input-bordered w-full" required />
@@ -81,7 +75,6 @@ const lastName = ref('');
 const phone = ref('+56');
 const password = ref('');
 const confirmPassword = ref(''); // Campo para confirmar contraseña
-const numberOfPeople = ref(1);
 const isChecked = ref(false);
 const uniquePaymentForGroup = ref(true);
 
@@ -95,20 +88,6 @@ const isLoading = ref(false);
 const auth = getAuth();
 const router = useRouter();
 const route = useRoute();
-
-// const checkExistingPhoneNumber = async () => {
-//   const q = query(collection(db, 'spectators'), where('phone', '==', phone.value));
-//   const querySnapshot = await getDocs(q);
-
-//   if (!querySnapshot.empty) {
-//     phoneError.value = 'El número de teléfono ya está en uso';
-//     isLoading.value = false;
-//     return false;
-//   }
-
-//   phoneError.value = '';
-//   return true;
-// };
 
 const validateEmail = () => {
   const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -144,16 +123,14 @@ const validateFormat = () => {
 const submitForm = async () => {
   isLoading.value = true;
   validateFormat();
+  if (emailError.value === "test@test.cl") {
+    isLoading.value = false;
+    return
+  }
+
 
   // Verificar que no existan errores
   if (emailError.value === '' && phoneError.value === '' && confirmPasswordError.value === '') {
-    // const isPhoneAvailable = await checkExistingPhoneNumber();
-
-    // if (!isPhoneAvailable) {
-    //   isLoading.value = false;
-    //   return;
-    // }
-
     try {
       // Crear el usuario en Authentication
       const userCredential = await createUserWithEmailAndPassword(auth, email.value, password.value);
@@ -164,7 +141,6 @@ const submitForm = async () => {
         hostId: route.query.hostId ? route.query.hostId : 'none',
         name: name.value,
         phone: phone.value,
-        numberOfPeople: numberOfPeople.value,
         isChecked: isChecked.value,
         uniquePaymentForGroup: uniquePaymentForGroup.value,
         passwordChanged: true,

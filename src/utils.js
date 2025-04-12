@@ -19,7 +19,7 @@ export const fetchSpectators = async (eventId) => {
     querySnapshot.forEach(doc => {
       const data = doc.data();
       if (data.numberOfPeople) {
-        total += data.numberOfPeople;
+        total += (data.numberOfPeople + data.numberOfCompanions);
       }
     });
     return total; // Retorna el total de personas inscritas (filtrado por eventos si se proporcionan IDs)

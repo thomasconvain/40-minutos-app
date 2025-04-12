@@ -69,6 +69,7 @@ const phone = ref('+56');
 const password = ref('');
 const confirmPassword = ref(''); // Campo para confirmar contraseña
 const numberOfPeople = ref(1);
+const numberOfCompanions = ref(1);
 const isChecked = ref(false);
 const uniquePaymentForGroup = ref(true);
 
@@ -87,21 +88,6 @@ onMounted(() => {
   password.value = route.params.idEvent;
   confirmPassword.value = route.params.idEvent;
 });
-// Se comenta porque el telefono ya no es el determinante para el registro, varios usuarios podrian tener el mismo telefono
-
-// const checkExistingPhoneNumber = async () => {
-//   const q = query(collection(db, 'spectators'), where('phone', '==', phone.value));
-//   const querySnapshot = await getDocs(q);
-
-//   if (!querySnapshot.empty) {
-//     phoneError.value = 'El número de teléfono ya está en uso';
-//     isLoading.value = false;
-//     return false;
-//   }
-
-//   phoneError.value = '';
-//   return true;
-// };
 
 const validateEmail = () => {
   const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -137,20 +123,13 @@ const validateFormat = () => {
 const submitForm = async () => {
   isLoading.value = true;
   validateFormat();
-
+  numberOfCompanions.value = numberOfPeople.value === 1
+  ? 0
+  : (numberOfPeople.value -1)
   // Verificar que no existan errores
   if (emailError.value === '' && phoneError.value === '' && confirmPasswordError.value === '') {
-
-    // Se comenta porque el telefono ya no es el determinante para el registro, varios usuarios podrian tener el mismo telefono
-
-    // const isPhoneAvailable = await checkExistingPhoneNumber();
-
-    // if (!isPhoneAvailable) {
-    //   isLoading.value = false;
-    //   return;
-    // }
-
     try {
+      console.log("Valor antes de guardar:", numberOfPeople.value);
       // Crear el usuario en Authentication
       const userCredential = await createUserWithEmailAndPassword(auth, email.value, password.value);
       const user = userCredential.user;
@@ -161,10 +140,12 @@ const submitForm = async () => {
         name: name.value,
         phone: phone.value,
         numberOfPeople: numberOfPeople.value,
+        numberOfCompanions: numberOfCompanions.value,
         isChecked: isChecked.value,
         uniquePaymentForGroup: uniquePaymentForGroup.value,
         subscribedEventsId: route.params.idEvent.split(',').map(id => id.trim()),
       };
+      console.log("Objeto a guardar:", spectatorData);
 
       // Guardar documento en Firestore
       await setDoc(doc(db, 'spectators', user.uid), spectatorData);
@@ -182,3 +163,5 @@ const submitForm = async () => {
   isLoading.value = false;
 };
 </script>
+
+<!-- hola -->

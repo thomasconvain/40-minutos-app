@@ -38,12 +38,12 @@
               <p><strong>Fecha:</strong> {{ formatDate(event.date) }}</p>
               <p>
                 <strong>Te acompañan:</strong>
-                {{ spectator.numberOfPeople -1 }} personas
+                {{ spectator.numberOfCompanions }} personas
               </p>
-              <p>
+              <!-- <p>
                 <strong>Total de inscritos:</strong>
                 {{ eventAttendees[event.id] || 0 }} personas
-              </p>
+              </p> -->
               <p v-if="event.hostName">
                 <strong>Anfitrión:</strong> {{ event.hostName }}
               </p>
@@ -100,15 +100,6 @@
       <p v-else class="my-4">
         <strong>No estás inscrito a ningún evento.</strong>
       </p>
-      <p class="my-4">
-        <strong>Revisa nuestros próximos eventos:</strong>
-      </p>
-      <ActiveEvents 
-        :isSpectatorSubscribed="checkSubscription"
-        :openModalSuccessAfterLogin="subscriptionAfterLogin"
-        :routerQueryIdEvent="route.query.idEvent"
-        @updateSubscribedEvents="({ eventId, numberOfPeople }) => addSubscribedEventId(auth.currentUser.uid, eventId, numberOfPeople)"
-      />
       </div>
     <div v-else class="flex justify-center w-full">
       <span class="loading loading-spinner loading-md"></span>
@@ -123,7 +114,7 @@ import { getFirestore, doc, getDoc, updateDoc, collection, arrayUnion  } from "f
 import { auth } from '@/firebase';
 import { onAuthStateChanged, signOut, sendPasswordResetEmail } from 'firebase/auth';
 import { InformationCircleIcon, ShareIcon } from "@heroicons/vue/24/outline";
-import ActiveEvents from "@/components/ActiveEvents.vue";
+// import ActiveEvents from "@/components/ActiveEvents.vue";
 import { fetchSpectators } from '@/utils'
 
 // Cambia de un valor simple a un objeto que mapea eventId -> número de personas
@@ -189,10 +180,6 @@ const fetchEvents = async (eventIds) => {
   } catch (error) {
     console.error("Error al obtener los detalles de los eventos:", error);
   }
-};
-
-const checkSubscription = (eventId) => {
-  return spectator.value.subscribedEventsId.includes(eventId);
 };
 
 const addSubscribedEventId = async (spectatorId, eventId, numberOfPeople) => {
