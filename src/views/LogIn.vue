@@ -21,13 +21,13 @@
         <span>Entrar</span>
       </button>
     </form>
-    <button
+    <!-- <button
         @click="router.push({name:'SignIn', params: { idEvent: eventId }})"
         type="submit"
         class="btn-md btn btn-primary btn-outline text-white w-full mt-4"
       >
         <span>¿Aún no tienes cuenta?</span>
-      </button>
+      </button> -->
     <button
         @click="router.push({name:'PasswordReset'})"
         class="btn-md btn btn-link btn-primary text-black w-full mt-4"

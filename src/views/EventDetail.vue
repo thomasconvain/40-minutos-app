@@ -1,218 +1,273 @@
 <template>
-  <div>
-    <button class="btn bg-white border-none mb-4" @click="$router.go(-1)">Volver</button>
-    <h1 class="text-2xl font-bold mb-6">{{ nameEvent }}</h1>
-    <p class="mb-6">{{ eventDescription }}</p>
-    <div v-if="themes.length">
-      <div class="my-8" v-if="spectator.numberOfPeople > 1">
-        <div class="alert alert-info rounded-none">
-          <span class="text-xs">Comparte al link del programa del concierto a tu grupo para que puedan seguir con la experiencia en sus propios dispositivos</span>
-        </div>
-        <a :href='`https://wa.me/?text=https://cuarenta-minutos.web.app/event/${spectatorParams}/${eventParams}/?referenceLink=true%26idVisitor=visitor-${randomId}`'>
-          <button class="btn btn-active mt-2 w-full"><ShareIcon class="-ml-1 mr-3 h-4 w-4" aria-hidden="true" />Compartir link</button>
-        </a>
+  <div class="reservation-container">
+    <!-- Cabecera con título y botón volver -->
+    <div class="flex justify-between items-center mt-8">
+      <h1 class="card-title">Reserva tu cupo</h1>
+      <button class="btn bg-white border-none" @click="$router.go(-1)">Volver</button>
+    </div>
+    
+    <!-- Selector de número de personas - siempre visible -->
+    <div class="form-group mt-4 mb-6">
+      <label class="text-sm font-bold" for="numberOfPeople">¿Cuántas personas asistirán?</label>
+      <input 
+        v-model="numberOfPeople" 
+        type="number" 
+        min="1" 
+        placeholder="Ingresa el número total de participantes" 
+        id="numberOfPeople" 
+        class="input input-bordered w-full" 
+        required 
+      />
+    </div>
+    
+    <!-- Opciones iniciales -->
+    <div v-if="!showForm" class="options-container">
+      <!-- Opción para usuarios existentes -->
+      <div class="option-group mb-4">
+        <p class="mb-2 text-gray-800">
+          ¿Ya tienes una cuenta? Si participaste en eventos anteriores, puedes ingresar con tus credenciales existentes.
+        </p>
+        <button
+          @click="goToLogin"
+          type="button"
+          class="btn-md btn btn-primary text-white w-full"
+          :disabled="isLoading"
+        >
+          <span>Ir a mi cuenta</span>
+        </button>
       </div>
-      <h2 class="text-xl font-semibold mb-4">Programa:</h2>
-      <ul>
-        <li v-for="theme in themes" :key="theme.id" class="mb-4 bg-white rounded-md">
-          <ThemeItem :theme="theme" @onRateChange="handleRateChange"/>
-        </li>
-      </ul>
-    </div>
-    <div v-else class="mb-4 p-4 border bg-white rounded-md w-full">
-    <div class="skeleton h-6 w-32 rounded-none"></div>
-    <div class="flex flex-wrap sm:flex-nowrap items-center justify-center sm:justify-start gap-4">
-      <div class="skeleton h-20 w-20 shrink-0 rounded-full"></div>
-      <div class="my-4 flex flex-col grow gap-2">
-        <div class="skeleton h-4 w-20 rounded-none "></div>
-        <div class="skeleton h-32 w-full rounded-none"></div>
-        <div>
-          <div class="skeleton h-4 w-20 mb-2 rounded-none"></div>
-          <div class="flex items-center">
-          <div class="skeleton h-4 w-32 rounded-none"></div>
-          </div>
-        </div>
+      
+      <!-- Opción para nuevos usuarios -->
+      <div class="option-group">
+        <p class="mt-4 mb-2 text-gray-800">
+          ¿Primera vez? Puedes realizar tu reserva directamente sin necesidad de crear una cuenta.
+        </p>
+        <button
+          @click="showForm = true"
+          type="button"
+          class="btn-md btn btn-outline text-primary w-full border-primary hover:bg-primary hover:text-white"
+          :disabled="isLoading"
+        >
+          <span>Reservar sin cuenta</span>
+        </button>
       </div>
     </div>
-  </div>
-    <!-- <p v-else class="text-red-500">Cargando detalles del evento y temas...</p> -->
-    <div v-if="ratings.length !== themes.length" class="alert alert-info rounded-none">
-      <InformationCircleIcon class="-ml-1 mr-3 h-5 w-5" aria-hidden="true" />
-      <span class="text-xs">Parece que no evaluaste todas las obras que hemos tocado. Nos encantaría conocer tu opinión antes de continuar. 🤓</span>
-    </div>
-    <button
-      type="button"
-      :disabled="isButtonDisabled"
-      class="btn-md btn btn-primary text-white w-full mt-4"
-      @click="goToCheckout"
-    >
-      <span v-if="!isLoading">Checkout</span>
-      <span v-else class="loading loading-dots loading-sm"></span>
-    </button>
+    
+    <!-- Formulario completo -->
+    <form v-if="showForm" @submit.prevent="submitForm" class="reservation-form mt-4">
+      <!-- Campos personales -->
+      <div class="form-group">
+        <label class="text-sm font-bold" for="name">Nombre</label>
+        <input 
+          v-model="name" 
+          type="text" 
+          id="name" 
+          class="input input-bordered w-full" 
+          required 
+        />
+      </div>
+
+      <div class="form-group mt-4">
+        <label class="text-sm font-bold" for="lastName">Apellidos</label>
+        <input 
+          v-model="lastName" 
+          type="text" 
+          id="lastName" 
+          class="input input-bordered w-full" 
+          required 
+        />
+      </div>
+
+      <div class="form-group mt-4">
+        <label class="text-sm font-bold" for="email">Email</label>
+        <input 
+          v-model="email" 
+          type="email" 
+          id="email" 
+          class="input input-bordered w-full" 
+          required 
+          @blur="validateEmail"
+        />
+        <p v-if="emailError" class="text-red-500 text-sm mt-1">{{ emailError }}</p>
+      </div>
+
+      <div class="form-group mt-4">
+        <label class="text-sm font-bold" for="phone">Teléfono</label>
+        <input 
+          v-model="phone" 
+          type="tel" 
+          id="phone" 
+          class="input input-bordered w-full" 
+          required 
+          @blur="validatePhone"
+        />
+        <p v-if="phoneError" class="text-red-500 text-sm mt-1">{{ phoneError }}</p>
+      </div>
+
+      <!-- Botón de envío -->
+      <button
+        type="submit"
+        class="btn-md btn btn-primary text-white w-full mt-6"
+        :disabled="isLoading"
+      >
+        <span v-if="isLoading">Procesando...</span>
+        <span v-else>Reservar</span>
+      </button>
+      
+      <!-- Mensaje de error general -->
+      <p v-if="errorMessage" class="text-red-500 text-center mt-4">{{ errorMessage }}</p>
+    </form>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
-import { doc, getDoc, updateDoc,  getFirestore } from 'firebase/firestore';
+import { ref, onMounted, computed } from 'vue';
+import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
+import { doc, setDoc } from 'firebase/firestore';
 import { db } from '@/firebase';
-import ThemeItem from '@/components/ThemeItem.vue';
-import { InformationCircleIcon } from '@heroicons/vue/24/outline'
+import { useRouter, useRoute } from 'vue-router';
 
-
-
-const route = useRoute();
+// Router y auth
+const auth = getAuth();
 const router = useRouter();
-const nameEvent = route.params.nameEvent;
-const idEvent = route.params.idEvent;
-const idSpectator = route.params.idSpectator;
-const eventDescription = ref('');
-const spectator = ref(null);
-const id = route.params.idSpectator;
-const randomId = ref('');
-const spectatorParams = ref('');
-const eventParams = ref('');
-const spectatorsShouldPayInTheApp = ref(true)
+const route = useRoute();
 
-const themes = ref([]);
-const ratings = ref([]); // Usar un arreglo para los ratings
-
+// Estado del formulario
+const showForm = ref(false);
 const isLoading = ref(false);
 
-// Función para capturar el rating de cada tema
-const handleRateChange = (themeId, rating) => {
-  // Buscar si ya existe un rating para este tema
-  const index = ratings.value.findIndex(item => item.themeId === themeId);
+// Campos del formulario
+const numberOfPeople = ref(1);
+const name = ref('');
+const lastName = ref('');
+const email = ref('');
+const phone = ref('+56');
+const password = ref('');
+const confirmPassword = ref('');
 
-  if (index !== -1) {
-    // Si ya existe, actualizar el rating
-    ratings.value[index].rating = rating;
-  } else {
-    // Si no existe, agregar el nuevo rating
-    ratings.value.push({ themeId, rating });
-  }
-};
+// Valores calculados
+const numberOfCompanions = computed(() => 
+  numberOfPeople.value === 1 ? 0 : (numberOfPeople.value - 1)
+);
 
-// Función para obtener los themes_id del evento y luego los detalles de los temas
-const fetchEventThemes = async () => {
+// Configuración adicional
+const isChecked = ref(false);
+const uniquePaymentForGroup = ref(true);
 
-  const eventDocRef = doc(db, 'events', idEvent);
+// Mensajes de error
+const emailError = ref('');
+const phoneError = ref('');
+const confirmPasswordError = ref('');
+const errorMessage = ref('');
 
-  try {
-    const eventDocSnap = await getDoc(eventDocRef);
-    if (eventDocSnap.exists()) {
-      const themesIds = eventDocSnap.data().themes_id;
-      spectatorsShouldPayInTheApp.value = eventDocSnap.data().spectatorsShouldPayInTheApp;
-
-      // Para cada theme_id, obtenemos los detalles del tema
-      const themeDocsPromises = themesIds.map(themeId => getDoc(doc(db, 'themes', themeId)));
-      const themeDocs = await Promise.all(themeDocsPromises);
-
-      themes.value = themeDocs
-        .filter(themeDoc => themeDoc.exists())
-        .map(themeDoc => ({ id: themeDoc.id, ...themeDoc.data() }))
-        .filter(theme => theme.isActive) 
-        .sort((a, b) => a.order - b.order);
-      
-      eventDescription.value = eventDocSnap.data().description;
-    } else {
-      console.error('No se encontró el evento con el ID proporcionado');
-    }
-  } catch (error) {
-    console.error('Error al obtener los detalles del evento:', error);
-  }
-};
-
-const fetchSpectator = async () => {
-  const db = getFirestore();
-  const docRef = doc(db, 'spectators', id);
-  
-  try {
-    const docSnap = await getDoc(docRef);
-    if (docSnap.exists()) {
-      spectator.value = docSnap.data();
-    } else {
-      console.error('No se encontró el documento con el ID proporcionado');
-    }
-  } catch (error) {
-    console.error('Error al obtener los datos del espectador:', error);
-  }
-};
-
-// Función para actualizar los ratings al hacer clic en Checkout
-const goToCheckout = async () => {
-  isLoading.value = true;
-  try {
-    // Recorrer cada rating y actualizar el documento correspondiente en Firebase
-    for (const { themeId, rating } of ratings.value) {
-      const themeRef = doc(db, 'themes', themeId);
-      const themeDoc = await getDoc(themeRef);
-      
-      if (themeDoc.exists()) {
-        // Obtener el array de ratings actual y añadir el nuevo rating
-        const currentRatings = themeDoc.data().ratings || [];
-        currentRatings.push(rating);
-        
-        // Actualizar el documento con el nuevo array de ratings
-        await updateDoc(themeRef, {
-          ratings: currentRatings
-        });
-      }
-    }
-    if(spectatorsShouldPayInTheApp.value) {
-    // Una vez que se actualizan los ratings, redirigir al checkout
-    router.push({
-      name: 'Checkout',
-      params: { idSpectator, idEvent, nameEvent },
-      query: { referenceLink: route.query.referenceLink, idVisitor: route.query.idVisitor}
-    });
-  } else {
-    router.push({
-      name: 'ThankYou',
-      query: { 
-      idSpectator: idSpectator,
-      referenceLink: route.query.referenceLink,
-      idVisitor: route.query.idVisitor,
-      idEvent: idEvent,
-      paymentMethod: 'no payment',
-      amount: 0
-      }
-    });
-  }
-  } catch (error) {
-    console.error('Error al enviar los ratings:', error);
-  }
-  isLoading.value = false;
-};
-
-// Definir la función para generar el ID aleatorio
-function generateRandomId() {
-  const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-  let result = '';
-  const charactersLength = characters.length;
-  
-  for (let i = 0; i < 4; i++) {
-    result += characters.charAt(Math.floor(Math.random() * charactersLength));
-  }
-  
-  randomId.value = result;
-}
-
-// Llamar a la función para obtener los datos cuando el componente se monte
+// Inicialización
 onMounted(() => {
-  spectatorParams.value = route.params.idSpectator;
-  eventParams.value = route.params.idEvent;
-  fetchSpectator();
-  fetchEventThemes();
-  generateRandomId();
+  password.value = route.params.idEvent;
+  confirmPassword.value = route.params.idEvent;
 });
+
+// Validaciones
+const validateEmail = () => {
+  const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  emailError.value = emailPattern.test(email.value)
+    ? ''
+    : 'Por favor ingresa un correo válido.';
+  return emailError.value === '';
+};
+
+const validatePhone = () => {
+  const phonePattern = /^\+56\d{9}$/;
+  phoneError.value = phonePattern.test(phone.value)
+    ? ''
+    : 'Por favor ingresa un número de teléfono válido en formato +56XXXXXXXXX.';
+  return phoneError.value === '';
+};
+
+const validatePasswords = () => {
+  if (password.value.length < 6) {
+    confirmPasswordError.value = 'La contraseña debe tener al menos 6 caracteres.';
+  } else if (password.value !== confirmPassword.value) {
+    confirmPasswordError.value = 'Las contraseñas no coinciden.';
+  } else {
+    confirmPasswordError.value = '';
+  }
+  return confirmPasswordError.value === '';
+};
+
+const validateForm = () => {
+  const isEmailValid = validateEmail();
+  const isPhoneValid = validatePhone();
+  const isPasswordValid = validatePasswords();
+  return isEmailValid && isPhoneValid && isPasswordValid;
+};
+
+// Acciones
+const goToLogin = () => {
+  router.push({
+    name: 'LogIn', 
+    params: { idEvent: route.params.idEvent },
+    query: { 
+      ...route.query,
+      numberOfPeople: numberOfPeople.value 
+    }
+  });
+};
+
+const submitForm = async () => {
+  try {
+    isLoading.value = true;
+    
+    if (!validateForm()) {
+      return;
+    }
+    
+    // Crear usuario en Authentication
+    const userCredential = await createUserWithEmailAndPassword(auth, email.value, password.value);
+    const user = userCredential.user;
+    
+    // Preparar datos para Firestore
+    const spectatorData = {
+      email: email.value,
+      uId: user.uid,
+      hostId: route.query.hostId ? route.query.hostId : 'none',
+      name: name.value,
+      lastName: lastName.value,
+      phone: phone.value,
+      numberOfPeople: numberOfPeople.value,
+      numberOfCompanions: numberOfCompanions.value,
+      isChecked: isChecked.value,
+      uniquePaymentForGroup: uniquePaymentForGroup.value,
+      subscribedEventsId: route.params.idEvent.split(',').map(id => id.trim()),
+    };
+    
+    // Guardar en Firestore
+    await setDoc(doc(db, 'spectators', user.uid), spectatorData);
+    
+    // Redirigir al perfil
+    router.push({ 
+      name: 'Profile', 
+      params: { idSpectator: user.uid }, 
+      query: { idEvent: route.params.idEvent } 
+    });
+  } catch (error) {
+    if (error.code === 'auth/email-already-in-use') {
+      emailError.value = 'El email ya está en uso. Por favor, elige otro o intenta iniciar sesión.';
+    } else {
+      errorMessage.value = 'Error al crear usuario: ' + error.message;
+    }
+  } finally {
+    isLoading.value = false;
+  }
+};
 </script>
 
-<style>
-
-.background-circle {
-  background-image: url("../assets/gradient_bg.png");
+<style scoped>
+.form-group label {
+  display: block;
+  margin-bottom: 0.5rem;
 }
 
+.reservation-container {
+  max-width: 100%;
+}
 </style>
