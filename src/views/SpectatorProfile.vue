@@ -6,9 +6,6 @@
     <h1 class="text-2xl font-bold mb-6">Hola {{ spectator?.name }}👋</h1>
     <p v-if="events.length">Acá podrás ver todos los eventos en los que estás inscrito.</p>
     <div class="mt-4" v-if="spectator">
-      <!-- <p v-if="events.length" class="my-4">
-        <strong>Estás inscrito para los siguientes eventos:</strong>
-      </p> -->
       <div v-if="events.length">
         <div class="indicator w-full flex flex-col gap-4">
           <div
@@ -29,10 +26,6 @@
                 <strong>Te acompañan:</strong>
                 {{ spectator.numberOfCompanions }} personas
               </p>
-              <!-- <p>
-                <strong>Total de inscritos:</strong>
-                {{ eventAttendees[event.id] || 0 }} personas
-              </p> -->
               <p v-if="event.hostName">
                 <strong>Anfitrión:</strong> {{ event.hostName }}
               </p>
@@ -84,25 +77,31 @@
         </p>
       </div>
 
-      <div v-if="spectator && !spectator.passwordChanged" class="alert alert-warning rounded-none my-6 flex sm:justify-between justify-center flex-wrap">
-      <span class="text-m">Para volver a entrar a este sitio de reserva debes crear tu contraseña<br>
-        <span class="text-xs">Es por la seguridad de tus datos personales 😀</span><br>
-        <span v-if="message !== ''" class="text-sm text-blank-500">
-        {{ message }}
-      </span>
-      </span>
-      <button v-if="message === ''" class="btn bg-white hover:bg-white/80 text-black border-none text-sm md:w-auto w-full" @click="handleReset">
-          Crear contraseña
-      </button>
-    </div>
+      <!-- Solo mostrar el mensaje si: 
+          1. No ha cambiado la contraseña
+          2. No tiene el parámetro específico 'hidePasswordPrompt=true' -->
+      <div 
+        v-if="spectator && !spectator.passwordChanged && !$route.query.hidePasswordPrompt" 
+        class="alert alert-warning rounded-none my-6 flex sm:justify-between justify-center flex-wrap"
+      >
+        <span class="text-m">Para volver a entrar a este sitio de reserva debes crear tu contraseña<br>
+          <span class="text-xs">Es por la seguridad de tus datos personales 😀</span><br>
+          <span v-if="message !== ''" class="text-sm text-blank-500">
+          {{ message }}
+        </span>
+        </span>
+        <button v-if="message === ''" class="btn bg-white hover:bg-white/80 text-black border-none text-sm md:w-auto w-full" @click="handleReset">
+            Crear contraseña
+        </button>
+      </div>
 
       <div v-else-if="isLoading" class="flex justify-center w-full">
         <span class="loading loading-spinner loading-md"></span>
       </div>
-      <p v-else class="my-4">
+      <p v-else-if="!events.length" class="my-4">
         <strong>No estás inscrito a ningún evento.</strong>
       </p>
-      </div>
+    </div>
     <div v-else class="flex justify-center w-full">
       <span class="loading loading-spinner loading-md"></span>
     </div>
@@ -112,38 +111,88 @@
 <script setup>
 import { ref, onMounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
-import { getFirestore, doc, getDoc, updateDoc, collection, arrayUnion  } from "firebase/firestore";
+import { 
+  getFirestore, 
+  doc, 
+  getDoc, 
+  updateDoc, 
+  collection, 
+  arrayUnion 
+} from "firebase/firestore";
 import { auth } from '@/firebase';
 import { onAuthStateChanged, signOut, sendPasswordResetEmail } from 'firebase/auth';
 import { InformationCircleIcon, ShareIcon } from "@heroicons/vue/24/outline";
-// import ActiveEvents from "@/components/ActiveEvents.vue";
-import { fetchSpectators } from '@/utils'
+import { fetchSpectators } from '@/utils';
 
-// Cambia de un valor simple a un objeto que mapea eventId -> número de personas
+// Estado de la aplicación
 const eventAttendees = ref({}); 
+const currentUser = ref(null);
+const spectator = ref(null);
+const events = ref([]);
+const isLoading = ref(true);
+const message = ref('');
+const subscriptionAfterLogin = ref(false);
+
+// Router y parámetros
+const route = useRoute();
+const router = useRouter();
+const idSpectator = route.params.idSpectator;
+
+// Inicialización principal
+onMounted(() => {
+  // Si se viene del login, añadir el parámetro para ocultar el mensaje
+  if (route.query.from === 'login' || document.referrer.includes('/login')) {
+    // Modificar la URL sin recargar la página para añadir hidePasswordPrompt=true
+    const newUrl = new URL(window.location.href);
+    newUrl.searchParams.set('hidePasswordPrompt', 'true');
+    window.history.replaceState({}, '', newUrl);
+  }
+  
+  // Inicializar la aplicación
+  init();
+});
+
+// Inicialización principal
+const init = async () => {
+  // Establecer observador de autenticación
+  onAuthStateChanged(auth, (user) => {
+    currentUser.value = user;
+  });
+  
+  // Obtener ID de evento de la URL si existe
+  const eventIdFromUrl = route.query.idEvent;
+  
+  // Si hay un ID de evento en la URL, obtener asistentes
+  if (eventIdFromUrl) {
+    fetchEventAttendees(eventIdFromUrl);
+  }
+  
+  // Cargar datos del espectador
+  await fetchSpectator();
+  
+  // Si hay un ID de evento en la URL, suscribir al usuario
+  if (eventIdFromUrl) {
+    subscriptionAfterLogin.value = true;
+    await addSubscribedEventId(idSpectator, eventIdFromUrl, 1);
+  }
+  
+  isLoading.value = false;
+};
 
 // Obtiene cantidad de asistentes por evento
 const fetchEventAttendees = async (eventId) => {
-  const count = await fetchSpectators(eventId);
-  eventAttendees.value[eventId] = count;
+  try {
+    const count = await fetchSpectators(eventId);
+    eventAttendees.value[eventId] = count;
+  } catch (error) {
+    console.error("Error al obtener asistentes:", error);
+    eventAttendees.value[eventId] = 0;
+  }
 };
-
-// Obtener el ID del espectador desde la ruta
-const route = useRoute();
-const idSpectator = route.params.idSpectator;
-const currentUser = ref(null);
-const subscriptionAfterLogin = ref(false);
-const isLoading = ref(true); // Variable reactiva para mostrar un spinner de carga
-const message = ref(''); // Mensaje para mostrar al usuario cuando solicita configurar contraseña
-
-// Variables reactivas para almacenar los datos del espectador y los eventos
-const spectator = ref(null);
-const events = ref([]);
-const router = useRouter(); // Instancia de Vue Router
 
 // Función para obtener los datos del espectador desde Firestore
 const fetchSpectator = async () => {
-  isLoading.value = true
+  isLoading.value = true;
   const db = getFirestore();
   const docRef = doc(db, "spectators", idSpectator);
 
@@ -151,17 +200,25 @@ const fetchSpectator = async () => {
     const docSnap = await getDoc(docRef);
     if (docSnap.exists()) {
       spectator.value = docSnap.data();
-      await fetchEvents(spectator.value["subscribedEventsId"]);
+      if (spectator.value.subscribedEventsId && spectator.value.subscribedEventsId.length > 0) {
+        await fetchEvents(spectator.value.subscribedEventsId);
+      } else {
+        events.value = [];
+      }
     } else {
       console.error("No se encontró el documento con el ID proporcionado");
     }
   } catch (error) {
     console.error("Error al obtener los datos del espectador:", error);
+  } finally {
+    isLoading.value = false;
   }
 };
 
 // Función para obtener los detalles de los eventos usando los IDs
 const fetchEvents = async (eventIds) => {
+  if (!eventIds || eventIds.length === 0) return;
+  
   const db = getFirestore();
   const eventsCollection = collection(db, "events");
 
@@ -185,19 +242,18 @@ const fetchEvents = async (eventIds) => {
 };
 
 const addSubscribedEventId = async (spectatorId, eventId, numberOfPeople) => {
+  if (!spectatorId || !eventId) return;
+  
   const db = getFirestore();
-  console.log('numberOfPeople', numberOfPeople); 
-  console.log('spectaroId', spectatorId);
-  console.log('newEventId', eventId);
   const spectatorDocRef = doc(db, "spectators", spectatorId);
 
   try {
     await updateDoc(spectatorDocRef, {
       subscribedEventsId: arrayUnion(eventId),
-      numberOfPeople: numberOfPeople,
+      numberOfPeople: numberOfPeople || 1,
     });
     console.log("Evento agregado correctamente.");
-    fetchSpectator();
+    await fetchSpectator();
   } catch (error) {
     console.error("Error al agregar el evento:", error);
   }
@@ -205,12 +261,17 @@ const addSubscribedEventId = async (spectatorId, eventId, numberOfPeople) => {
 
 // Función para formatear la fecha
 const formatDate = (timestamp) => {
+  if (!timestamp || typeof timestamp.toDate !== 'function') {
+    return "Fecha no disponible";
+  }
   const date = timestamp.toDate();
   return date.toLocaleDateString() + " " + date.toLocaleTimeString();
 };
 
 // Función para navegar a la página del evento
 const goToEvent = (event) => {
+  if (!event || !event.id) return;
+  
   router.push({
     name: spectator.value.isChecked ? "EventDetail" : "CheckIn",
     params: {
@@ -224,7 +285,6 @@ const goToEvent = (event) => {
 const logout = async () => {
   try {
     await signOut(auth);
-    // Redirigir a la ruta que prefieras tras el logout
     router.push('/');
   } catch (error) {
     console.error("Error al cerrar sesión:", error);
@@ -232,6 +292,11 @@ const logout = async () => {
 };
 
 const handleReset = async () => {
+  if (!spectator.value || !spectator.value.email) {
+    message.value = "Error: datos de usuario no disponibles";
+    return;
+  }
+  
   try {
     await sendPasswordResetEmail(auth, spectator.value.email);
     message.value = "✉️ Te enviamos un correo, revísalo!";
@@ -239,28 +304,6 @@ const handleReset = async () => {
     message.value = "Error al enviar el correo: " + error.message;
   }
 };
-
-onMounted(() => {
-  // Obtiene el ID del evento de la URL
-  const eventIdFromUrl = route.query.idEvent;
-  
-  // Llama a la función con el ID del evento
-  if (eventIdFromUrl) {
-    fetchEventAttendees(eventIdFromUrl);
-  } else {
-    fetchEventAttendees(); // Sin parámetro para mantener compatibilidad
-  }
-  
-  onAuthStateChanged(auth, (user) => {
-    currentUser.value = user;
-  });
-  fetchSpectator();
-  if (route.query.idEvent) {
-    subscriptionAfterLogin.value = true;
-    addSubscribedEventId(idSpectator, route.query.idEvent, 1);
-  }
-  isLoading.value = false;
-});
 </script>
 
 <style scoped></style>
