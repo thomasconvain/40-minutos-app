@@ -4,17 +4,6 @@
       Salir
     </button>
     <h1 class="text-2xl font-bold mb-6">Hola {{ spectator?.name }}👋</h1>
-    <div v-if="spectator && !spectator.passwordChanged" class="alert alert-warning rounded-none my-6 flex sm:justify-between justify-center flex-wrap">
-      <span class="text-m">Configura tu contraseña ahora para entrar facilmente al evento el día del concierto<br>
-        <span class="text-xs">¡No te preocupes! También lo podrás hacer más tarde.</span><br>
-        <span v-if="message !== ''" class="text-sm text-green-500">
-        {{ message }}
-      </span>
-      </span>
-      <button v-if="message === ''" class="btn bg-white hover:bg-white/80 text-black border-none md:w-auto w-full" @click="handleReset">
-          ¡Vamos!
-      </button>
-    </div>
     <p v-if="events.length">Acá podrás ver todos los eventos en los que estás inscrito.</p>
     <div class="mt-4" v-if="spectator">
       <!-- <p v-if="events.length" class="my-4">
@@ -94,6 +83,19 @@
           tu reserva.
         </p>
       </div>
+
+      <div v-if="spectator && !spectator.passwordChanged" class="alert alert-warning rounded-none my-6 flex sm:justify-between justify-center flex-wrap">
+      <span class="text-m">Para volver a entrar a este sitio de reserva debes crear tu contraseña<br>
+        <span class="text-xs">Es por la seguridad de tus datos personales 😀</span><br>
+        <span v-if="message !== ''" class="text-sm text-blank-500">
+        {{ message }}
+      </span>
+      </span>
+      <button v-if="message === ''" class="btn bg-white hover:bg-white/80 text-black border-none text-sm md:w-auto w-full" @click="handleReset">
+          Crear contraseña
+      </button>
+    </div>
+
       <div v-else-if="isLoading" class="flex justify-center w-full">
         <span class="loading loading-spinner loading-md"></span>
       </div>
@@ -232,7 +234,7 @@ const logout = async () => {
 const handleReset = async () => {
   try {
     await sendPasswordResetEmail(auth, spectator.value.email);
-    message.value = "Te enviamos un correo para configurar tu contraseña.";
+    message.value = "✉️ Te enviamos un correo, revísalo!";
   } catch (error) {
     message.value = "Error al enviar el correo: " + error.message;
   }
