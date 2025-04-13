@@ -8,34 +8,6 @@
     <h1 class="justify-self-start text-2xl text-gray-900 font-bold">Inscríbete a nuestro próximos eventos</h1>
     <ActiveEvents />
   </div>
-    <!-- <div
-      class="card w-full bg-base-100 border border-base-600 rounded-lg lg:p-8"
-    >
-      <div class="card-body">
-        <div class="flex items-center gap-6 flex-wrap md:flex-nowrap">
-          <div class="responsive-iframe">
-            <iframe
-              src="https://www.instagram.com/reel/C_k7JOCOj2I/embed"
-              frameborder="0"
-              allowfullscreen="true"
-              scrolling="no"
-              allowtransparency="true"
-            >
-            </iframe>
-          </div>
-          <div>
-            <h2 class="card-title">
-              ¿Quieres este evento en tu casa, colegio u oficina?
-            </h2>
-            <div class="card-actions justify-start mt-4">
-              <a href="https://wa.me/56989612263">
-                <button class="btn btn-active mt-2">Contáctanos</button>
-              </a>
-            </div>
-          </div>
-        </div>
-      </div> 
-    </div>-->
 </template>
 
 <script setup>

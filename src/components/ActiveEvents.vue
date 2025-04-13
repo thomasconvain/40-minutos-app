@@ -58,10 +58,20 @@
               </div>
             </div>
           
-            <!-- Botones de navegación centrados en la parte inferior (solo visibles en tablets y desktop) -->
-            <div class="hidden md:flex justify-center mt-4 gap-4">
-              <button class="btn btn-circle" onclick="document.getElementById('carousel').scrollBy({left: -300, behavior: 'smooth'})">❮</button>
-              <button class="btn btn-circle" onclick="document.getElementById('carousel').scrollBy({left: 300, behavior: 'smooth'})">❯</button>
+            <!-- Botones de navegación con lógica para mostrar solo el botón relevante -->
+            <div v-if="activeEvents.length > 1" class="flex justify-center mt-4 gap-3">
+              <button 
+                class="btn btn-circle btn-sm" 
+                :class="{'btn-primary': carouselPosition > 0, 'opacity-50': carouselPosition === 0}"
+                :disabled="carouselPosition === 0"
+                @click="scrollCarousel('prev')"
+              >❮</button>
+              <button 
+                class="btn btn-circle btn-sm" 
+                :class="{'btn-primary': carouselPosition < activeEvents.length - 1, 'opacity-50': carouselPosition >= activeEvents.length - 1}"
+                :disabled="carouselPosition >= activeEvents.length - 1"
+                @click="scrollCarousel('next')"
+              >❯</button>
             </div>
           </div>
         </div>
@@ -134,7 +144,7 @@
 
 <script setup>
 import { useRouter } from "vue-router";
-import { ref, onMounted, defineEmits, defineProps, computed } from "vue";
+import { ref, onMounted, onBeforeUnmount, defineEmits, defineProps, computed } from "vue";
 import { collection, getDocs, query, where, orderBy } from "firebase/firestore";
 import { auth } from '@/firebase';
 import { onAuthStateChanged } from 'firebase/auth';
@@ -167,6 +177,7 @@ const modalValidation = ref(null);
 
 const currentEventIdForModal = ref(null);
 const codeIdForPrivateEvents = ref(null); 
+const carouselPosition = ref(0); // Seguimiento de la posición actual en el carrusel
 
 // Añadir computed property para eventos activos
 const activeEvents = computed(() => {
@@ -247,13 +258,59 @@ const checkIdAndRedirect = async () => {
   }
 };
 
+// Función para desplazar el carrusel
+const scrollCarousel = (direction) => {
+  const carousel = document.getElementById('carousel');
+  const scrollAmount = direction === 'next' ? carousel.offsetWidth : -carousel.offsetWidth;
+  carousel.scrollBy({left: scrollAmount, behavior: 'smooth'});
+  
+  // Actualizar la posición después del desplazamiento
+  if (direction === 'next') {
+    carouselPosition.value++;
+  } else {
+    carouselPosition.value--;
+  }
+};
+
+// Función para manejar el evento de scroll del carrusel
+const handleCarouselScroll = () => {
+  const carousel = document.getElementById('carousel');
+  if (!carousel) return;
+  
+  // Calcular la posición actual basada en el desplazamiento
+  const scrollLeft = carousel.scrollLeft;
+  const itemWidth = carousel.offsetWidth;
+  const newPosition = Math.round(scrollLeft / itemWidth);
+  
+  // Actualizar la posición solo si ha cambiado
+  if (newPosition !== carouselPosition.value) {
+    carouselPosition.value = newPosition;
+  }
+};
+
 onMounted(() => {
-    onAuthStateChanged(auth, (user) => {
+  onAuthStateChanged(auth, (user) => {
     currentUser.value = user;
-  }),
+  });
+  
   fetchActiveEvents();
+  
   if (props.openModalSuccessAfterLogin) {
     openModal(null, 'modalSuccess');
+  }
+  
+  // Añadir event listener para scroll del carrusel
+  const carousel = document.getElementById('carousel');
+  if (carousel) {
+    carousel.addEventListener('scroll', handleCarouselScroll);
+  }
+});
+
+// Limpiar event listeners cuando el componente se destruya
+onBeforeUnmount(() => {
+  const carousel = document.getElementById('carousel');
+  if (carousel) {
+    carousel.removeEventListener('scroll', handleCarouselScroll);
   }
 });
 </script>

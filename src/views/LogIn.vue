@@ -71,37 +71,6 @@ const router = useRouter();
 const route = useRoute();
 
 const eventId = route.params.idEvent;
-// const validatePhone = () => {
-//   const phonePattern = /^\+56\d{9}$/; // Formato para números de teléfono en Chile: +56XXXXXXXXX
-//   if (!phonePattern.test(phone.value)) {
-//     phoneError.value = 'Por favor ingresa un número de teléfono válido en formato +56XXXXXXXXX.';
-//     isButtonDisabled.value = true;
-//   } else {
-//     phoneError.value = '';
-//     isButtonDisabled.value = false;
-//   }
-// };
-
-// Función para verificar la suscripción del espectador
-// const checkSpectatorSubscriptions = async () => {
-//   const db = getFirestore();
-//   const spectatorsRef = collection(db, 'spectators');
-//   const q = query(spectatorsRef, where('phone', '==', phone.value));
-
-//   try {
-//     const querySnapshot = await getDocs(q);
-//     if (!querySnapshot.empty) {
-//       // Si se encuentra una coincidencia, redirige a la ruta /profile/:id
-//       const doc = querySnapshot.docs[0];
-//       router.push({ name: 'Profile', params: { idSpectator: doc.id } });
-//     } else {
-//       alert('Número no encontrado.');
-//     }
-//   } catch (error) {
-//     console.error('Error al verificar la suscripción:', error);
-//     alert('Hubo un problema al verificar la suscripción.');
-//   }
-// };
 
 const login = async () => {
   // Evitar múltiples envíos
