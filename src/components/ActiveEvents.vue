@@ -1,6 +1,6 @@
 <template>
     <div>
-      <section class="py-8">
+      <section class="pt-6 pb-4">
         <div class="mx-auto max-w-screen-xl">          
           <!-- Carrusel de daisyUI -->
           <div class="relative w-full overflow-hidden">
@@ -77,35 +77,33 @@
         </div>
       </section>
 
-      <div class="mx-auto grid max-w-screen-xl rounded-2xl bg-white p-8 md:p-8 lg:grid-cols-12 lg:gap-8 lg:p-16 xl:gap-16"
+      <div class="mx-auto w-full max-w-screen-xl rounded-2xl bg-white p-6 md:p-8 mt-2"
       >
-        <div class="me-auto place-self-center lg:col-span-7">
-          <h1
-          class="mb-3 text-2xl font-bold leading-tight tracking-tight text-black md:text-4xl"
+        <div class="w-full">
+          <h2
+          class="mb-2 text-xl font-bold leading-tight text-black md:text-2xl"
           >
           ¿Te invitaron a un evento privado?
-          </h1>
-          <p class="mb-6 text-gray-800">
+          </h2>
+          <p class="mb-4 text-sm text-gray-700">
             Ingresa tu código de acceso acá
           </p>
-          <div class="flex flex-wrap gap-3">
-            <div class="flex items-center flex-wrap gap-3">
-              <input
-                v-model="codeIdForPrivateEvents"
-                type="text"
-                id="name"
-                placeholder="Ingresa tu código"
-                class="input input-bordered w-full sm:w-auto"
-                required
-              />
-              <button
-                @click="checkIdAndRedirect()"
-                type="button"
-                class="btn-md w-full sm:w-auto inline-flex justify-center items-center px-4 py-2 border border-transparent shadow-sm text-white bg-black hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 disabled:opacity-50 disabled:cursor-not-allowed rounded-md"
-              >
-                <span>Confirmar asistencia</span>
-              </button>
-            </div>
+          <div class="flex flex-col sm:flex-row gap-3">
+            <input
+              v-model="codeIdForPrivateEvents"
+              type="text"
+              id="event-code"
+              placeholder="Ingresa tu código"
+              class="input input-bordered w-full"
+              required
+            />
+            <button
+              @click="checkIdAndRedirect()"
+              type="button"
+              class="btn bg-black hover:bg-gray-800 text-white"
+            >
+              Confirmar asistencia
+            </button>
           </div>
         </div>
       </div>
