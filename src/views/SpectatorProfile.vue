@@ -41,10 +41,10 @@
                   v-else
                   class="alert alert-info rounded-none flex text-left"
                 >
-                  <InformationCircleIcon
+                  <!-- <InformationCircleIcon
                     class="-ml-1 mr-3 h-5 min-w-5"
                     aria-hidden="true"
-                  />
+                  /> -->
                   <span class="text-xs"
                     >El día del concierto se habilitará el acceso a tu checkin.
                   </span>
@@ -84,17 +84,34 @@
           4. NO viene del login -->
       <div 
         v-if="spectator && !spectator.passwordChanged && !$route.query.hidePasswordPrompt && $route.query.from !== 'login' && ($route.query.from === 'booking' || !$route.query.from)" 
-        class="alert alert-warning rounded-none my-6 flex sm:justify-between justify-center flex-wrap"
+        class="bg-yellow-50 border-l-4 border-yellow-400 rounded-lg my-6 p-4"
       >
-        <span class="text-m">Para volver a entrar a este sitio de reserva debes crear tu contraseña<br>
-          <span class="text-xs">Es por la seguridad de tus datos personales 😀</span><br>
-          <span v-if="message !== ''" class="text-sm text-blank-500">
-          {{ message }}
-        </span>
-        </span>
-        <button v-if="message === ''" class="btn bg-white hover:bg-white/80 text-black border-none text-sm md:w-auto w-full" @click="handleReset">
-            Crear contraseña
-        </button>
+        <div class="flex items-start gap-3">
+          <div class="flex-shrink-0">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-yellow-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+            </svg>
+          </div>
+          <div class="flex-1 text-black">
+            <h3 class="font-bold text-md">¡Información importante sobre tu contraseña!</h3>
+            <div class="text-sm mt-1">
+              <p>Hemos creado una contraseña temporal para tu cuenta. <strong>Debes recuperarla y cambiarla</strong> para accesos futuros.</p>
+              <p class="mt-1">Este paso es necesario para proteger tus datos personales y asegurar que solo tú puedas acceder a tus reservas. 🔒</p>
+              <p v-if="message !== ''" class="mt-2 text-sm text-green-700 font-medium">
+                {{ message }}
+              </p>
+            </div>
+          </div>
+        </div>
+        
+        <div v-if="message === ''" class="mt-4 text-center">
+          <button 
+            class="btn btn-sm bg-black/10 hover:bg-black/15 text-black border-none" 
+            @click="handleReset"
+          >
+            Entendido!
+          </button>
+        </div>
       </div>
 
       <div v-else-if="isLoading" class="flex justify-center w-full">
@@ -123,7 +140,7 @@ import {
 } from "firebase/firestore";
 import { auth } from '@/firebase';
 import { onAuthStateChanged, signOut, sendPasswordResetEmail } from 'firebase/auth';
-import { InformationCircleIcon, ShareIcon } from "@heroicons/vue/24/outline";
+import { ShareIcon } from "@heroicons/vue/24/outline";
 import { fetchSpectators } from '@/utils';
 
 // Estado de la aplicación
@@ -149,6 +166,8 @@ onMounted(() => {
     newUrl.searchParams.set('hidePasswordPrompt', 'true');
     window.history.replaceState({}, '', newUrl);
   }
+  // Cuando viene de booking, simplemente dejamos que se muestre el mensaje sin modificar la URL
+  // y no enviamos el correo automáticamente
   
   // Inicializar la aplicación
   init();
