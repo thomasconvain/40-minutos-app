@@ -93,7 +93,7 @@ const login = async () => {
     if (!querySnapshot.empty) {
       const doc = querySnapshot.docs[0];
       console.log('Usuario logueado:', userCredential.user);
-      router.push({ name: 'Profile', params: { idSpectator: doc.id }, query: { idEvent: eventId } });
+      router.push({ name: 'Profile', params: { idSpectator: doc.id }, query: { idEvent: eventId, from: 'login' } });
     } else {
       alert('Usuario no encontrado.');
     }

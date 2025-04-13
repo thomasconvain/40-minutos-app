@@ -79,9 +79,11 @@
 
       <!-- Solo mostrar el mensaje si: 
           1. No ha cambiado la contraseña
-          2. No tiene el parámetro específico 'hidePasswordPrompt=true' -->
+          2. No tiene el parámetro específico 'hidePasswordPrompt=true'
+          3. Viene específicamente desde booking O no especifica de dónde viene
+          4. NO viene del login -->
       <div 
-        v-if="spectator && !spectator.passwordChanged && !$route.query.hidePasswordPrompt" 
+        v-if="spectator && !spectator.passwordChanged && !$route.query.hidePasswordPrompt && $route.query.from !== 'login' && ($route.query.from === 'booking' || !$route.query.from)" 
         class="alert alert-warning rounded-none my-6 flex sm:justify-between justify-center flex-wrap"
       >
         <span class="text-m">Para volver a entrar a este sitio de reserva debes crear tu contraseña<br>
@@ -140,9 +142,9 @@ const idSpectator = route.params.idSpectator;
 
 // Inicialización principal
 onMounted(() => {
-  // Si se viene del login, añadir el parámetro para ocultar el mensaje
-  if (route.query.from === 'login' || document.referrer.includes('/login')) {
-    // Modificar la URL sin recargar la página para añadir hidePasswordPrompt=true
+  // Si no hay un parámetro 'from' específico o si no viene explícitamente de 'booking',
+  // añadir el parámetro para ocultar el mensaje de contraseña en todos los casos
+  if (!route.query.from || route.query.from !== 'booking') {
     const newUrl = new URL(window.location.href);
     newUrl.searchParams.set('hidePasswordPrompt', 'true');
     window.history.replaceState({}, '', newUrl);
@@ -299,7 +301,18 @@ const handleReset = async () => {
   
   try {
     await sendPasswordResetEmail(auth, spectator.value.email);
+    
+    // Actualizar el campo passwordChanged en Firestore
+    const db = getFirestore();
+    const spectatorDocRef = doc(db, "spectators", idSpectator);
+    await updateDoc(spectatorDocRef, {
+      passwordChanged: true
+    });
+    
     message.value = "✉️ Te enviamos un correo, revísalo!";
+    
+    // Actualizar el estado local
+    spectator.value.passwordChanged = true;
   } catch (error) {
     message.value = "Error al enviar el correo: " + error.message;
   }

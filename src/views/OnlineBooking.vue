@@ -242,11 +242,14 @@ const submitForm = async () => {
     // Guardar en Firestore
     await setDoc(doc(db, 'spectators', user.uid), spectatorData);
     
-    // Redirigir al perfil
+    // Redirigir al perfil (indicando que viene de OnlineBooking)
     router.push({ 
       name: 'Profile', 
       params: { idSpectator: user.uid }, 
-      query: { idEvent: route.params.idEvent } 
+      query: { 
+        idEvent: route.params.idEvent,
+        from: 'booking' // Añadir indicador de origen
+      } 
     });
   } catch (error) {
     if (error.code === 'auth/email-already-in-use') {
