@@ -70,6 +70,7 @@
 import { ref } from 'vue';
 import { getAuth, sendPasswordResetEmail } from "firebase/auth";
 import { useRouter } from 'vue-router';
+import { getFirestore, collection, query, where, getDocs } from 'firebase/firestore';
 
 // Estado del formulario
 const email = ref('');
@@ -78,8 +79,9 @@ const messageType = ref('');
 const errorCode = ref('');
 const isLoading = ref(false);
 
-// Servicio de autenticación
+// Servicios
 const auth = getAuth();
+const db = getFirestore();
 const router = useRouter();
 
 /**
@@ -87,6 +89,24 @@ const router = useRouter();
  */
 const goToHome = () => {
   router.push({ name: 'Home' });
+};
+
+/**
+ * Verifica si el email existe en la colección 'spectators' de Firestore
+ * @param {string} email El email a verificar
+ * @returns {Promise<boolean>} True si el email existe, false en caso contrario
+ */
+const checkEmailExistsInFirestore = async (emailToCheck) => {
+  try {
+    const spectatorsRef = collection(db, 'spectators');
+    const q = query(spectatorsRef, where('email', '==', emailToCheck));
+    const querySnapshot = await getDocs(q);
+    
+    return !querySnapshot.empty; // Retorna true si hay al menos un documento
+  } catch (error) {
+    console.error('Error al verificar email en Firestore:', error);
+    return false;
+  }
 };
 
 /**
@@ -101,8 +121,19 @@ const handleReset = async () => {
   errorCode.value = '';
   
   try {
-    // Enviar directamente el correo de recuperación sin verificación previa
-    console.log('Enviando correo de restablecimiento a:', email.value);
+    // Primero verificar si el email existe en Firestore
+    const emailExists = await checkEmailExistsInFirestore(email.value);
+    
+    if (!emailExists) {
+      // Si el email no existe en Firestore, mostramos un error personalizado
+      messageType.value = 'error';
+      message.value = "No existe una cuenta asociada a este correo. Debes hacer la reserva por primera vez.";
+      isLoading.value = false;
+      return;
+    }
+    
+    // Si el email existe, procedemos a enviar el correo de recuperación
+    console.log('Email verificado. Enviando correo de restablecimiento a:', email.value);
     await sendPasswordResetEmail(auth, email.value);
     
     messageType.value = 'success';
