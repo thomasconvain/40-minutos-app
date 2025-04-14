@@ -5,6 +5,36 @@
     </button>
     <h1 class="text-2xl font-bold mb-6">Hola {{ spectator?.name }}👋</h1>
     <p v-if="events.length">Acá podrás ver todos los eventos en los que estás inscrito.</p>
+    
+    <!-- Primer mensaje informativo sobre la reserva - verde con check icon en círculo -->
+    <div 
+      v-if="spectator && !infoReserveDismissed && !$route.query.hideReserveInfo && $route.query.from !== 'login' && ($route.query.from === 'booking' || !$route.query.from)" 
+      class="bg-green-50 border-l-4 border-green-400 rounded-lg my-4 p-4"
+    >
+      <div class="flex items-start gap-3">
+        <div class="flex-shrink-0">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+        </div>
+        <div class="flex-1 text-black">
+          <h3 class="font-bold text-md">Reserva exitosa</h3>
+          <div class="text-sm mt-1">
+            <p> El ingreso es por <strong>orden de llegada</strong> y solo debes hacer check-in digital cuando llegues a tu asiento.</p>
+          </div>
+        </div>
+      </div>
+      
+      <div class="mt-4 text-center">
+        <button 
+          class="btn btn-sm bg-black/10 hover:bg-black/15 text-black border-none" 
+          @click="dismissReserveInfo"
+        >
+          Entendido
+        </button>
+      </div>
+    </div>
+    
     <div class="mt-4" v-if="spectator">
       <div v-if="events.length">
         <div class="indicator w-full flex flex-col gap-4">
@@ -77,50 +107,22 @@
         </p>
       </div>
 
-      <!-- Primer mensaje informativo sobre la reserva -->
-      <div 
-        v-if="spectator && !infoReserveDismissed && !$route.query.hideReserveInfo && $route.query.from !== 'login' && ($route.query.from === 'booking' || !$route.query.from)" 
-        class="bg-blue-50 border-l-4 border-blue-400 rounded-lg my-6 p-4"
-      >
-        <div class="flex items-start gap-3">
-          <div class="flex-shrink-0">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
-          </div>
-          <div class="flex-1 text-black">
-            <h3 class="font-bold text-md">Sobre tu reserva</h3>
-            <div class="text-sm mt-1">
-              <p>Tu reserva no incluye un asiento asignado: el ingreso es por <strong>orden de llegada</strong>. Tampoco necesitas ticket físico, solo hacer check-in en este sitio web.</p>
-            </div>
-          </div>
-        </div>
-        
-        <div class="mt-4 text-center">
-          <button 
-            class="btn btn-sm bg-black/10 hover:bg-black/15 text-black border-none" 
-            @click="dismissReserveInfo"
-          >
-            Entendido
-          </button>
-        </div>
-      </div>
-
-      <!-- Segundo mensaje sobre la contraseña temporal -->
+      <!-- Segundo mensaje sobre la contraseña temporal - estilo gris transparente sin bordes con icono de candado -->
       <div 
         v-if="spectator && !spectator.passwordChanged && !$route.query.hidePasswordPrompt && $route.query.from !== 'login' && ($route.query.from === 'booking' || !$route.query.from)" 
-        class="bg-yellow-50 border-l-4 border-yellow-400 rounded-lg my-6 p-4"
+        class="bg-gray-50/50 my-6 p-4"
       >
         <div class="flex items-start gap-3">
           <div class="flex-shrink-0">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-yellow-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
             </svg>
           </div>
-          <div class="flex-1 text-black">
-            <h3 class="font-bold text-md">Contraseña temporal</h3>
-            <div class="text-sm mt-1">
-              <p>Hemos creado una contraseña temporal para proteger tus datos temporales. Al aceptar, te <strong>enviaremos un email</strong> para que puedas volver a a acceder a este lugar con usuario contraseña.</p>
+          <div class="flex-1 text-gray-700">
+            <h3 class="font-bold text-md text-gray-700">Cambia tu contraseña</h3>
+            <div class="text-sm mt-1 text-gray-600">
+              <p>Por tu seguridad, te creamos una constraseña temporal.</p>
+              <p class="mt-2">Para volver a entrar a este lugar, debes cambiarla y hace login.</p>
               <p v-if="message !== ''" class="mt-2 text-sm text-green-700 font-medium">
                 {{ message }}
               </p>
@@ -133,7 +135,7 @@
             class="btn btn-sm bg-black/10 hover:bg-black/15 text-black border-none" 
             @click="handleReset"
           >
-            Enviar email
+            Cambiar contraseña
           </button>
         </div>
       </div>
