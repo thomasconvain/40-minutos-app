@@ -77,11 +77,36 @@
         </p>
       </div>
 
-      <!-- Solo mostrar el mensaje si: 
-          1. No ha cambiado la contraseña
-          2. No tiene el parámetro específico 'hidePasswordPrompt=true'
-          3. Viene específicamente desde booking O no especifica de dónde viene
-          4. NO viene del login -->
+      <!-- Primer mensaje informativo sobre la reserva -->
+      <div 
+        v-if="spectator && !infoReserveDismissed && !$route.query.hideReserveInfo && $route.query.from !== 'login' && ($route.query.from === 'booking' || !$route.query.from)" 
+        class="bg-blue-50 border-l-4 border-blue-400 rounded-lg my-6 p-4"
+      >
+        <div class="flex items-start gap-3">
+          <div class="flex-shrink-0">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          </div>
+          <div class="flex-1 text-black">
+            <h3 class="font-bold text-md">Sobre tu reserva</h3>
+            <div class="text-sm mt-1">
+              <p>Tu reserva no incluye un asiento asignado: el ingreso es por <strong>orden de llegada</strong>. Tampoco necesitas ticket físico, solo hacer check-in en este sitio web.</p>
+            </div>
+          </div>
+        </div>
+        
+        <div class="mt-4 text-center">
+          <button 
+            class="btn btn-sm bg-black/10 hover:bg-black/15 text-black border-none" 
+            @click="dismissReserveInfo"
+          >
+            Entendido
+          </button>
+        </div>
+      </div>
+
+      <!-- Segundo mensaje sobre la contraseña temporal -->
       <div 
         v-if="spectator && !spectator.passwordChanged && !$route.query.hidePasswordPrompt && $route.query.from !== 'login' && ($route.query.from === 'booking' || !$route.query.from)" 
         class="bg-yellow-50 border-l-4 border-yellow-400 rounded-lg my-6 p-4"
@@ -93,10 +118,9 @@
             </svg>
           </div>
           <div class="flex-1 text-black">
-            <h3 class="font-bold text-md">¡Información importante sobre tu contraseña!</h3>
+            <h3 class="font-bold text-md">Contraseña temporal</h3>
             <div class="text-sm mt-1">
-              <p>Hemos creado una contraseña temporal para tu cuenta. <strong>Debes recuperarla y cambiarla</strong> para accesos futuros.</p>
-              <p class="mt-1">Este paso es necesario para proteger tus datos personales y asegurar que solo tú puedas acceder a tus reservas. 🔒</p>
+              <p>Hemos creado una contraseña temporal para proteger tus datos temporales. Al aceptar, te <strong>enviaremos un email</strong> para que puedas volver a a acceder a este lugar con usuario contraseña.</p>
               <p v-if="message !== ''" class="mt-2 text-sm text-green-700 font-medium">
                 {{ message }}
               </p>
@@ -109,9 +133,22 @@
             class="btn btn-sm bg-black/10 hover:bg-black/15 text-black border-none" 
             @click="handleReset"
           >
-            Entendido!
+            Enviar email
           </button>
         </div>
+      </div>
+      
+      <!-- Botón para finalizar primera reserva -->
+      <div 
+        v-if="spectator && !$route.query.hideFinishButton && $route.query.from === 'booking'" 
+        class="mt-6 text-center"
+      >
+        <button 
+          class="btn btn-primary text-white"
+          @click="goToHome"
+        >
+          Finalizar primera reserva
+        </button>
       </div>
 
       <div v-else-if="isLoading" class="flex justify-center w-full">
@@ -151,6 +188,7 @@ const events = ref([]);
 const isLoading = ref(true);
 const message = ref('');
 const subscriptionAfterLogin = ref(false);
+const infoReserveDismissed = ref(false);
 
 // Router y parámetros
 const route = useRoute();
@@ -334,6 +372,21 @@ const handleReset = async () => {
     spectator.value.passwordChanged = true;
   } catch (error) {
     message.value = "Error al enviar el correo: " + error.message;
+  }
+};
+
+// Función para ocultar el mensaje informativo de reserva
+const dismissReserveInfo = () => {
+  infoReserveDismissed.value = true;
+};
+
+// Función para finalizar la reserva e ir a la página principal
+const goToHome = async () => {
+  try {
+    await signOut(auth);
+    router.push('/');
+  } catch (error) {
+    console.error("Error al cerrar sesión:", error);
   }
 };
 </script>
