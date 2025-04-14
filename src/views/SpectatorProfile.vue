@@ -181,6 +181,11 @@ import { auth } from '@/firebase';
 import { onAuthStateChanged, signOut, sendPasswordResetEmail } from 'firebase/auth';
 import { ShareIcon } from "@heroicons/vue/24/outline";
 import { fetchSpectators } from '@/utils';
+import { getFunctions, httpsCallable } from 'firebase/functions'
+
+//functions sendEmail
+const functions = getFunctions()
+const sendEmail = httpsCallable(functions, 'sendEmailWithBrevo')
 
 // Estado de la aplicación
 const eventAttendees = ref({}); 
@@ -315,6 +320,13 @@ const addSubscribedEventId = async (spectatorId, eventId, numberOfPeople) => {
     });
     console.log("Evento agregado correctamente.");
     await fetchSpectator();
+    await sendEmail({
+      to: spectator.value.email,
+      templateId: 1, // ← cambia esto por el ID real de tu plantilla Brevo
+      params: {
+        name: spectator.value.name,
+      }
+    })
   } catch (error) {
     console.error("Error al agregar el evento:", error);
   }

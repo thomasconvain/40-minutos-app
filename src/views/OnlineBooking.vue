@@ -27,29 +27,29 @@
     
     <!-- Opciones iniciales -->
     <div v-if="!showForm" class="options-container">
-      <!-- Opción para usuarios existentes -->
-      <div class="option-group mb-4">
+      <!-- Opción para nuevos usuarios -->
+      <div class="option-group mb-2">
         <button
-          @click="goToLogin"
+          @click="showForm = true"
           type="button"
           class="btn-md btn btn-primary text-white w-full"
           :disabled="isLoading"
         >
-          <span>Reservar con datos guardados</span>
+          <span>Continuar</span>
         </button>
       </div>
-      
-      <!-- Opción para nuevos usuarios -->
+      <!-- Opción para usuarios existentes -->
       <div class="option-group">
         <button
-          @click="showForm = true"
+          @click="goToLogin"
           type="button"
           class="btn-md btn btn-outline text-primary w-full border-primary hover:bg-primary hover:text-white"
           :disabled="isLoading"
         >
-          <span>Reservar por primera vez</span>
+          <span>Reservar con mis datos guardados</span>
         </button>
       </div>
+      
     </div>
     
     <!-- Formulario completo -->
