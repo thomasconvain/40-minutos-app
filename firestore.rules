@@ -15,7 +15,7 @@ service cloud.firestore {
     // Regla para los espectadores
     match /spectators/{idSpectator} {
       // Solo usuarios autenticados pueden leer datos de spectators
-      allow read: if request.auth != null;
+      allow read: if true;
       // Para crear/actualizar/eliminar se verifica que además la data contenga alguna de las llaves permitidas
       // Permitir crear o actualizar solo `passwordChanged` sin estar autenticado
       allow create, update: if request.resource.data.keys().hasOnly(['passwordChanged']);
