@@ -75,14 +75,20 @@ exports.sendEmailWithBrevo = functions.https.onCall(async (data, context) => {
   try {
     let currentSubscribedEvents = [];
 
-    // 1. Buscar el contacto actual
-    const contactRes = await axios.get(`https://api.brevo.com/v3/contacts/${to}`, {headers});
+    // 1. Intentar obtener contacto
+    try {
+      const contactRes = await axios.get(`https://api.brevo.com/v3/contacts/${to}`, {headers});
 
-    if (contactRes.data &&
-      contactRes.data.attributes &&
-      contactRes.data.attributes.SUBSCRIBED_EVENTS) {
-      const existing = contactRes.data.attributes.SUBSCRIBED_EVENTS;
-      currentSubscribedEvents = existing.split(",").map((e) => e.trim());
+      if (contactRes.data?.attributes?.SUBSCRIBED_EVENTS) {
+        currentSubscribedEvents = contactRes.data.attributes
+            .SUBSCRIBED_EVENTS.split(",")
+            .map((e) => e.trim());
+      }
+    } catch (err) {
+      // Si el contacto no existe, ignoramos el error
+      if (err.response?.data?.code !== "document_not_found") {
+        throw err; // Si es otro error, lo lanzamos
+      }
     }
 
     // 2. Añadir nuevo evento si no existe aún
