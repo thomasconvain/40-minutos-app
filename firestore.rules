@@ -29,7 +29,8 @@ service cloud.firestore {
           'lastName',
           'isCheckinActive',
           'uniquePaymentForGroup',
-          'subscribedEventsId'
+          'subscribedEventsId',
+          'passwordChanged"
         ]);
     }
     
