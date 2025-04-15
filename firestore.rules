@@ -32,6 +32,9 @@ service cloud.firestore {
           'subscribedEventsId',
           'passwordChanged"
         ]);
+      allow create, update: if request.resource.data.keys().hasAny([
+          'passwordChanged',
+        ]);
     }
     
     // Regla para los eventos - NUEVA
