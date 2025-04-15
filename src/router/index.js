@@ -33,7 +33,7 @@ const routes = [
     component: OnlineBooking,
   },
   {
-    path: '/password-reset',
+    path: '/password-reset/:email?',
     name: 'PasswordReset',
     component: PasswordReset,
   },

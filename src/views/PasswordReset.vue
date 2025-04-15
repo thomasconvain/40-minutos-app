@@ -67,9 +67,9 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
 import { getAuth, sendPasswordResetEmail } from "firebase/auth";
-import { useRouter } from 'vue-router';
+import { useRouter, useRoute } from 'vue-router';
 import { getFirestore, collection, query, where, getDocs } from 'firebase/firestore';
 
 // Estado del formulario
@@ -82,7 +82,17 @@ const isLoading = ref(false);
 // Servicios
 const auth = getAuth();
 const db = getFirestore();
+
+// Router y parámetros
+const route = useRoute();
 const router = useRouter();
+
+onMounted(() => {
+  // Si se pasa un email como parámetro, lo prellenamos en el campo
+  if (route.query.email) {
+    email.value = route.query.email;
+  }
+});
 
 /**
  * Navega a la página Home
