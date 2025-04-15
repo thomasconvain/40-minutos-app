@@ -64,18 +64,33 @@ exports.getPaymentDetails = functions.https.onRequest(async (req, res) => {
 const axios = require("axios");
 
 const apiKey = functions.config().brevo.api_key;
-
-// Reutilizar configuración de headers
 const headers = {
   "api-key": apiKey,
   "Content-Type": "application/json",
 };
 
 exports.sendEmailWithBrevo = functions.https.onCall(async (data, context) => {
-  const {to, params, templateId} = data;
+  const {to, params, templateId, newEventId} = data;
 
   try {
-    // 1. Añadir el contacto si no existe
+    let currentSubscribedEvents = [];
+
+    // 1. Buscar el contacto actual
+    const contactRes = await axios.get(`https://api.brevo.com/v3/contacts/${to}`, {headers});
+
+    if (contactRes.data &&
+      contactRes.data.attributes &&
+      contactRes.data.attributes.SUBSCRIBED_EVENTS) {
+      const existing = contactRes.data.attributes.SUBSCRIBED_EVENTS;
+      currentSubscribedEvents = existing.split(",").map((e) => e.trim());
+    }
+
+    // 2. Añadir nuevo evento si no existe aún
+    if (!currentSubscribedEvents.includes(newEventId)) {
+      currentSubscribedEvents.push(newEventId);
+    }
+
+    // 3. Crear o actualizar el contacto
     await axios.post("https://api.brevo.com/v3/contacts", {
       email: to,
       attributes: {
@@ -84,12 +99,13 @@ exports.sendEmailWithBrevo = functions.https.onCall(async (data, context) => {
         SMS: params.phone || "",
         WHATSAPP: params.phone || "",
         FIREBASE_ID: params.firebaseId || "",
+        SUBSCRIBED_EVENTS: currentSubscribedEvents.join(","),
       },
-      listIds: [2],
-      updateEnabled: true, // si ya existe, actualiza
+      listIds: [2], // tu ID real de lista
+      updateEnabled: true,
     }, {headers});
 
-    // 2. Enviar el correo
+    // 4. Enviar el correo
     await axios.post("https://api.brevo.com/v3/smtp/email", {
       to: [{email: to}],
       templateId,
@@ -99,9 +115,7 @@ exports.sendEmailWithBrevo = functions.https.onCall(async (data, context) => {
 
     return {success: true};
   } catch (error) {
-    console.error(
-        "Error en el proceso:", error.response?.data || error.message,
-    );
+    console.error("Error:", error.response?.data || error.message);
     throw new functions.https.HttpsError("internal", error.message);
   }
 });

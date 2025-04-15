@@ -323,6 +323,7 @@ const addSubscribedEventId = async (spectatorId, eventId, numberOfPeople) => {
     await sendEmail({
       to: spectator.value.email,
       templateId: 1,
+      newEventId: eventId,
       params: {
         name: spectator.value.name,
         surname: spectator.value.lastName,
