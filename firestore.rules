@@ -17,6 +17,10 @@ service cloud.firestore {
       // Solo usuarios autenticados pueden leer datos de spectators
       allow read: if request.auth != null;
       // Para crear/actualizar/eliminar se verifica que además la data contenga alguna de las llaves permitidas
+      // Permitir crear o actualizar solo `passwordChanged` sin estar autenticado
+      allow create, update: if request.resource.data.keys().hasOnly(['passwordChanged']);
+
+      // Permitir crear, actualizar o eliminar cualquier otro campo si está autenticado
       allow create, update, delete: if request.auth != null &&
         request.resource.data.keys().hasAny([
           'payments',
@@ -29,11 +33,7 @@ service cloud.firestore {
           'lastName',
           'isCheckinActive',
           'uniquePaymentForGroup',
-          'subscribedEventsId',
-          'passwordChanged"
-        ]);
-      allow create, update: if request.resource.data.keys().hasAny([
-          'passwordChanged',
+          'subscribedEventsId'
         ]);
     }
     
