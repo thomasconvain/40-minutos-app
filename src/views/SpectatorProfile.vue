@@ -8,7 +8,7 @@
     
     <!-- Primer mensaje informativo sobre la reserva - verde con check icon en círculo -->
     <div 
-      v-if="spectator && $route.query.from && !infoReserveDismissed" 
+      v-if="spectator && $route.query.from !== 'login' && !infoReserveDismissed" 
       class="relative my-4 p-[1px] rounded-lg bg-gradient-to-br from-green-400/80 to-transparent"
     >
       <div class="bg-green-50 rounded-lg p-4">

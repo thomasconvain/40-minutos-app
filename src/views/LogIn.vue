@@ -72,6 +72,7 @@ const router = useRouter();
 const route = useRoute();
 
 const eventId = route.params.idEvent;
+const from = ref('login');
 
 const login = async () => {
   // Evitar múltiples envíos
@@ -99,6 +100,7 @@ const login = async () => {
       
       // Si hay un eventId en los parámetros de la ruta y el usuario viene de una reserva
       if (eventId) {
+        from.value = 'loginWithSubscription';
         // Obtener el número de personas de la consulta, si existe
         const numberOfPeople = route.query.numberOfPeople ? parseInt(route.query.numberOfPeople) : 1;
         const numberOfCompanions = numberOfPeople > 1 ? numberOfPeople - 1 : 0;
@@ -138,7 +140,7 @@ const login = async () => {
         params: { idSpectator: docData.id }, 
         query: { 
           idEvent: eventId, 
-          from: 'login',
+          from: from.value,
           // Pasar el número de personas si existe en la consulta
           ...(route.query.numberOfPeople && { numberOfPeople: route.query.numberOfPeople })
         } 
