@@ -384,9 +384,7 @@ const dismissReserveInfo = () => {
   infoReserveDismissed.value = true;
 
   // Limpiar el parámetro 'from' de la URL porque ya no es necesario si el usuario ha visto el mensaje
-  const newQuery = { ...route.query }
-  delete newQuery['from']
-
+  const newQuery = { ...route.query, ['from']: 'login' }
   router.replace({ path: route.path, query: newQuery })
 };
 </script>
