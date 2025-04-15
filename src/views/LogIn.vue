@@ -54,10 +54,11 @@
 <script setup>
 import { ref } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
-import { getFirestore, collection, query, where, getDocs } from 'firebase/firestore';
+import { getFirestore, collection, query, where, getDocs, updateDoc, doc, arrayUnion } from 'firebase/firestore';
 import { auth } from '@/firebase';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import PasswordField from '@/components/PasswordField.vue';
+import { addSpectatorToEvent } from '@/utils';
 
 // Estado del formulario
 const email = ref('');
@@ -93,13 +94,54 @@ const login = async () => {
     
     if (!querySnapshot.empty) {
       const docData = querySnapshot.docs[0];
+      const spectatorData = docData.data();
       console.log('Usuario logueado:', userCredential.user);
+      
+      // Si hay un eventId en los parámetros de la ruta y el usuario viene de una reserva
+      if (eventId) {
+        // Obtener el número de personas de la consulta, si existe
+        const numberOfPeople = route.query.numberOfPeople ? parseInt(route.query.numberOfPeople) : 1;
+        const numberOfCompanions = numberOfPeople > 1 ? numberOfPeople - 1 : 0;
+        
+        // Verificar si necesitamos actualizar el evento con los datos del espectador
+        const eventIds = eventId.split(',').map(id => id.trim());
+        
+        for (const currentEventId of eventIds) {
+          // Añadir el espectador al evento si no está ya incluido
+          const spectatorForEvent = {
+            id: docData.id,
+            name: spectatorData.name || '',
+            lastName: spectatorData.lastName || '',
+            numberOfCompanions: numberOfCompanions,
+            email: spectatorData.email || '',
+            phone: spectatorData.phone || '',
+          };
+          
+          // Añadir el espectador al evento
+          await addSpectatorToEvent(currentEventId, spectatorForEvent);
+          
+          // Actualizar o añadir el evento a la lista de eventos suscritos del espectador si no está ya
+          if (!spectatorData.subscribedEventsId || !spectatorData.subscribedEventsId.includes(currentEventId)) {
+            const spectatorRef = doc(db, 'spectators', docData.id);
+            await updateDoc(spectatorRef, {
+              subscribedEventsId: arrayUnion(currentEventId),
+              // Actualizar numberOfCompanions si es necesario
+              numberOfCompanions: numberOfCompanions
+            });
+          }
+        }
+      }
       
       // Redirigir al perfil con parámetros adicionales
       router.push({ 
         name: 'Profile', 
         params: { idSpectator: docData.id }, 
-        query: { idEvent: eventId, from: 'login' } 
+        query: { 
+          idEvent: eventId, 
+          from: 'login',
+          // Pasar el número de personas si existe en la consulta
+          ...(route.query.numberOfPeople && { numberOfPeople: route.query.numberOfPeople })
+        } 
       });
     } else {
       errorMessage.value = 'Usuario no encontrado en el sistema.';

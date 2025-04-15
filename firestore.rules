@@ -2,8 +2,41 @@ rules_version = '2';
 
 service cloud.firestore {
   match /databases/{database}/documents {
+    // Regla general para permitir lectura
     match /{document=**} {
-      allow read, write: if false;
+      allow read: if true;
+    }
+    
+    // Regla para los temas
+    match /themes/{themeId} {
+      allow update: if request.resource.data.keys().hasAny(['ratings']);
+    }
+    
+    // Regla para los espectadores
+    match /spectators/{idSpectator} {
+      // Solo usuarios autenticados pueden leer datos de spectators
+      allow read: if request.auth != null;
+      // Para crear/actualizar/eliminar se verifica que además la data contenga alguna de las llaves permitidas
+      allow create, update, delete: if request.auth != null &&
+        request.resource.data.keys().hasAny([
+          'payments',
+          'isChecked',
+          'numberOfPeople',
+          'email',
+          'phone',
+          'onlyOwnerPayment',
+          'name',
+          'lastName',
+          'isCheckinActive',
+          'uniquePaymentForGroup',
+          'subscribedEventsId'
+        ]);
+    }
+    
+    // Regla para los eventos - NUEVA
+    match /events/{eventId} {
+      // Los usuarios autenticados pueden actualizar eventos (para añadir espectadores)
+      allow update: if request.auth != null;
     }
   }
 }

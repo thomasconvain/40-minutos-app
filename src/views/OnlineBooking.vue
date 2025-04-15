@@ -125,6 +125,7 @@ import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
 import { doc, setDoc } from 'firebase/firestore';
 import { db } from '@/firebase';
 import { useRouter, useRoute } from 'vue-router';
+import { addSpectatorToEvent } from '@/utils';
 
 // Router y auth
 const auth = getAuth();
@@ -241,6 +242,23 @@ const submitForm = async () => {
     
     // Guardar en Firestore
     await setDoc(doc(db, 'spectators', user.uid), spectatorData);
+    
+    // Para cada evento al que se suscribe, añadir el espectador al evento
+    const eventIds = route.params.idEvent.split(',').map(id => id.trim());
+    for (const eventId of eventIds) {
+      // Datos del espectador para almacenar en el evento
+      const spectatorForEvent = {
+        id: user.uid,
+        name: name.value,
+        lastName: lastName.value,
+        numberOfCompanions: numberOfCompanions.value,
+        email: email.value,
+        phone: phone.value
+      };
+      
+      // Añadir espectador al evento
+      await addSpectatorToEvent(eventId, spectatorForEvent);
+    }
     
     // Redirigir al perfil (indicando que viene de OnlineBooking)
     router.push({ 
