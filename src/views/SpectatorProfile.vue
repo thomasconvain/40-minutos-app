@@ -322,9 +322,12 @@ const addSubscribedEventId = async (spectatorId, eventId, numberOfPeople) => {
     await fetchSpectator();
     await sendEmail({
       to: spectator.value.email,
-      templateId: 1, // ← cambia esto por el ID real de tu plantilla Brevo
+      templateId: 1,
       params: {
         name: spectator.value.name,
+        surname: spectator.value.lastName,
+        phone: spectator.value.phone,
+        firebaseId: spectator.value.uId,
       }
     })
   } catch (error) {

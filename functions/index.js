@@ -63,26 +63,44 @@ exports.getPaymentDetails = functions.https.onRequest(async (req, res) => {
 // Brevo Email Sending Function
 const axios = require("axios");
 
+const apiKey = functions.config().brevo.api_key;
+
+// Reutilizar configuración de headers
+const headers = {
+  "api-key": apiKey,
+  "Content-Type": "application/json",
+};
+
 exports.sendEmailWithBrevo = functions.https.onCall(async (data, context) => {
   const {to, params, templateId} = data;
 
   try {
-    const response = await axios.post("https://api.brevo.com/v3/smtp/email", {
+    // 1. Añadir el contacto si no existe
+    await axios.post("https://api.brevo.com/v3/contacts", {
+      email: to,
+      attributes: {
+        NOMBRE: params.name || "",
+        APELLIDOS: params.surname || "",
+        SMS: params.phone || "",
+        WHATSAPP: params.phone || "",
+        FIREBASE_ID: params.firebaseId || "",
+      },
+      listIds: [2],
+      updateEnabled: true, // si ya existe, actualiza
+    }, {headers});
+
+    // 2. Enviar el correo
+    await axios.post("https://api.brevo.com/v3/smtp/email", {
       to: [{email: to}],
       templateId,
       params,
       headers: {"X-Mailin-custom": "Firebase Function"},
-    }, {
-      headers: {
-        "api-key": functions.config().brevo.api_key,
-        "Content-Type": "application/json",
-      },
-    });
+    }, {headers});
 
-    return {success: true, response: response.data};
+    return {success: true};
   } catch (error) {
     console.error(
-        "Error al enviar correo:", error.response?.data || error.message,
+        "Error en el proceso:", error.response?.data || error.message,
     );
     throw new functions.https.HttpsError("internal", error.message);
   }
