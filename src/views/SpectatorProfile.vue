@@ -8,32 +8,34 @@
     
     <!-- Primer mensaje informativo sobre la reserva - verde con check icon en círculo -->
     <div 
-      v-if="spectator && !infoReserveDismissed && !$route.query.hideReserveInfo && $route.query.from !== 'login' && ($route.query.from === 'booking' || !$route.query.from)" 
-      class="bg-green-50 border-l-4 border-green-400 rounded-lg my-4 p-4"
+      v-if="spectator && $route.query.from && !infoReserveDismissed" 
+      class="relative my-4 p-[1px] rounded-lg bg-gradient-to-br from-green-400/80 to-transparent"
     >
+      <div class="bg-green-50 rounded-lg p-4">
       <div class="flex items-start gap-3">
         <div class="flex-shrink-0">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-          </svg>
+            <CheckCircleIcon class="h-6 w-6 text-green-500" aria-hidden="true" />
         </div>
         <div class="flex-1 text-black">
           <h3 class="font-bold text-md">Reserva exitosa</h3>
           <div class="text-sm mt-1">
-            <p> El ingreso es por <strong>orden de llegada</strong> y solo debes hacer check-in digital cuando llegues a tu asiento.</p>
+              <p>Hemos enviado una confirmación a tu correo.</p>
+              <p class="mt-2"> El ingreso es por <strong>orden de llegada</strong> y solo debes hacer check-in digital cuando llegues a tu asiento.</p>
           </div>
         </div>
       </div>
       
       <div class="mt-4 text-center">
         <button 
-          class="btn btn-sm bg-black/10 hover:bg-black/15 text-black border-none" 
+            class="btn btn-md bg-white hover:bg-transparent text-black border-none" 
           @click="dismissReserveInfo"
         >
           Entendido
         </button>
       </div>
     </div>
+    </div>
+
     
     <div class="mt-4" v-if="spectator">
       <div v-if="events.length">
@@ -109,14 +111,13 @@
 
       <!-- Segundo mensaje sobre la contraseña temporal - estilo gris transparente sin bordes con icono de candado -->
       <div 
-        v-if="spectator && !spectator.passwordChanged && !$route.query.hidePasswordPrompt && $route.query.from !== 'login' && ($route.query.from === 'booking' || !$route.query.from)" 
-        class="bg-gray-50/50 my-6 p-4"
+  v-if="spectator && !spectator.passwordChanged" 
+  class="relative my-6 p-[1px] rounded-xl bg-gradient-to-br from-orange-400/80 to-transparent"
       >
+  <div class="bg-orange-50 rounded-xl p-4">
         <div class="flex items-start gap-3">
           <div class="flex-shrink-0">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-            </svg>
+        <LockClosedIcon class="h-6 w-6 text-orange-500" aria-hidden="true" />
           </div>
           <div class="flex-1 text-gray-700">
             <h3 class="font-bold text-md text-gray-700">Cambia tu contraseña</h3>
@@ -132,26 +133,15 @@
         
         <div v-if="message === ''" class="mt-4 text-center">
           <button 
-            class="btn btn-sm bg-black/10 hover:bg-black/15 text-black border-none" 
+        class="btn btn-md bg-white hover:bg-transparent text-black border-none" 
             @click="handleReset"
           >
             Cambiar contraseña
           </button>
         </div>
       </div>
-      
-      <!-- Botón para finalizar primera reserva -->
-      <div 
-        v-if="spectator && !$route.query.hideFinishButton && $route.query.from === 'booking'" 
-        class="mt-6 text-center"
-      >
-        <button 
-          class="btn btn-primary text-white"
-          @click="goToHome"
-        >
-          Finalizar primera reserva
-        </button>
       </div>
+
 
       <div v-else-if="isLoading" class="flex justify-center w-full">
         <span class="loading loading-spinner loading-md"></span>
@@ -179,7 +169,7 @@ import {
 } from "firebase/firestore";
 import { auth } from '@/firebase';
 import { onAuthStateChanged, signOut, sendPasswordResetEmail } from 'firebase/auth';
-import { ShareIcon } from "@heroicons/vue/24/outline";
+import { ShareIcon, CheckCircleIcon, LockClosedIcon } from "@heroicons/vue/24/outline";
 import { fetchSpectators } from '@/utils';
 import { getFunctions, httpsCallable } from 'firebase/functions'
 
@@ -204,16 +194,6 @@ const idSpectator = route.params.idSpectator;
 
 // Inicialización principal
 onMounted(() => {
-  // Si no hay un parámetro 'from' específico o si no viene explícitamente de 'booking',
-  // añadir el parámetro para ocultar el mensaje de contraseña en todos los casos
-  if (!route.query.from || route.query.from !== 'booking') {
-    const newUrl = new URL(window.location.href);
-    newUrl.searchParams.set('hidePasswordPrompt', 'true');
-    window.history.replaceState({}, '', newUrl);
-  }
-  // Cuando viene de booking, simplemente dejamos que se muestre el mensaje sin modificar la URL
-  // y no enviamos el correo automáticamente
-  
   // Inicializar la aplicación
   init();
 });
@@ -241,6 +221,12 @@ const init = async () => {
     subscriptionAfterLogin.value = true;
     await addSubscribedEventId(idSpectator, eventIdFromUrl, 1);
   }
+
+  // Limpia IdEvent de la URL cuando ya no se necesita para evitar hacer llamadas innecesarias y envios de correo multiples cuando usuario refresca pagina
+  const newQuery = { ...route.query }
+  delete newQuery['idEvent']
+
+  router.replace({ path: route.path, query: newQuery })
   
   isLoading.value = false;
 };
@@ -387,7 +373,7 @@ const handleReset = async () => {
     message.value = "✉️ Te enviamos un correo, revísalo!";
     
     // Actualizar el estado local
-    spectator.value.passwordChanged = true;
+    // spectator.value.passwordChanged = true;
   } catch (error) {
     message.value = "Error al enviar el correo: " + error.message;
   }
@@ -396,16 +382,12 @@ const handleReset = async () => {
 // Función para ocultar el mensaje informativo de reserva
 const dismissReserveInfo = () => {
   infoReserveDismissed.value = true;
-};
 
-// Función para finalizar la reserva e ir a la página principal
-const goToHome = async () => {
-  try {
-    await signOut(auth);
-    router.push('/');
-  } catch (error) {
-    console.error("Error al cerrar sesión:", error);
-  }
+  // Limpiar el parámetro 'from' de la URL porque ya no es necesario si el usuario ha visto el mensaje
+  const newQuery = { ...route.query }
+  delete newQuery['from']
+
+  router.replace({ path: route.path, query: newQuery })
 };
 </script>
 

@@ -54,7 +54,7 @@
           <!-- Botón para ir a Home, siempre visible -->
           <div class="mt-6 text-center">
             <button 
-              class="btn bg-white border-none" 
+              class="btn bg-white border-none w-full" 
               @click="goToHome"
             >
               Volver al home
