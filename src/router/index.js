@@ -15,6 +15,7 @@ import AdminPage from '@/views/AdminPage.vue';
 import AdminLogin from '@/views/AdminLogin.vue';
 import OnlineBooking from '@/views/OnlineBooking.vue';
 import PasswordConfig from '@/views/PasswordConfig.vue';
+import Dashboard from '@/views/Dashboard.vue';
 
 const routes = [
   {
@@ -81,6 +82,11 @@ const routes = [
     name: 'Admin',
     component: AdminPage,
     meta: { requiresAuth: true }
+  },
+  {
+    path: '/dashboard',
+    name: 'Dashboard',
+    component: Dashboard
   },
   {
     path: '/login',
