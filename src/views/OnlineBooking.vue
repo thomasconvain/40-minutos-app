@@ -23,6 +23,7 @@
         class="input input-bordered w-full" 
         required 
       />
+      <p v-if="numberOfPeople >= 2" class="text-yellow-600 text-sm mt-1">Se recomienda ir con niños mayores de 10 años</p>
     </div>
     
     <!-- Opciones iniciales -->
