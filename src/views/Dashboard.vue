@@ -67,7 +67,9 @@ import {
   getDocs, 
   query, 
   where, 
-  orderBy
+  orderBy,
+  doc,
+  updateDoc
 } from 'firebase/firestore';
 import { auth, db } from '@/firebase';
 import { signOut, onAuthStateChanged } from 'firebase/auth';
@@ -156,6 +158,8 @@ const fetchEventSpectators = async (event) => {
       const querySnapshot = await getDocs(q);
       let checkinCount = 0;
       let checkoutCount = 0;
+      const eventRef = doc(db, 'events', event.id);
+      let needsUpdate = false;
       
       querySnapshot.forEach(docSnapshot => {
         const data = docSnapshot.data();
@@ -163,25 +167,50 @@ const fetchEventSpectators = async (event) => {
         // Find the spectator in our array
         const spectatorIndex = event.spectators.findIndex(s => s.id === docSnapshot.id);
         if (spectatorIndex >= 0) {
+          const currentSpectator = event.spectators[spectatorIndex];
+          
+          // Verificar si hay cambios en el estado de check-in o check-out
+          const hasNewCheckin = data.isChecked && !currentSpectator.wasCheckedIn;
+          const hasNewCheckout = data.isCheckedOut && !currentSpectator.wasCheckedOut;
+          
           // Update with additional data
           event.spectators[spectatorIndex] = {
-            ...event.spectators[spectatorIndex],
+            ...currentSpectator,
             isChecked: data.isChecked || false,
             isCheckedOut: data.isCheckedOut || false,
+            wasCheckedIn: hasNewCheckin ? true : (currentSpectator.wasCheckedIn || false),
+            wasCheckedOut: hasNewCheckout ? true : (currentSpectator.wasCheckedOut || false),
             subscribedEventsId: data.subscribedEventsId || []
           };
           
-          // Count check-ins
+          // Si hubo cambios, marcar para actualizar en Firestore
+          if (hasNewCheckin || hasNewCheckout) {
+            needsUpdate = true;
+          }
+          
+          // Count check-ins (actual)
           if (data.isChecked) {
             checkinCount++;
           }
           
-          // Count check-outs
+          // Count check-outs (actual)
           if (data.isCheckedOut) {
             checkoutCount++;
           }
         }
       });
+      
+      // Actualizar Firestore si es necesario
+      if (needsUpdate) {
+        try {
+          await updateDoc(eventRef, {
+            eventSpectators: event.spectators
+          });
+          console.log('Estado de check-in/out actualizado para el evento:', event.id);
+        } catch (error) {
+          console.error('Error al actualizar los datos de check-in/out:', error);
+        }
+      }
       
       event.checkinCount = checkinCount;
       event.checkoutCount = checkoutCount;

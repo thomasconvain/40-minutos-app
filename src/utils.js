@@ -76,7 +76,9 @@ export const addSpectatorToEvent = async (eventId, spectatorData) => {
       numberOfCompanions: spectatorData.numberOfCompanions || 0,
       email: spectatorData.email || '',
       phone: spectatorData.phone || '',
-      registeredAt: new Date() // Añadir timestamp para saber cuándo se registró
+      registeredAt: new Date(), // Añadir timestamp para saber cuándo se registró
+      wasCheckedIn: false,      // Nuevo campo para seguimiento de check-in
+      wasCheckedOut: false      // Nuevo campo para seguimiento de check-out
     };
 
     // Verificar si el evento ya tiene el campo eventSpectators
