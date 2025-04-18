@@ -149,53 +149,68 @@ const fetchEventSpectators = async (event) => {
     // Get spectators from the event's eventSpectators array
     if (event.eventSpectators && Array.isArray(event.eventSpectators)) {
       event.spectatorCount = event.eventSpectators.length;
-      event.spectators = [...event.eventSpectators];
       
-      // Get additional data for each spectator (like check-in status)
-      const spectatorsRef = collection(db, 'spectators');
-      const q = query(spectatorsRef, where('subscribedEventsId', 'array-contains', event.id));
-      
-      const querySnapshot = await getDocs(q);
+      // Contar directamente desde el arreglo eventSpectators
       let checkinCount = 0;
       let checkoutCount = 0;
+      let wasCheckedInCount = 0;
+      let wasCheckedOutCount = 0;
+      
+      // Procesar cada espectador en el evento
+      event.eventSpectators.forEach(spectator => {
+        // Contar estados actuales
+        if (spectator.isChecked) {
+          checkinCount++;
+        }
+        if (spectator.isCheckedOut) {
+          checkoutCount++;
+        }
+        
+        // Contar estados históricos
+        if (spectator.wasCheckedIn) {
+          wasCheckedInCount++;
+        }
+        if (spectator.wasCheckedOut) {
+          wasCheckedOutCount++;
+        }
+      });
+      
+      // Obtener datos actualizados de los espectadores
+      const spectatorsRef = collection(db, 'spectators');
+      const q = query(spectatorsRef, where('subscribedEventsId', 'array-contains', event.id));
+      const querySnapshot = await getDocs(q);
+      
       const eventRef = doc(db, 'events', event.id);
       let needsUpdate = false;
       
+      // Crear una copia para actualizar
+      const updatedSpectators = [...event.eventSpectators];
+      
+      // Actualizar cada espectador con datos de Firestore
       querySnapshot.forEach(docSnapshot => {
         const data = docSnapshot.data();
         
-        // Find the spectator in our array
-        const spectatorIndex = event.spectators.findIndex(s => s.id === docSnapshot.id);
+        // Buscar el espectador en el array
+        const spectatorIndex = updatedSpectators.findIndex(s => s.id === docSnapshot.id);
+        
         if (spectatorIndex >= 0) {
-          const currentSpectator = event.spectators[spectatorIndex];
+          const currentSpectator = updatedSpectators[spectatorIndex];
           
           // Verificar si hay cambios en el estado de check-in o check-out
           const hasNewCheckin = data.isChecked && !currentSpectator.wasCheckedIn;
           const hasNewCheckout = data.isCheckedOut && !currentSpectator.wasCheckedOut;
           
-          // Update with additional data
-          event.spectators[spectatorIndex] = {
-            ...currentSpectator,
-            isChecked: data.isChecked || false,
-            isCheckedOut: data.isCheckedOut || false,
-            wasCheckedIn: hasNewCheckin ? true : (currentSpectator.wasCheckedIn || false),
-            wasCheckedOut: hasNewCheckout ? true : (currentSpectator.wasCheckedOut || false),
-            subscribedEventsId: data.subscribedEventsId || []
-          };
-          
-          // Si hubo cambios, marcar para actualizar en Firestore
+          // Actualizar datos
           if (hasNewCheckin || hasNewCheckout) {
+            updatedSpectators[spectatorIndex] = {
+              ...currentSpectator,
+              isChecked: data.isChecked || false,
+              isCheckedOut: data.isCheckedOut || false,
+              wasCheckedIn: hasNewCheckin ? true : (currentSpectator.wasCheckedIn || false),
+              wasCheckedOut: hasNewCheckout ? true : (currentSpectator.wasCheckedOut || false),
+            };
+            
             needsUpdate = true;
-          }
-          
-          // Count check-ins (actual)
-          if (data.isChecked) {
-            checkinCount++;
-          }
-          
-          // Count check-outs (actual)
-          if (data.isCheckedOut) {
-            checkoutCount++;
           }
         }
       });
@@ -204,16 +219,23 @@ const fetchEventSpectators = async (event) => {
       if (needsUpdate) {
         try {
           await updateDoc(eventRef, {
-            eventSpectators: event.spectators
+            eventSpectators: updatedSpectators
           });
           console.log('Estado de check-in/out actualizado para el evento:', event.id);
+          
+          // Actualizar los contadores después de guardar
+          wasCheckedInCount = updatedSpectators.filter(s => s.wasCheckedIn).length;
+          wasCheckedOutCount = updatedSpectators.filter(s => s.wasCheckedOut).length;
         } catch (error) {
           console.error('Error al actualizar los datos de check-in/out:', error);
         }
       }
       
-      event.checkinCount = checkinCount;
-      event.checkoutCount = checkoutCount;
+      // Actualizar los contadores en el objeto del evento para visualización
+      event.checkinCount = wasCheckedInCount;  // Usar wasCheckedIn en lugar de isChecked
+      event.checkoutCount = wasCheckedOutCount;  // Usar wasCheckedOut en lugar de isCheckedOut
+      event.currentCheckinCount = checkinCount;  // Guardar estos por si acaso
+      event.currentCheckoutCount = checkoutCount;
     }
   } catch (error) {
     console.error(`Error fetching spectators for event ${event.id}:`, error);
