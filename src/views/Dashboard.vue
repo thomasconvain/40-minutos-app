@@ -17,7 +17,7 @@
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
       <div v-for="event in activeEvents" :key="event.id" class="card bg-base-100 bg-opacity-70 shadow-xl">
         <div class="card-body">
-          <h2 class="card-title">{{ event.name || event.hostName || event.place }}</h2>
+          <h2 class="card-title">{{ event.place || event.name || event.hostName }}</h2>
           
           <div class="flex mt-1 mb-1 text-sm text-gray-500">
             {{ formatDate(event.date) }}
@@ -29,7 +29,7 @@
             <!-- Primera fila: Inscritos y Reservas -->
             <div class="grid grid-cols-2 gap-2">
               <div class="text-center p-1 bg-primary/10 rounded-md">
-                <div class="stat-title text-black font-semibold">Inscritos</div>
+                <div class="stat-title text-black">Inscritos</div>
                 <div class="stat-value text-xl text-black">{{ calculateTotalReservations(event)  }}</div>
               </div>
               
