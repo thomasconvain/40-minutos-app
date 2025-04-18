@@ -58,6 +58,16 @@ export const addSpectatorToEvent = async (eventId, spectatorData) => {
       return false;
     }
 
+    // Verificar si el espectador ya está registrado en este evento
+    const eventData = eventSnap.data();
+    if (eventData.eventSpectators && eventData.eventSpectators.some(spec => spec.email === spectatorData.email)) {
+      console.log('El espectador ya está registrado en este evento:', {
+        eventId,
+        email: spectatorData.email
+      });
+      return true; // Retornar true porque el espectador ya está en el evento
+    }
+
     // Crear un objeto con los datos relevantes del espectador para añadir al evento
     const spectatorForEvent = {
       id: spectatorData.id,
@@ -70,8 +80,6 @@ export const addSpectatorToEvent = async (eventId, spectatorData) => {
     };
 
     // Verificar si el evento ya tiene el campo eventSpectators
-    const eventData = eventSnap.data();
-    
     if (eventData.eventSpectators) {
       // Si ya existe el array, añadir el nuevo espectador
       await updateDoc(eventRef, {

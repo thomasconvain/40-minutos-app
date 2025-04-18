@@ -19,6 +19,11 @@
                     <p v-else-if="event.isFreeEntrance" class="my-3 text-gray-300">
                       {{ event.place }}
                     </p>
+                    
+                    <!-- Mostrar número de acompañantes si el usuario está inscrito -->
+                    <p v-if="event.isUserInEvent && event.spectatorInfo" class="my-3 text-gray-300">
+                      <strong>Te acompañan:</strong> {{ event.spectatorInfo.numberOfCompanions || 0 }} personas
+                    </p>
               
                     <div class="card-actions mt-4">
                       <button
@@ -31,7 +36,7 @@
                       </button>
                 
                       <button
-                        v-if="!event.isOver && event.isFreeEntrance && currentUser && !isSpectatorSubscribed(event.id)"
+                        v-if="!event.isOver && event.isFreeEntrance && currentUser && !isSpectatorSubscribed(event.id) && !event.isUserInEvent"
                         type="button"
                         class="btn btn-sm md:btn-md bg-white text-black hover:bg-gray-200 border-transparent"
                         @click="openModal(event.id, 'modalValidation')"
@@ -39,7 +44,7 @@
                         <span>Consigue tu ticket en un click</span>
                       </button>
                 
-                      <div v-if="isSpectatorSubscribed(event.id)" class="flex items-center">
+                      <div v-if="isSpectatorSubscribed(event.id) || event.isUserInEvent" class="flex items-center">
                         <CheckCircleIcon v-if="!isLoading" class="-ml-1 mr-2 h-5 w-5" aria-hidden="true" />
                         Ya estas inscrito a este evento
                       </div>
@@ -192,12 +197,30 @@ const fetchActiveEvents = async () => {
     );
 
     const querySnapshot = await getDocs(q);
-    events.value = querySnapshot.docs.map((doc) => ({
-      id: doc.id,
-      ...doc.data(),
-      // agrega booleano para definir si el spectator ya está suscrito al evento o no
-      isSubscribed: props.isSpectatorSubscribed,
-    }));
+    events.value = querySnapshot.docs.map((doc) => {
+      const eventData = doc.data();
+      // Verificar si el usuario actual está en la lista de eventSpectators por email
+      let isUserInEvent = false;
+      let spectatorInfo = null;
+      
+      if (currentUser.value && eventData.eventSpectators) {
+        const userEmail = currentUser.value.email;
+        const userSpectator = eventData.eventSpectators.find(spec => spec.email === userEmail);
+        
+        if (userSpectator) {
+          isUserInEvent = true;
+          spectatorInfo = userSpectator;
+        }
+      }
+      
+      return {
+        id: doc.id,
+        ...eventData,
+        isSubscribed: props.isSpectatorSubscribed,
+        isUserInEvent: isUserInEvent,
+        spectatorInfo: spectatorInfo
+      };
+    });
   } catch (error) {
     console.error("Error fetching active events: ", error);
   }
