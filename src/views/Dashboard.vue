@@ -17,9 +17,10 @@
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
       <div v-for="event in activeEvents" :key="event.id" class="card bg-base-100 bg-opacity-70 shadow-xl">
         <div class="card-body">
-          <h2 class="card-title">{{ event.hostName || event.place }}</h2>
+          <h2 class="card-title">{{ event.name || event.hostName || event.place }}</h2>
           
           <div class="flex mt-1 text-sm text-gray-500">
+            {{ formatDate(event.date) }}
           </div>
           
           <div class="divider"></div>
@@ -60,6 +61,8 @@ import {
 import { auth, db } from '@/firebase';
 import { signOut, onAuthStateChanged } from 'firebase/auth';
 import { useRouter } from 'vue-router';
+import { format } from "date-fns";
+import { es } from "date-fns/locale";
 
 // Para evitar error vue/multi-word-component-names
 defineComponent({
@@ -69,6 +72,16 @@ defineComponent({
 const router = useRouter();
 const activeEvents = ref([]);
 const isLoading = ref(true);
+
+// Función para formatear la fecha
+const formatDate = (timestamp) => {
+  if (!timestamp || typeof timestamp.toDate !== 'function') {
+    return "Fecha no disponible";
+  }
+  return format(timestamp.toDate(), "EEEE dd 'de' MMMM '|' HH.mm 'hrs'", {
+    locale: es,
+  });
+};
 
 // Fetch active events based on user authentication status
 const fetchActiveEvents = async () => {

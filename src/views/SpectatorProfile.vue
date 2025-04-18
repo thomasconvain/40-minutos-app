@@ -53,10 +53,11 @@
             <div class="card-body">
               <h2 class="card-title">{{ event.name }}</h2>
               <p><strong>Lugar:</strong> {{ event.place }}</p>
-              <p><strong>Fecha:</strong> {{ formatDate(event.date) }}</p>
+              <p><strong>Fecha:</strong> {{ formatDatePart(event.date, 'date') }}</p>
+              <p><strong>Hora:</strong> {{ formatDatePart(event.date, 'time') }}</p>
               <p>
                 <strong>Te acompañan:</strong>
-                {{ spectator.numberOfCompanions }} personas
+                {{ getNumberOfCompanionsForEvent(event.id) }} personas
               </p>
               <p v-if="event.hostName">
                 <strong>Anfitrión:</strong> {{ event.hostName }}
@@ -171,7 +172,9 @@ import { auth } from '@/firebase';
 import { onAuthStateChanged, signOut, sendPasswordResetEmail } from 'firebase/auth';
 import { ShareIcon, CheckCircleIcon, LockClosedIcon } from "@heroicons/vue/24/outline";
 import { fetchSpectators } from '@/utils';
-import { getFunctions, httpsCallable } from 'firebase/functions'
+import { getFunctions, httpsCallable } from 'firebase/functions';
+import { format } from "date-fns";
+import { es } from "date-fns/locale";
 
 //functions sendEmail
 const functions = getFunctions()
@@ -293,6 +296,15 @@ const fetchEvents = async (eventIds) => {
   }
 };
 
+// Función para obtener el número de acompañantes para un evento específico
+const getNumberOfCompanionsForEvent = (eventId) => {
+  const event = events.value.find(e => e.id === eventId);
+  if (!event || !event.eventSpectators) return 0;
+  
+  const userSpectator = event.eventSpectators.find(spec => spec.email === spectator.value?.email);
+  return userSpectator ? userSpectator.numberOfCompanions : 0;
+};
+
 const addSubscribedEventId = async (spectatorId, eventId, numberOfPeople) => {
   if (!spectatorId || !eventId) return;
   
@@ -327,8 +339,36 @@ const formatDate = (timestamp) => {
   if (!timestamp || typeof timestamp.toDate !== 'function') {
     return "Fecha no disponible";
   }
-  const date = timestamp.toDate();
-  return date.toLocaleDateString() + " " + date.toLocaleTimeString();
+  
+  // Usamos la misma lógica de formato de fecha de ActiveEvents con date-fns
+  return format(timestamp.toDate(), "EEEE dd 'de' MMMM '|' HH.mm 'hrs'", {
+    locale: es,
+  });
+};
+
+// Funciones auxiliares para obtener parte de la fecha (fecha u hora)
+const formatDatePart = (timestamp, part) => {
+  if (!timestamp || typeof timestamp.toDate !== 'function') {
+    return "No disponible";
+  }
+  
+  try {
+    const formattedDate = formatDate(timestamp);
+    if (formattedDate === "Fecha no disponible") return "No disponible";
+    
+    const parts = formattedDate.split('|');
+    
+    if (part === 'date' && parts.length > 0) {
+      return parts[0].trim();
+    } else if (part === 'time' && parts.length > 1) {
+      return parts[1].trim();
+    } else {
+      return "No disponible";
+    }
+  } catch (error) {
+    console.error("Error formateando fecha:", error);
+    return "No disponible";
+  }
 };
 
 // Función para navegar a la página del evento
