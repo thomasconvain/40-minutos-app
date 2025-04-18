@@ -19,26 +19,37 @@
         <div class="card-body">
           <h2 class="card-title">{{ event.name || event.hostName || event.place }}</h2>
           
-          <div class="flex mt-1 text-sm text-gray-500">
+          <div class="flex mt-1 mb-1 text-sm text-gray-500">
             {{ formatDate(event.date) }}
           </div>
           
-          <div class="divider"></div>
+          <div class="divider my-0"></div>
           
-          <div class="grid grid-cols-3 gap-2">
-            <div class="text-center">
-              <div class="stat-title">Reservas</div>
-              <div class="stat-value text-xl">{{ calculateTotalReservations(event) }}</div>
+          <div class="flex flex-col gap-1 mt-1">
+            <!-- Primera fila: Inscritos y Reservas -->
+            <div class="grid grid-cols-2 gap-2">
+              <div class="text-center p-1 bg-primary/10 rounded-md">
+                <div class="stat-title text-black font-semibold">Inscritos</div>
+                <div class="stat-value text-xl text-black">{{ calculateTotalReservations(event)  }}</div>
+              </div>
+              
+              <div class="text-center">
+                <div class="stat-title">Reservas</div>
+                <div class="stat-value text-xl">{{ event.eventSpectators?.length || 0 }}</div>
+              </div>
             </div>
             
-            <div class="text-center">
-              <div class="stat-title">Check-in</div>
-              <div class="stat-value text-xl">{{ event.checkinCount || 0 }}</div>
-            </div>
-            
-            <div class="text-center">
-              <div class="stat-title">Check-out</div>
-              <div class="stat-value text-xl">{{ event.checkoutCount || 0 }}</div>
+            <!-- Segunda fila: Check-in y Check-out -->
+            <div class="grid grid-cols-2 gap-2 mt-1">
+              <div class="text-center text-gray-600">
+                <div class="stat-title text-sm">Check-in</div>
+                <div class="stat-value text-lg">{{ event.checkinCount || 0 }}</div>
+              </div>
+              
+              <div class="text-center text-gray-600">
+                <div class="stat-title text-sm">Check-out</div>
+                <div class="stat-value text-lg">{{ event.checkoutCount || 0 }}</div>
+              </div>
             </div>
           </div>
           
