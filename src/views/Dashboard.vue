@@ -196,18 +196,21 @@ const fetchEventSpectators = async (event) => {
         if (spectatorIndex >= 0) {
           const currentSpectator = updatedSpectators[spectatorIndex];
           
-          // Verificar si hay cambios en el estado de check-in o check-out
-          const hasNewCheckin = data.isChecked && !currentSpectator.wasCheckedIn;
-          const hasNewCheckout = data.isCheckedOut && !currentSpectator.wasCheckedOut;
+          // Ya no usamos el campo global isChecked/isCheckedOut para modificar el wasCheckedIn/wasCheckedOut del evento
+          // Solo actualizamos el isChecked/isCheckedOut específico del evento para mantener sincronía
           
-          // Actualizar datos
-          if (hasNewCheckin || hasNewCheckout) {
+          // Actualizar datos si hay cambios en el estado actual (no histórico)
+          const hasChanges = 
+            (data.isChecked !== currentSpectator.isChecked) || 
+            (data.isCheckedOut !== currentSpectator.isCheckedOut);
+            
+          if (hasChanges) {
             updatedSpectators[spectatorIndex] = {
               ...currentSpectator,
               isChecked: data.isChecked || false,
               isCheckedOut: data.isCheckedOut || false,
-              wasCheckedIn: hasNewCheckin ? true : (currentSpectator.wasCheckedIn || false),
-              wasCheckedOut: hasNewCheckout ? true : (currentSpectator.wasCheckedOut || false),
+              // Mantenemos los valores históricos tal como están
+              // wasCheckedIn y wasCheckedOut se actualizan directamente durante el check-in/check-out
             };
             
             needsUpdate = true;

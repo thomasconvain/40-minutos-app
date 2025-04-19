@@ -119,23 +119,50 @@ const fetchEvents = async () => {
 
 const validateCheckin = async () => {
   const db = getFirestore();
-  const docRef = doc(db, 'spectators', id); // Usa el id del espectador de los params
+  const spectatorRef = doc(db, 'spectators', id); // Usa el id del espectador de los params
+  const eventRef = doc(db, 'events', route.params.idEvent); // Referencia al evento actual
   
   try {
-    await updateDoc(docRef, {
+    // Actualizar solo los datos básicos del espectador sin cambiar el estado global de check-in
+    await updateDoc(spectatorRef, {
       email: spectator.value.email,
       phone: spectator.value.phone,
       numberOfPeople: numberOfCompanions.value + 1,
       uniquePaymentForGroup: uniquePaymentForGroup.value,
-      isChecked: true,
+      // Ya no actualizamos isChecked globalmente para evitar afectar otros eventos
     });
-    console.log('Datos del espectador actualizados correctamente');
+
+    // Obtener el documento del evento para actualizar el eventSpectator específico
+    const eventDoc = await getDoc(eventRef);
+    if (eventDoc.exists()) {
+      const eventData = eventDoc.data();
+      const eventSpectators = eventData.eventSpectators || [];
+      
+      // Buscar el índice del espectador actual en el array de eventSpectators
+      const spectatorIndex = eventSpectators.findIndex(s => s.id === id);
+      
+      if (spectatorIndex !== -1) {
+        // Actualizar solo el registro del espectador para este evento específico
+        eventSpectators[spectatorIndex] = {
+          ...eventSpectators[spectatorIndex],
+          isChecked: true,
+          wasCheckedIn: true
+        };
+        
+        // Guardar los cambios en el documento del evento
+        await updateDoc(eventRef, {
+          eventSpectators: eventSpectators
+        });
+      }
+    }
+    
+    console.log('Datos del espectador y check-in actualizados correctamente');
     router.push({
-    name: 'EventDetail',
-    params: { idSpectator: route.params.idSpectator, idEvent: route.params.idEvent, nameEvent: route.params.nameEvent },
-  });
+      name: 'EventDetail',
+      params: { idSpectator: route.params.idSpectator, idEvent: route.params.idEvent, nameEvent: route.params.nameEvent },
+    });
   } catch (error) {
-    console.error('Error al actualizar los datos del espectador:', error);
+    console.error('Error al actualizar los datos del check-in:', error);
   }
 };
 

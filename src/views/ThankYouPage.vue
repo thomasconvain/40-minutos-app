@@ -73,11 +73,12 @@ const event = ref();
 const textToCopy = ref();
 const copiedMessage = ref('');
 
-// Obtener el payment_id desde los parámetros de la URL
+// Obtener los parámetros de la URL
 const paymentId = route.query.payment_id;
 const idSpectator = route.query.idSpectator; 
 const numberOfPeople = route.query.numberOfPeople;
-const idVisitor = route.query.idVisitor; 
+const idVisitor = route.query.idVisitor;
+const idEvent = route.query.idEvent;
 
 // Función para obtener detalles del pago desde Firebase Functions
 const getPaymentDetails = async () => {
@@ -101,7 +102,7 @@ const getPaymentDetails = async () => {
       const paymentExists = payments.some(payment => payment.paymentId === paymentId);
       
       if (!paymentExists) {
-        // Si no existe, añadir el nuevo pago
+        // Si no existe, añadir el nuevo pago (sin actualizar estado global)
         await updateDoc(spectatorRef, {
           payments: arrayUnion({
             paymentId: paymentId,
@@ -110,7 +111,36 @@ const getPaymentDetails = async () => {
             amount: paymentDetails.value.amount,
             date: new Date() // Timestamp del momento
           })
+          // Ya no actualizamos isCheckedOut globalmente para evitar afectar otros eventos
         });
+        
+        // Actualizar el eventSpectator específico en el documento del evento
+        if (idEvent) {
+          const eventRef = doc(db, 'events', idEvent);
+          const eventDoc = await getDoc(eventRef);
+          
+          if (eventDoc.exists()) {
+            const eventData = eventDoc.data();
+            const eventSpectators = eventData.eventSpectators || [];
+            
+            // Buscar el índice del espectador actual en el array de eventSpectators
+            const spectatorIndex = eventSpectators.findIndex(s => s.id === idSpectator);
+            
+            if (spectatorIndex !== -1) {
+              // Actualizar solo el registro del espectador para este evento específico
+              eventSpectators[spectatorIndex] = {
+                ...eventSpectators[spectatorIndex],
+                isCheckedOut: true,
+                wasCheckedOut: true
+              };
+              
+              // Guardar los cambios en el documento del evento
+              await updateDoc(eventRef, {
+                eventSpectators: eventSpectators
+              });
+            }
+          }
+        }
       } else {
         console.log('El pago ya existe con ese mercadoPagoId');
       }
@@ -136,22 +166,57 @@ const getPaymentDetails = async () => {
 
 const updateZeroPaymentSpectator = async () => {
   try {
+    // Crear un ID único para el pago
+    const paymentId = idSpectator + '-' + (idVisitor ? idVisitor : 'owner');
+    
+    // Actualizar el documento del espectador con la información del pago
     const spectatorRef = doc(db, 'spectators', idSpectator);
     const spectatorDoc = await getDoc(spectatorRef);
     const payments = spectatorDoc.data().payments || [];
+    
     // Verificar si ya existe un pago con el mismo paymentId
-    const paymentExists = payments.some(payment => payment.paymentId === idSpectator + '-' + (idVisitor ? idVisitor : 'owner'));
+    const paymentExists = payments.some(payment => payment.paymentId === paymentId);
+    
     if (!paymentExists) {
-      // Si no existe, añadir el nuevo pago
+      // Si no existe, añadir el nuevo pago (sin actualizar estado global de check-out)
       await updateDoc(spectatorRef, {
         payments: arrayUnion({
           paymentMethod: 'BankTransfer',
           numberOfPeople: numberOfPeople,
-          paymentId: idSpectator + '-' + (idVisitor ? idVisitor : 'owner'),
+          paymentId: paymentId,
           amount: route.query.amount,
           date: new Date() // Timestamp del momento
         })
+        // Ya no actualizamos isCheckedOut globalmente para evitar afectar otros eventos
       });
+      
+      // Actualizar el eventSpectator específico en el documento del evento
+      if (route.query.idEvent) {
+        const eventRef = doc(db, 'events', route.query.idEvent);
+        const eventDoc = await getDoc(eventRef);
+        
+        if (eventDoc.exists()) {
+          const eventData = eventDoc.data();
+          const eventSpectators = eventData.eventSpectators || [];
+          
+          // Buscar el índice del espectador actual en el array de eventSpectators
+          const spectatorIndex = eventSpectators.findIndex(s => s.id === idSpectator);
+          
+          if (spectatorIndex !== -1) {
+            // Actualizar solo el registro del espectador para este evento específico
+            eventSpectators[spectatorIndex] = {
+              ...eventSpectators[spectatorIndex],
+              isCheckedOut: true,
+              wasCheckedOut: true
+            };
+            
+            // Guardar los cambios en el documento del evento
+            await updateDoc(eventRef, {
+              eventSpectators: eventSpectators
+            });
+          }
+        }
+      }
     } else {
       console.log('El pago ya existe con ese paymentId');
     }
@@ -163,7 +228,7 @@ const updateZeroPaymentSpectator = async () => {
 // Función para obtener los detalles de los eventos usando los IDs
 const fetchEvents = async () => {
   const db = getFirestore();
-  const docRef = doc(db, 'events', route.query.idEvent);
+  const docRef = doc(db, 'events', idEvent);
 
   try {
     const docSnap = await getDoc(docRef);
@@ -207,8 +272,8 @@ onMounted(() => {
   if (paymentId) {
     getPaymentDetails();
   } else {
-  updateZeroPaymentSpectator();
-  fetchEvents(route.query.idEvent);
+    updateZeroPaymentSpectator();
+    fetchEvents();
   }
 });
 </script>
