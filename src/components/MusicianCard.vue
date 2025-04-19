@@ -3,7 +3,17 @@
     <div class="card bg-base-200 shadow-lg rounded-xl w-full border border-base-300">
       <div class="card-body p-4 sm:p-6">
         <div class="flex gap-4 items-start mb-3">
-          <img class="w-16 sm:w-20 mt-1 rounded" v-if="imageUrl" :src="imageUrl" alt="cover" />
+          <div class="w-20 sm:w-28 h-20 sm:h-28 flex-shrink-0">
+            <img 
+              v-if="imageUrl" 
+              :src="imageUrl" 
+              alt="Foto del músico" 
+              class="w-full h-full object-cover rounded shadow-sm"
+            />
+            <div v-else class="w-full h-full bg-gray-200 rounded shadow-sm flex items-center justify-center">
+              <span class="text-gray-400 text-xs">Sin foto</span>
+            </div>
+          </div>
           <div>
             <h2 class="card-title text-lg sm:text-xl font-bold">{{ musician?.name || 'Músico' }}</h2>
             <p class="text-xs sm:text-sm text-gray-500 mb-1">{{ musician?.instrument || 'Instrumento' }}</p>
@@ -46,8 +56,10 @@ const fetchImageUrl = async (path) => {
 
 // Llamar a la función para obtener la URL cuando el componente se monte
 onMounted(() => {
-  if (props.musician && props.musician.photoPath) {
-    fetchImageUrl(`gs://minutos-87fe9.appspot.com/${props.musician.photoPath}`);
+  // Verificar si existe photoPath o imagePath
+  const imagePath = props.musician?.photoPath || props.musician?.imagePath;
+  if (imagePath) {
+    fetchImageUrl(`gs://minutos-87fe9.appspot.com/${imagePath}`);
   }
 });
 </script>

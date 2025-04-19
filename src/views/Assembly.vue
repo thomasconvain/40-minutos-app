@@ -11,7 +11,9 @@
     <div v-if="assemblyData" class="mb-8">
       <h2 class="text-xl font-semibold mb-2">{{ assemblyData.name }}</h2>
       <p class="mb-4">{{ assemblyData.description }}</p>
-      <p v-if="assemblyData.type" class="text-sm text-gray-600">Tipo: {{ assemblyData.type }}</p>
+      <div v-if="assemblyData.type" class="text-sm text-gray-600">
+        <p v-if="assemblyData.typeDescription" class="mt-1"><strong>Descripción:</strong> {{ assemblyData.typeDescription }}</p>
+      </div>
     </div>
 
     <div v-if="isLoading" class="flex justify-center my-8">
