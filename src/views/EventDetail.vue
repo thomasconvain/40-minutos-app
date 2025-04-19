@@ -36,7 +36,11 @@
         </div>
         <ul>
           <li v-for="theme in themes" :key="theme.id" class="mb-4 bg-white rounded-md">
-            <ThemeItem :theme="theme" @onRateChange="handleRateChange"/>
+            <ThemeItem 
+              :theme="theme" 
+              :initialRating="getThemeRating(theme.id)"
+              @onRateChange="handleRateChange"
+            />
           </li>
         </ul>
       </div>
@@ -101,7 +105,11 @@
         <div class="carousel carousel-center w-full rounded-box gap-4" id="membersCarousel">
           <!-- Cada integrante será un item del carrusel -->
           <div v-for="musician in musicians" :key="musician.id" class="carousel-item w-full">
-            <MusicianCard :musician="musician" />
+            <MusicianCard 
+              :musician="musician" 
+              :initialRating="getMusicianRating(musician.id)"
+              @rateChange="handleMusicianRating" 
+            />
           </div>
         </div>
         
@@ -214,6 +222,7 @@ const activeTab = ref('programa'); // Para controlar las pestañas
 const themes = ref([]);
 const ratings = ref([]); // Usar un arreglo para los ratings
 const musicians = ref([]);
+const musiciansRatings = ref([]); // Arreglo para los ratings de músicos
 const assemblyData = ref(null);
 const carouselPosition = ref(0);
 const chapterData = ref(null);
@@ -336,30 +345,83 @@ const goToCheckout = async () => {
         });
       }
     }
+    
+    // Guardar todas las evaluaciones del espectador en el eventSpectator
+    await saveSpectatorRatings();
+    
     if(spectatorsShouldPayInTheApp.value) {
-    // Una vez que se actualizan los ratings, redirigir al checkout
-    router.push({
-      name: 'Checkout',
-      params: { idSpectator, idEvent, nameEvent },
-      query: { referenceLink: route.query.referenceLink, idVisitor: route.query.idVisitor}
-    });
-  } else {
-    router.push({
-      name: 'ThankYou',
-      query: { 
-      idSpectator: idSpectator,
-      referenceLink: route.query.referenceLink,
-      idVisitor: route.query.idVisitor,
-      idEvent: idEvent,
-      paymentMethod: 'no payment',
-      amount: 0
-      }
-    });
-  }
+      // Una vez que se actualizan los ratings, redirigir al checkout
+      router.push({
+        name: 'Checkout',
+        params: { idSpectator, idEvent, nameEvent },
+        query: { referenceLink: route.query.referenceLink, idVisitor: route.query.idVisitor}
+      });
+    } else {
+      router.push({
+        name: 'ThankYou',
+        query: { 
+          idSpectator: idSpectator,
+          referenceLink: route.query.referenceLink,
+          idVisitor: route.query.idVisitor,
+          idEvent: idEvent,
+          paymentMethod: 'no payment',
+          amount: 0
+        }
+      });
+    }
   } catch (error) {
     console.error('Error al enviar los ratings:', error);
   }
   isLoading.value = false;
+};
+
+// Función para guardar todas las evaluaciones del espectador
+const saveSpectatorRatings = async () => {
+  try {
+    // Obtener el documento del evento para encontrar el spectator específico
+    const eventRef = doc(db, 'events', idEvent);
+    const eventDoc = await getDoc(eventRef);
+    
+    if (!eventDoc.exists()) {
+      console.error('No se encontró el evento');
+      return;
+    }
+    
+    const eventData = eventDoc.data();
+    const eventSpectators = eventData.eventSpectators || [];
+    
+    // Buscar el espectador actual en el array
+    const spectatorIndex = eventSpectators.findIndex(s => s.id === idSpectator);
+    
+    if (spectatorIndex === -1) {
+      console.error('No se encontró el espectador en el evento');
+      return;
+    }
+    
+    // Crear objeto de ratings consolidado
+    const spectatorRatings = {
+      themes: ratings.value.map(item => ({ id: item.themeId, rating: item.rating })),
+      assembly: assemblyRating.value > 0 ? assemblyRating.value : null,
+      chapter: chapterRating.value > 0 ? chapterRating.value : null,
+      musicians: musiciansRatings.value.map(item => ({ id: item.musicianId, rating: item.rating }))
+    };
+    
+    // Actualizar el eventSpectator con todas las calificaciones
+    eventSpectators[spectatorIndex] = {
+      ...eventSpectators[spectatorIndex],
+      ratings: spectatorRatings,
+      ratedAt: new Date().toISOString()
+    };
+    
+    // Guardar los cambios en el documento del evento
+    await updateDoc(eventRef, {
+      eventSpectators: eventSpectators
+    });
+    
+    console.log('Evaluaciones guardadas con éxito');
+  } catch (error) {
+    console.error('Error al guardar las evaluaciones:', error);
+  }
 };
 
 // Definir la función para generar el ID aleatorio
@@ -453,6 +515,32 @@ const rateAssembly = (rating) => {
 const rateChapter = (rating) => {
   chapterRating.value = rating;
   // Aquí podrías almacenar esta calificación en Firestore si es necesario
+};
+
+// Función para manejar la calificación de músicos
+const handleMusicianRating = (musicianId, rating) => {
+  // Buscar si ya existe un rating para este músico
+  const index = musiciansRatings.value.findIndex(item => item.musicianId === musicianId);
+  
+  if (index !== -1) {
+    // Si ya existe, actualizar el rating
+    musiciansRatings.value[index].rating = rating;
+  } else {
+    // Si no existe, agregar el nuevo rating
+    musiciansRatings.value.push({ musicianId, rating });
+  }
+};
+
+// Función para obtener la calificación de un músico específico
+const getMusicianRating = (musicianId) => {
+  const ratingItem = musiciansRatings.value.find(item => item.musicianId === musicianId);
+  return ratingItem ? ratingItem.rating : 0;
+};
+
+// Función para obtener la calificación de un tema específico
+const getThemeRating = (themeId) => {
+  const ratingItem = ratings.value.find(item => item.themeId === themeId);
+  return ratingItem ? ratingItem.rating : 0;
 };
 
 // Función para obtener los datos del capítulo

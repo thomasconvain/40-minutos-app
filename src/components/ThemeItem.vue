@@ -65,12 +65,16 @@ const openCollapse = ref(false)
 // eslint-disable-next-line no-undef
 const props = defineProps({
   theme: Object,  // El documento del tema que se va a mostrar
+  initialRating: {
+    type: Number,
+    default: 0
+  }
 });
 
 // Crear una copia local del tema para evitar mutar la prop directamente
 const localTheme = ref({ ...props.theme });
 
-const userRating = ref(0);
+const userRating = ref(props.initialRating);
 
 // Cálculo de la media de ratings
 // const averageRating = computed(() => {

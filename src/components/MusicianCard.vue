@@ -60,11 +60,18 @@ import { PlusCircleIcon, MinusCircleIcon, StarIcon } from '@heroicons/vue/24/sol
 // eslint-disable-next-line no-undef
 const props = defineProps({
   musician: Object,  // El músico que se va a mostrar
+  initialRating: {
+    type: Number,
+    default: 0
+  }
 });
+
+// Emisión de eventos
+const emit = defineEmits(['rateChange']);
 
 const imageUrl = ref('');
 const isOpen = ref(false);
-const musicianRating = ref(0);
+const musicianRating = ref(props.initialRating);
 
 // Función para obtener la URL de la imagen
 const fetchImageUrl = async (path) => {
@@ -79,7 +86,8 @@ const fetchImageUrl = async (path) => {
 // Función para calificar al músico
 const rateMusicianPerformance = (rating) => {
   musicianRating.value = rating;
-  // Aquí podrías almacenar esta calificación en Firestore si es necesario
+  // Emitir el evento al componente padre
+  emit('rateChange', props.musician.id, rating);
 };
 
 // Llamar a la función para obtener la URL cuando el componente se monte
