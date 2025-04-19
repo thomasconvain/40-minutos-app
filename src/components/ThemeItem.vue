@@ -1,6 +1,6 @@
 <template>
   <div>
-      <div :class="openCollapse ? 'collapse-open' : ''" class="collapse border-base-300 bg-base-200 border rounded-xl">
+      <div :class="openCollapse ? 'collapse-open' : ''" class="collapse bg-white rounded-xl shadow-sm">
         <div class="collapse-title text-xl font-medium flex items-center justify-between pr-1">
           <div class="flex gap-4 items-center">
             <img class="h-full w-16 sm:w-20 mt-4 sm:m-0" v-if="imageUrl" :src="imageUrl" alt="cover" />

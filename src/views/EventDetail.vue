@@ -80,7 +80,7 @@
       <div v-else-if="musicians.length > 0" class="relative w-full overflow-hidden">
         <!-- Info del ensamble si está disponible -->
         <div v-if="assemblyData" class="mb-8">
-          <div :class="assemblyDescriptionOpen ? 'collapse-open' : ''" class="collapse border-base-300 bg-base-200 border rounded-xl">
+          <div :class="assemblyDescriptionOpen ? 'collapse-open' : ''" class="collapse bg-white rounded-xl shadow-sm">
             <div class="collapse-title text-xl font-medium flex items-center justify-between pr-1">
               <div>
                 <p class="w-full text-base sm:text-lg font-medium">
@@ -150,7 +150,7 @@
         <span class="loading loading-spinner loading-lg"></span>
       </div>
       <div v-else-if="chapterData" class="mb-8">
-        <div :class="chapterDescriptionOpen ? 'collapse-open' : ''" class="collapse border-base-300 bg-base-200 border rounded-xl">
+        <div :class="chapterDescriptionOpen ? 'collapse-open' : ''" class="collapse bg-white rounded-xl shadow-sm">
           <div class="collapse-title text-xl font-medium flex items-center justify-between pr-1">
             <div>
               <p class="w-full text-base sm:text-lg font-medium">

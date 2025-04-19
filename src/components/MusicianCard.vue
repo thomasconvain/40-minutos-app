@@ -1,6 +1,6 @@
 <template>
   <div class="w-full">
-    <div :class="isOpen ? 'collapse-open' : ''" class="collapse border-base-300 bg-white border rounded-xl">
+    <div :class="isOpen ? 'collapse-open' : ''" class="collapse border border-gray-200 rounded-xl shadow-sm">
       <div class="collapse-title p-4 sm:p-6">
         <div class="flex gap-4 items-start">
           <div class="w-20 sm:w-28 h-20 sm:h-28 flex-shrink-0">
@@ -28,13 +28,13 @@
                 <div v-if="musician && musician.instruments && musician.instruments.length > 0" class="flex flex-wrap mt-1">
                   <div v-for="(instrument, index) in musician.instruments" :key="index" class="badge badge-neutral badge-xs border-none bg-gray-200 text-gray-600 p-2 font-thin mr-1 mb-1">{{ instrument }}</div>
                 </div>
-              </div>
-              
-              <div v-if="musician && musician.background" class="flex-shrink-0 absolute right-4 top-4">
-                <button class="btn btn-active btn-link" @click.stop="isOpen = !isOpen">
-                  <PlusCircleIcon v-if="!isOpen" class="h-5 w-5"/>
-                  <MinusCircleIcon v-else class="h-5 w-5"/>
-                </button>
+                
+                <div v-if="musician && musician.background" class="mt-2 text-left">
+                  <button class="btn btn-sm btn-link text-xs px-0 justify-start" @click.stop="isOpen = !isOpen">
+                    <span v-if="!isOpen">Ver reseña</span>
+                    <span v-else>Ocultar reseña</span>
+                  </button>
+                </div>
               </div>
             </div>
           </div>
@@ -54,7 +54,7 @@
 import { ref, onMounted } from 'vue';
 import { storage } from '@/firebase';
 import { ref as storageRef, getDownloadURL } from 'firebase/storage';
-import { PlusCircleIcon, MinusCircleIcon, StarIcon } from '@heroicons/vue/24/solid';
+import { StarIcon } from '@heroicons/vue/24/solid';
 
 // Props que recibe el componente
 // eslint-disable-next-line no-undef
