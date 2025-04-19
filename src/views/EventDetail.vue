@@ -7,19 +7,23 @@
     <p class="mb-6">{{ eventDescription }}</p>
     
     <div class="tabs-boxed mb-4">
-      <div role="tablist" class="tabs tabs-lifted">
-        <a role="tab" class="tab" :class="{ 'tab-active bg-gray-200': activeTab === 'programa' }" @click="activeTab = 'programa'">
-          <DocumentTextIcon class="h-5 w-5 mr-1" aria-hidden="true" />
-          Programa
+      <div role="tablist" class="tabs tabs-lifted tab-container">
+        <a role="tab" class="tab tab-responsive" :class="{ 'tab-active bg-gray-200': activeTab === 'programa' }" @click="activeTab = 'programa'">
+          <DocumentTextIcon class="tab-icon" aria-hidden="true" />
+          <span>Obras</span>
         </a>
-        <a role="tab" class="tab" :class="{ 'tab-active bg-base-200': activeTab === 'interpretes' }" @click="activeTab = 'interpretes'">
-          <UserGroupIcon class="h-5 w-5 mr-1" aria-hidden="true" />
-          Intérpretes
+        <a role="tab" class="tab tab-responsive" :class="{ 'tab-active bg-base-200': activeTab === 'interpretes' }" @click="activeTab = 'interpretes'">
+          <UserGroupIcon class="tab-icon" aria-hidden="true" />
+          <span>Intérpretes</span>
+        </a>
+        <a role="tab" class="tab tab-responsive" :class="{ 'tab-active bg-base-200': activeTab === 'capitulo' }" @click="activeTab = 'capitulo'">
+          <BookOpenIcon class="tab-icon" aria-hidden="true" />
+          <span>Capítulo</span>
         </a>
       </div>
     </div>
     
-    <!-- Contenido de la pestaña "Programa" -->
+    <!-- Contenido de la pestaña "Obras" -->
     <div v-if="activeTab === 'programa'">
       <div v-if="themes.length">
         <div class="my-4" v-if="spectator.numberOfPeople > 1">
@@ -59,13 +63,77 @@
       <div v-if="isLoadingMusicians" class="flex justify-center my-8">
         <span class="loading loading-spinner loading-lg"></span>
       </div>
-      <div v-else-if="musicians.length > 0">
-        <div v-for="musician in musicians" :key="musician.id" class="mb-4">
-          <MusicianCard :musician="musician" />
+      <div v-else-if="musicians.length > 0" class="relative w-full overflow-hidden">
+        <!-- Info del ensamble si está disponible -->
+        <div v-if="assemblyData" class="mb-8">
+          <div :class="assemblyDescriptionOpen ? 'collapse-open' : ''" class="collapse border-base-300 bg-base-200 border rounded-xl">
+            <div class="collapse-title text-xl font-medium flex items-center justify-between pr-1">
+              <div>
+                <p class="w-full text-base sm:text-lg font-medium">
+                  {{ assemblyData.name }}
+                </p>
+                <div class="flex items-center flex-wrap gap-4 mt-2">
+                  <div class="flex items-center">
+                    <StarIcon v-for="star in 5" :key="star" @click="rateAssembly(star)" class="cursor-pointer h-5 w-5" :class="star <= assemblyRating ? 'text-yellow-500' : 'text-gray-300'"/>
+                  </div>
+                  <p class="text-xs text-gray-400"><span v-if="assemblyRating !== 0"> Tu nota: {{ assemblyRating }}</span></p>
+                </div>
+              </div>
+              <div class="flex items-center">
+                <button v-if="assemblyData.description" class="btn btn-active btn-link" @click="assemblyDescriptionOpen = !assemblyDescriptionOpen">
+                  <PlusCircleIcon v-if="!assemblyDescriptionOpen" class="h-5 w-5"/>
+                  <MinusCircleIcon v-else class="h-5 w-5"/>
+                </button>
+                <div v-else class="min-w-28"></div>
+              </div>
+            </div>
+            <div class="collapse-content">
+              <div class="flex flex-wrap sm:flex-nowrap items-center justify-center sm:justify-start gap-4">
+                <div class="my-4 flex flex-col gap-2">
+                  <p>{{ assemblyData.description || 'No hay descripción disponible' }}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Carrusel para los integrantes -->
+        <div class="carousel carousel-center w-full rounded-box gap-4" id="membersCarousel">
+          <!-- Cada integrante será un item del carrusel -->
+          <div v-for="musician in musicians" :key="musician.id" class="carousel-item w-full">
+            <MusicianCard :musician="musician" />
+          </div>
+        </div>
+        
+        <!-- Botones de navegación para el carrusel -->
+        <div v-if="musicians.length > 1" class="flex justify-center mt-4 gap-3">
+          <button 
+            class="btn btn-circle btn-sm" 
+            :class="{'btn-primary': carouselPosition > 0, 'opacity-50': carouselPosition === 0}"
+            :disabled="carouselPosition === 0"
+            @click="scrollCarousel('prev')"
+          >❮</button>
+          <button 
+            class="btn btn-circle btn-sm" 
+            :class="{'btn-primary': carouselPosition < musicians.length - 1, 'opacity-50': carouselPosition >= musicians.length - 1}"
+            :disabled="carouselPosition >= musicians.length - 1"
+            @click="scrollCarousel('next')"
+          >❯</button>
         </div>
       </div>
       <div v-else class="alert alert-info">
         <span>No hay información disponible sobre los intérpretes.</span>
+      </div>
+    </div>
+    
+    <!-- Contenido de la pestaña "Capítulo" -->
+    <div v-if="activeTab === 'capitulo'" class="mt-4">
+      <div class="card bg-base-100 shadow-xl">
+        <div class="card-body">
+          <h2 class="card-title">Capítulo del concierto</h2>
+          <p v-if="chapterContent">{{ chapterContent }}</p>
+          <p v-else class="text-gray-500">Información del capítulo no disponible para este concierto.</p>
+        </div>
       </div>
     </div>
     
@@ -88,13 +156,14 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, onBeforeUnmount } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { doc, getDoc, updateDoc, getFirestore, collection, getDocs } from 'firebase/firestore';
 import { db } from '@/firebase';
 import ThemeItem from '@/components/ThemeItem.vue';
 import MusicianCard from '@/components/MusicianCard.vue';
-import { InformationCircleIcon, ShareIcon, DocumentTextIcon, UserGroupIcon } from '@heroicons/vue/24/outline'
+import { InformationCircleIcon, ShareIcon, DocumentTextIcon, UserGroupIcon, BookOpenIcon } from '@heroicons/vue/24/outline'
+import { PlusCircleIcon, MinusCircleIcon, StarIcon } from '@heroicons/vue/24/solid'
 
 
 const route = useRoute();
@@ -114,9 +183,14 @@ const activeTab = ref('programa'); // Para controlar las pestañas
 const themes = ref([]);
 const ratings = ref([]); // Usar un arreglo para los ratings
 const musicians = ref([]);
+const assemblyData = ref(null);
+const carouselPosition = ref(0);
+const chapterContent = ref('');
 const isLoading = ref(false);
 const isLoadingMusicians = ref(false);
 const isButtonDisabled = ref(false);
+const assemblyDescriptionOpen = ref(false);
+const assemblyRating = ref(0);
 
 // Función para capturar el rating de cada tema
 const handleRateChange = (themeId, rating) => {
@@ -157,6 +231,11 @@ const fetchEventThemes = async () => {
             } else {
               // Fallback a la descripción actual si no existe en content-manager
               eventDescription.value = eventData.description || '';
+            }
+            
+            // Obtener contenido del capítulo si existe
+            if (contentData.chapter && contentData.chapter.content) {
+              chapterContent.value = contentData.chapter.content;
             }
           } else {
             eventDescription.value = eventData.description || '';
@@ -271,8 +350,15 @@ const fetchMusicians = async () => {
     
     if (!assemblySnapshot.empty) {
       const assemblyDoc = assemblySnapshot.docs[0];
-      const assemblyData = assemblyDoc.data();
-      const assemblyMembers = assemblyData.members || [];
+      const assemblyDataRaw = assemblyDoc.data();
+      
+      // Guardar los datos del ensamble
+      assemblyData.value = {
+        id: assemblyDoc.id,
+        ...assemblyDataRaw
+      };
+      
+      const assemblyMembers = assemblyDataRaw.members || [];
       
       // Obtener detalles de cada músico
       const musiciansData = [];
@@ -306,6 +392,45 @@ const fetchMusicians = async () => {
   }
 };
 
+// Función para desplazar el carrusel
+const scrollCarousel = (direction) => {
+  const carousel = document.getElementById('membersCarousel');
+  if (!carousel) return;
+  
+  const scrollAmount = direction === 'next' ? carousel.offsetWidth : -carousel.offsetWidth;
+  carousel.scrollBy({left: scrollAmount, behavior: 'smooth'});
+  
+  // Actualizar la posición
+  if (direction === 'next') {
+    carouselPosition.value++;
+  } else {
+    carouselPosition.value--;
+  }
+};
+
+
+// Función para calificar el ensamble
+const rateAssembly = (rating) => {
+  assemblyRating.value = rating;
+  // Aquí podrías almacenar esta calificación en Firestore si es necesario
+};
+
+// Función para manejar el evento de scroll del carrusel
+const handleCarouselScroll = () => {
+  const carousel = document.getElementById('membersCarousel');
+  if (!carousel) return;
+  
+  // Calcular la posición actual basada en el desplazamiento
+  const scrollLeft = carousel.scrollLeft;
+  const itemWidth = carousel.offsetWidth;
+  const newPosition = Math.round(scrollLeft / itemWidth);
+  
+  // Actualizar la posición solo si ha cambiado
+  if (newPosition !== carouselPosition.value) {
+    carouselPosition.value = newPosition;
+  }
+};
+
 // Llamar a la función para obtener los datos cuando el componente se monte
 onMounted(() => {
   spectatorParams.value = route.params.idSpectator;
@@ -314,6 +439,22 @@ onMounted(() => {
   fetchEventThemes();
   fetchMusicians();
   generateRandomId();
+  
+  // Añadir listener para scroll del carrusel cuando se active la pestaña de intérpretes
+  setTimeout(() => {
+    const carousel = document.getElementById('membersCarousel');
+    if (carousel) {
+      carousel.addEventListener('scroll', handleCarouselScroll);
+    }
+  }, 1000); // Dar tiempo a que el DOM se actualice
+});
+
+// Limpiar event listeners cuando el componente se destruya
+onBeforeUnmount(() => {
+  const carousel = document.getElementById('membersCarousel');
+  if (carousel) {
+    carousel.removeEventListener('scroll', handleCarouselScroll);
+  }
 });
 </script>
 
@@ -332,5 +473,70 @@ onMounted(() => {
 /* Para asegurarse que el contenido del tab tenga el mismo fondo */
 .tab-active + .tab-content {
   background-color: rgba(209, 213, 219, 0.7) !important;
+}
+
+/* Contenedor de tabs para que todos tengan el mismo tamaño */
+.tab-container {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  width: 100%;
+}
+
+/* Estilos para los tabs responsivos */
+.tab-responsive {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: auto !important;
+  min-height: 3rem;
+  padding: 0.75rem 0.5rem !important;
+  text-align: center;
+  flex: 1;
+}
+
+.tab-icon {
+  height: 1.25rem;
+  width: 1.25rem;
+  margin-bottom: 0.25rem;
+}
+
+/* Para pantallas más grandes */
+@media (min-width: 640px) {
+  .tab-responsive {
+    flex-direction: row;
+    padding: 0.5rem 1rem !important;
+    justify-content: center;
+  }
+  
+  .tab-icon {
+    margin-bottom: 0;
+    margin-right: 0.375rem;
+  }
+}
+
+/* Tooltip personalizado */
+.tooltip::before {
+  background-color: #4B5563 !important; /* gris medio */
+  color: white !important;
+  font-size: 0.75rem !important;
+  max-width: 15rem !important;
+  padding: 0.5rem !important;
+  z-index: 999 !important;
+  white-space: normal !important;
+  text-align: left !important;
+  line-height: 1.25 !important;
+}
+
+.tooltip::after {
+  background-color: #4B5563 !important;
+  z-index: 999 !important;
+}
+
+/* Asegurar que cada card del carrusel tenga un ancho adecuado */
+.carousel-item {
+  width: 100%;
+  max-width: 100%;
+  margin: 0 auto;
 }
 </style>

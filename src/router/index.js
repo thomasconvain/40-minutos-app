@@ -16,18 +16,12 @@ import AdminLogin from '@/views/AdminLogin.vue';
 import OnlineBooking from '@/views/OnlineBooking.vue';
 import PasswordConfig from '@/views/PasswordConfig.vue';
 import Dashboard from '@/views/Dashboard.vue';
-import Assembly from '@/views/Assembly.vue';
 
 const routes = [
   {
     path: '/',
     name: 'Home',
     component: Home,
-  },
-  {
-    path: '/assembly',
-    name: 'Assembly',
-    component: Assembly,
   },
   {
     path: '/sign-in/:idEvent?',
