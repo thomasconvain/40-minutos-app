@@ -195,7 +195,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onBeforeUnmount } from 'vue';
+import { ref, onMounted, onBeforeUnmount, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { doc, getDoc, updateDoc, getFirestore, collection, getDocs } from 'firebase/firestore';
 import { db } from '@/firebase';
@@ -219,6 +219,12 @@ const eventParams = ref('');
 const spectatorsShouldPayInTheApp = ref(true);
 const activeTab = ref('programa'); // Para controlar las pestañas
 
+// Observar cambios en activeTab para asegurar que las evaluaciones estén actualizadas al cambiar de pestaña
+watch(activeTab, () => {
+  // Al cambiar de pestaña, asegurarse de que las evaluaciones estén actualizadas
+  loadExistingRatings();
+});
+
 const themes = ref([]);
 const ratings = ref([]); // Usar un arreglo para los ratings
 const musicians = ref([]);
@@ -236,7 +242,7 @@ const assemblyDescriptionOpen = ref(false);
 const assemblyRating = ref(0);
 
 // Función para capturar el rating de cada tema
-const handleRateChange = (themeId, rating) => {
+const handleRateChange = async (themeId, rating) => {
   // Buscar si ya existe un rating para este tema
   const index = ratings.value.findIndex(item => item.themeId === themeId);
 
@@ -247,6 +253,9 @@ const handleRateChange = (themeId, rating) => {
     // Si no existe, agregar el nuevo rating
     ratings.value.push({ themeId, rating });
   }
+  
+  // Guardar inmediatamente la evaluación para que persista entre cambios de tab
+  await saveSpectatorRatings();
 };
 
 // Función para obtener los themes_id del evento y luego los detalles de los temas
@@ -506,19 +515,21 @@ const scrollCarousel = (direction) => {
 
 
 // Función para calificar el ensamble
-const rateAssembly = (rating) => {
+const rateAssembly = async (rating) => {
   assemblyRating.value = rating;
-  // Aquí podrías almacenar esta calificación en Firestore si es necesario
+  // Guardar inmediatamente la evaluación para que persista entre cambios de tab
+  await saveSpectatorRatings();
 };
 
 // Función para calificar el capítulo
-const rateChapter = (rating) => {
+const rateChapter = async (rating) => {
   chapterRating.value = rating;
-  // Aquí podrías almacenar esta calificación en Firestore si es necesario
+  // Guardar inmediatamente la evaluación para que persista entre cambios de tab
+  await saveSpectatorRatings();
 };
 
 // Función para manejar la calificación de músicos
-const handleMusicianRating = (musicianId, rating) => {
+const handleMusicianRating = async (musicianId, rating) => {
   // Buscar si ya existe un rating para este músico
   const index = musiciansRatings.value.findIndex(item => item.musicianId === musicianId);
   
@@ -529,6 +540,9 @@ const handleMusicianRating = (musicianId, rating) => {
     // Si no existe, agregar el nuevo rating
     musiciansRatings.value.push({ musicianId, rating });
   }
+  
+  // Guardar inmediatamente la evaluación para que persista entre cambios de tab
+  await saveSpectatorRatings();
 };
 
 // Función para obtener la calificación de un músico específico
@@ -588,6 +602,54 @@ const handleCarouselScroll = () => {
   }
 };
 
+// Cargar evaluaciones existentes del espectador 
+const loadExistingRatings = async () => {
+  try {
+    const eventRef = doc(db, 'events', idEvent);
+    const eventDoc = await getDoc(eventRef);
+    
+    if (!eventDoc.exists()) {
+      console.error('No se encontró el evento');
+      return;
+    }
+    
+    const eventData = eventDoc.data();
+    const eventSpectators = eventData.eventSpectators || [];
+    
+    // Buscar el espectador actual en el array
+    const spectator = eventSpectators.find(s => s.id === idSpectator);
+    
+    if (!spectator || !spectator.ratings) return;
+    
+    // Cargar las calificaciones guardadas
+    if (spectator.ratings.themes) {
+      ratings.value = spectator.ratings.themes.map(item => ({ 
+        themeId: item.id, 
+        rating: item.rating 
+      }));
+    }
+    
+    if (spectator.ratings.musicians) {
+      musiciansRatings.value = spectator.ratings.musicians.map(item => ({
+        musicianId: item.id,
+        rating: item.rating
+      }));
+    }
+    
+    if (spectator.ratings.assembly) {
+      assemblyRating.value = spectator.ratings.assembly;
+    }
+    
+    if (spectator.ratings.chapter) {
+      chapterRating.value = spectator.ratings.chapter;
+    }
+    
+    console.log('Evaluaciones cargadas con éxito');
+  } catch (error) {
+    console.error('Error al cargar evaluaciones:', error);
+  }
+};
+
 // Llamar a la función para obtener los datos cuando el componente se monte
 onMounted(() => {
   spectatorParams.value = route.params.idSpectator;
@@ -596,6 +658,7 @@ onMounted(() => {
   fetchEventThemes();
   fetchMusicians();
   generateRandomId();
+  loadExistingRatings();
   
   // Añadir listener para scroll del carrusel cuando se active la pestaña de intérpretes
   setTimeout(() => {
