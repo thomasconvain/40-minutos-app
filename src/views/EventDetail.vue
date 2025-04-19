@@ -1,6 +1,9 @@
 <template>
   <div>
-    <button class="btn bg-white border-none mb-4" @click="$router.go(-1)">Volver</button>
+    <div class="flex justify-between items-center mb-4">
+      <button class="btn bg-white border-none" @click="$router.go(-1)">Volver</button>
+      <router-link to="/assembly" class="btn btn-link">Ver integrantes</router-link>
+    </div>
     <h1 class="text-2xl font-bold mb-6">{{ nameEvent }}</h1>
     <p class="mb-6">{{ eventDescription }}</p>
     <div v-if="themes.length">
@@ -58,8 +61,7 @@ import { useRoute, useRouter } from 'vue-router';
 import { doc, getDoc, updateDoc,  getFirestore } from 'firebase/firestore';
 import { db } from '@/firebase';
 import ThemeItem from '@/components/ThemeItem.vue';
-import { InformationCircleIcon } from '@heroicons/vue/24/outline'
-
+import { InformationCircleIcon, ShareIcon } from '@heroicons/vue/24/outline'
 
 
 const route = useRoute();
