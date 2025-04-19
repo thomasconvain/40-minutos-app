@@ -1,10 +1,20 @@
 <template>
   <div>
     <div class="flex justify-between items-center mb-4">
-      <button class="btn bg-white border-none" @click="$router.go(-1)">Volver</button>
+      <button class="btn btn-square rounded-lg bg-white border-none" @click="$router.go(-1)">
+        <HomeIcon class="h-5 w-5" aria-hidden="true" />
+      </button>
     </div>
     <h1 class="text-2xl font-bold mb-6">{{ nameEvent }}</h1>
-    <p class="mb-6">{{ eventDescription }}</p>
+    <p class="mb-4">{{ eventDescription }}</p>
+    
+    <div class="flex w-full bg-gray-200/70 rounded-lg p-2 mb-3">
+      <InformationCircleIcon class="h-5 w-5 mr-2 flex-shrink-0" aria-hidden="true" />
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between w-full">
+        <span class="text-xs">Recuerda finalizar el proceso con checkout</span>
+        <a v-if="activeTab !== 'programa'" href="#" @click.prevent="activeTab = 'programa'" class="text-xs font-semibold underline mt-1 sm:mt-0">Ir al checkout</a>
+      </div>
+    </div>
     
     <div class="tabs-boxed mb-4">
       <div role="tablist" class="tabs tabs-lifted tab-container">
@@ -181,6 +191,7 @@
       <span class="text-xs">Parece que no evaluaste todas las obras que hemos tocado. Nos encantaría conocer tu opinión antes de continuar. 🤓</span>
     </div>
     
+    
     <button
       v-if="activeTab === 'programa'"
       type="button"
@@ -201,7 +212,7 @@ import { doc, getDoc, updateDoc, getFirestore, collection, getDocs } from 'fireb
 import { db } from '@/firebase';
 import ThemeItem from '@/components/ThemeItem.vue';
 import MusicianCard from '@/components/MusicianCard.vue';
-import { InformationCircleIcon, ShareIcon, DocumentTextIcon, UserGroupIcon, BookOpenIcon } from '@heroicons/vue/24/outline'
+import { InformationCircleIcon, ShareIcon, DocumentTextIcon, UserGroupIcon, BookOpenIcon, HomeIcon } from '@heroicons/vue/24/outline'
 import { PlusCircleIcon, MinusCircleIcon, StarIcon } from '@heroicons/vue/24/solid'
 
 

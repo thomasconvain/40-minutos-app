@@ -272,7 +272,7 @@ const submitForm = async () => {
     });
   } catch (error) {
     if (error.code === 'auth/email-already-in-use') {
-      emailError.value = 'El email ya está en uso. Por favor, elige otro o intenta iniciar sesión.';
+      emailError.value = 'Ya tienes cuentas, debes reservar con la opción de "usar datos guardados"';
     } else {
       errorMessage.value = 'Error al crear usuario: ' + error.message;
     }

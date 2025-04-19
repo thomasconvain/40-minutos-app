@@ -1,6 +1,6 @@
 <template>
   <div class="w-full">
-    <div :class="isOpen ? 'collapse-open' : ''" class="collapse border-base-300 bg-base-200 border rounded-xl">
+    <div :class="isOpen ? 'collapse-open' : ''" class="collapse border-base-300 bg-white border rounded-xl">
       <div class="collapse-title p-4 sm:p-6">
         <div class="flex gap-4 items-start">
           <div class="w-20 sm:w-28 h-20 sm:h-28 flex-shrink-0">
