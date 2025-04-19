@@ -375,8 +375,13 @@ const formatDatePart = (timestamp, part) => {
 const goToEvent = (event) => {
   if (!event || !event.id) return;
   
+  // Verificar si el espectador ya hizo check-in para este evento específico
+  const spectatorWasCheckedIn = event.eventSpectators?.some(spec => 
+    spec.email === spectator.value?.email && spec.wasCheckedIn === true
+  );
+  
   router.push({
-    name: spectator.value.isChecked ? "EventDetail" : "CheckIn",
+    name: spectatorWasCheckedIn ? "EventDetail" : "CheckIn",
     params: {
       idSpectator: idSpectator,
       idEvent: event.id,
