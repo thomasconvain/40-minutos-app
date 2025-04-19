@@ -18,7 +18,6 @@
             <div class="flex justify-between items-start w-full">
               <div class="pr-10 flex-1 relative">
                 <h2 class="text-sm sm:text-xl font-bold pr-6">{{ musician?.name || 'Músico' }}</h2>
-                <p class="text-xs sm:text-sm text-gray-500">{{ musician?.instrument || 'Instrumento' }}</p>
                 <div class="flex items-center">
                   <StarIcon v-for="star in 5" :key="star" @click="rateMusicianPerformance(star)" class="cursor-pointer h-5 w-5" :class="star <= musicianRating ? 'text-yellow-500' : 'text-gray-300'"/>
                 </div>

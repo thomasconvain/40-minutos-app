@@ -128,11 +128,42 @@
     
     <!-- Contenido de la pestaña "Capítulo" -->
     <div v-if="activeTab === 'capitulo'" class="mt-4">
-      <div class="card bg-base-100 shadow-xl">
+      <div v-if="isLoadingChapter" class="flex justify-center my-8">
+        <span class="loading loading-spinner loading-lg"></span>
+      </div>
+      <div v-else-if="chapterData" class="mb-8">
+        <div :class="chapterDescriptionOpen ? 'collapse-open' : ''" class="collapse border-base-300 bg-base-200 border rounded-xl">
+          <div class="collapse-title text-xl font-medium flex items-center justify-between pr-1">
+            <div>
+              <p class="w-full text-base sm:text-lg font-medium">
+                {{ chapterData.title || 'Capítulo del concierto' }}
+              </p>
+              <div class="flex items-center mt-1">
+                <StarIcon v-for="star in 5" :key="star" @click="rateChapter(star)" class="cursor-pointer h-5 w-5" :class="star <= chapterRating ? 'text-yellow-500' : 'text-gray-300'"/>
+                <p class="text-xs text-gray-400 ml-2"><span v-if="chapterRating !== 0"> Tu nota: {{ chapterRating }}</span></p>
+              </div>
+              <p class="text-sm text-gray-600 mt-2">{{ chapterData.synopsis }}</p>
+            </div>
+            <div class="flex items-center" v-if="chapterData.description">
+              <button class="btn btn-active btn-link" @click="chapterDescriptionOpen = !chapterDescriptionOpen">
+                <PlusCircleIcon v-if="!chapterDescriptionOpen" class="h-5 w-5"/>
+                <MinusCircleIcon v-else class="h-5 w-5"/>
+              </button>
+            </div>
+          </div>
+          <div class="collapse-content">
+            <div class="flex flex-wrap sm:flex-nowrap items-center justify-center sm:justify-start gap-4">
+              <div class="my-4 flex flex-col gap-2">
+                <p>{{ chapterData.description }}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div v-else class="card bg-base-100 shadow-xl">
         <div class="card-body">
           <h2 class="card-title">Capítulo del concierto</h2>
-          <p v-if="chapterContent">{{ chapterContent }}</p>
-          <p v-else class="text-gray-500">Información del capítulo no disponible para este concierto.</p>
+          <p class="text-gray-500">Información del capítulo no disponible para este concierto.</p>
         </div>
       </div>
     </div>
@@ -185,9 +216,12 @@ const ratings = ref([]); // Usar un arreglo para los ratings
 const musicians = ref([]);
 const assemblyData = ref(null);
 const carouselPosition = ref(0);
-const chapterContent = ref('');
+const chapterData = ref(null);
+const chapterDescriptionOpen = ref(false);
+const chapterRating = ref(0);
 const isLoading = ref(false);
 const isLoadingMusicians = ref(false);
+const isLoadingChapter = ref(false);
 const isButtonDisabled = ref(false);
 const assemblyDescriptionOpen = ref(false);
 const assemblyRating = ref(0);
@@ -232,11 +266,6 @@ const fetchEventThemes = async () => {
               // Fallback a la descripción actual si no existe en content-manager
               eventDescription.value = eventData.description || '';
             }
-            
-            // Obtener contenido del capítulo si existe
-            if (contentData.chapter && contentData.chapter.content) {
-              chapterContent.value = contentData.chapter.content;
-            }
           } else {
             eventDescription.value = eventData.description || '';
           }
@@ -247,6 +276,11 @@ const fetchEventThemes = async () => {
       } else {
         // Si no hay contentReferenceId, usar la descripción directamente del evento
         eventDescription.value = eventData.description || '';
+      }
+      
+      // Obtener datos del capítulo si existe chapterId
+      if (eventData.chapterId) {
+        fetchChapterData(eventData.chapterId);
       }
 
       // Para cada theme_id, obtenemos los detalles del tema
@@ -413,6 +447,41 @@ const scrollCarousel = (direction) => {
 const rateAssembly = (rating) => {
   assemblyRating.value = rating;
   // Aquí podrías almacenar esta calificación en Firestore si es necesario
+};
+
+// Función para calificar el capítulo
+const rateChapter = (rating) => {
+  chapterRating.value = rating;
+  // Aquí podrías almacenar esta calificación en Firestore si es necesario
+};
+
+// Función para obtener los datos del capítulo
+const fetchChapterData = async (chapterId) => {
+  if (!chapterId) return;
+  
+  isLoadingChapter.value = true;
+  try {
+    const chapterRef = doc(db, 'chapters', chapterId);
+    const chapterSnap = await getDoc(chapterRef);
+    
+    if (chapterSnap.exists()) {
+      const data = chapterSnap.data();
+      chapterData.value = {
+        id: chapterId,
+        title: data.title || 'Capítulo del concierto',
+        synopsis: data.synopsis || '',
+        description: data.description || ''
+      };
+    } else {
+      console.log('No se encontró el capítulo con ID:', chapterId);
+      chapterData.value = null;
+    }
+  } catch (error) {
+    console.error('Error al obtener datos del capítulo:', error);
+    chapterData.value = null;
+  } finally {
+    isLoadingChapter.value = false;
+  }
 };
 
 // Función para manejar el evento de scroll del carrusel
