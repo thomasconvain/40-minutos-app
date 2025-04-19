@@ -22,8 +22,8 @@
     <div v-else-if="musicians.length > 0" class="relative w-full overflow-hidden">
       <div class="carousel carousel-center w-full rounded-box gap-4" id="membersCarousel">
         <!-- Cada integrante será un item del carrusel -->
-        <div v-for="musician in musicians" :key="musician.id" class="carousel-item w-full max-w-md">
-          <ThemeItem :theme="mapMusicianToTheme(musician)" />
+        <div v-for="musician in musicians" :key="musician.id" class="carousel-item w-full">
+          <MusicianCard :musician="musician" />
         </div>
       </div>
       
@@ -54,7 +54,7 @@
 import { ref, onMounted, onBeforeUnmount } from 'vue';
 import { collection, doc, getDoc, getDocs } from 'firebase/firestore';
 import { db } from '@/firebase';
-import ThemeItem from '@/components/ThemeItem.vue';
+import MusicianCard from '@/components/MusicianCard.vue';
 
 // Estado para los datos
 const assemblyData = ref(null);
@@ -117,7 +117,7 @@ const fetchAssemblyData = async () => {
       
       try {
         console.log(`Buscando músico con ID: ${member.musicianId}`);
-        const musicianDoc = await getDoc(doc(db, 'musician', member.musicianId));
+        const musicianDoc = await getDoc(doc(db, 'musicians', member.musicianId));
         
         if (musicianDoc.exists()) {
           const musicianData = musicianDoc.data();
@@ -141,7 +141,7 @@ const fetchAssemblyData = async () => {
     
     // Si no hay músicos con datos completos, mostrar datos básicos
     if (musiciansData.length === 0 && activeMembers.length > 0) {
-      console.log("No se encontraron datos de músicos en la colección musician, usando datos básicos");
+      console.log("No se encontraron datos de músicos en la colección musicians, usando datos básicos");
       musicians.value = activeMembers.map(member => ({
         id: member.musicianId || `temp-${Math.random().toString(36).substring(7)}`,
         name: "Músico",
@@ -158,18 +158,8 @@ const fetchAssemblyData = async () => {
   }
 };
 
-// Mapear datos del músico al formato que espera ThemeItem
-const mapMusicianToTheme = (musician) => {
-  return {
-    id: musician.id,
-    name: musician.name || 'Músico',
-    artist: musician.instrument || (musician.instruments && musician.instruments.length > 0 ? musician.instruments[0] : 'Músico'),
-    description: musician.background || '',
-    topic: musician.instruments || [],
-    imagePath: musician.photoPath || '',
-    ratings: []
-  };
-};
+// Ya no necesitamos la función mapMusicianToTheme porque pasamos 
+// el objeto musician directamente al componente MusicianCard
 
 // Función para desplazar el carrusel
 const scrollCarousel = (direction) => {
@@ -225,10 +215,10 @@ onBeforeUnmount(() => {
 </script>
 
 <style scoped>
-/* Asegurar que cada card del carrusel tenga un ancho máximo */
+/* Asegurar que cada card del carrusel tenga un ancho adecuado */
 .carousel-item {
   width: 100%;
-  max-width: 480px;
+  max-width: 100%;
   margin: 0 auto;
 }
 </style>
