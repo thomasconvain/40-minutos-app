@@ -108,7 +108,29 @@ const fetchEvents = async () => {
   try {
     const docSnap = await getDoc(docRef);
     if (docSnap.exists()) {
-      event.value = docSnap.data();
+      const eventData = docSnap.data();
+      event.value = eventData;
+      
+      // Obtener datos de content-manager si existe contentReferenceId
+      if (eventData.contentReferenceId) {
+        try {
+          const contentRef = doc(db, 'content-manager', eventData.contentReferenceId);
+          const contentSnap = await getDoc(contentRef);
+          
+          if (contentSnap.exists()) {
+            const contentData = contentSnap.data();
+            // Actualizar el evento con datos del content-manager
+            if (contentData.checkin && contentData.checkin.instructions) {
+              event.value = {
+                ...event.value,
+                checkinInstructions: contentData.checkin.instructions
+              };
+            }
+          }
+        } catch (contentError) {
+          console.error('Error al obtener datos de content-manager:', contentError);
+        }
+      }
     } else {
       console.error('No se encontró el documento con el ID proporcionado');
     }
