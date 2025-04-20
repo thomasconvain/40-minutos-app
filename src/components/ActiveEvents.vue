@@ -7,59 +7,24 @@
             <div class="carousel carousel-center w-full rounded-box gap-4" id="carousel">
               <!-- Asegurando que cada tarjeta tenga el ancho adecuado -->
               <div v-for="event in activeEvents" :key="event.id" class="carousel-item w-full mx-auto">
-                <!-- La tarjeta con ancho controlado -->
-                <div class="card bg-black text-white shadow-xl h-full w-full">
-                  <div class="card-body">
-                    <h2 class="card-title text-xl md:text-2xl font-bold">{{ event.name }}</h2>
-                    <p class="text-sm md:text-base">{{ convertTimestamp(event.date) }}</p>
-              
-                    <p v-if="event.isOver" class="my-3 text-gray-300">
-                      Evento terminado. Si aún no realizaste tu aporte puedes hacerlo haciendo click en el siguiente botón.
-                    </p>
-                    <p v-else-if="event.isFreeEntrance" class="my-3 text-gray-300">
-                      {{ event.place }}
-                    </p>
-                    
-                    <!-- Mostrar número de acompañantes si el usuario está inscrito -->
-                    <p v-if="event.isUserInEvent && event.spectatorInfo" class="my-3 text-gray-300">
-                      <strong>Te acompañan:</strong> {{ event.spectatorInfo.numberOfCompanions || 0 }} personas
-                    </p>
-              
-                    <div class="card-actions mt-4">
-                      <button
-                        v-if="!event.isOver && event.isFreeEntrance && !currentUser"
-                        type="button"
-                        class="btn btn-sm md:btn-md bg-white text-black hover:bg-gray-200 border-transparent"
-                        @click="router.push({ name: 'Booking', params: { idEvent: event.id } })"
-                      >
-                        <span>Quiero asistir</span>
-                      </button>
-                
-                      <button
-                        v-if="!event.isOver && event.isFreeEntrance && currentUser && !isSpectatorSubscribed(event.id) && !event.isUserInEvent"
-                        type="button"
-                        class="btn btn-sm md:btn-md bg-white text-black hover:bg-gray-200 border-transparent"
-                        @click="openModal(event.id, 'modalValidation')"
-                      >
-                        <span>Consigue tu ticket en un click</span>
-                      </button>
-                
-                      <div v-if="isSpectatorSubscribed(event.id) || event.isUserInEvent" class="flex items-center">
-                        <CheckCircleIcon v-if="!isLoading" class="-ml-1 mr-2 h-5 w-5" aria-hidden="true" />
-                        Ya estas inscrito a este evento
-                      </div>
-                
-                      <button
-                        v-if="!currentUser && event.isOver"
-                        type="button"
-                        class="btn btn-sm md:btn-md btn-outline text-white hover:bg-white hover:text-black"
-                        @click="router.push({ name: 'LogIn' })"
-                      >
-                        <span>Realizar mi aporte</span>
-                      </button>
-                    </div>
-                  </div>
-                </div>
+                <!-- Usando el componente compartido EventCard con estilo para Home -->
+                <EventCard
+                  :event="event"
+                  :isLoggedIn="!!currentUser"
+                  :numberOfCompanions="event.isUserInEvent && event.spectatorInfo ? event.spectatorInfo.numberOfCompanions || 0 : undefined"
+                  :showCheckinMessage="event.isCheckinActive"
+                  :checkinMessageText="''"
+                  :customMessageClass="true"
+                  :showActionButton="(!event.isOver && event.isFreeEntrance && !currentUser) || 
+                                    (!event.isOver && event.isFreeEntrance && currentUser && !props.isSpectatorSubscribed(event.id) && !event.isUserInEvent) ||
+                                    (!currentUser && event.isOver)"
+                  :actionButtonText="getButtonText(event)"
+                  :showShareButton="false"
+                  :showLogo="false"
+                  buttonStyle="white"
+                  class="bg-black text-white shadow-xl"
+                  @action="handleEventAction"
+                />
               </div>
             </div>
           
@@ -152,9 +117,9 @@ import { collection, getDocs, query, where, orderBy } from "firebase/firestore";
 import { auth } from '@/firebase';
 import { onAuthStateChanged } from 'firebase/auth';
 import { db } from "@/firebase";
-import { format } from "date-fns";
-import { es } from "date-fns/locale";
-import { CheckCircleIcon } from '@heroicons/vue/24/outline'
+// Imports de date-fns ya no son necesarios aquí
+// No hero icons needed for EventCard
+import EventCard from '@/components/EventCard.vue';
 
 const props = defineProps({
   isSpectatorSubscribed: {
@@ -226,12 +191,7 @@ const fetchActiveEvents = async () => {
   }
 };
 
-const convertTimestamp = (timestamp) => {
-  // Convierte el timestamp en un objeto de fecha y luego lo formatea
-  return format(timestamp.toDate(), "EEEE dd 'de' MMMM '|' HH.mm 'hrs'", {
-    locale: es,
-  });
-};
+// Helper function for formatting is now in EventCard component
 
 const emit = defineEmits(["updateSubscribedEvents"]);
 
@@ -326,6 +286,28 @@ onMounted(() => {
     carousel.addEventListener('scroll', handleCarouselScroll);
   }
 });
+
+// Función para determinar el texto del botón según el estado del evento
+const getButtonText = (event) => {
+  if (!currentUser.value && event.isOver) {
+    return "Realizar mi aporte";
+  } else if (!event.isOver && event.isFreeEntrance && currentUser.value && !props.isSpectatorSubscribed(event.id) && !event.isUserInEvent) {
+    return "Consigue tu ticket en un click";
+  } else {
+    return "Quiero asistir";
+  }
+};
+
+// Función para manejar la acción del botón según el estado del evento
+const handleEventAction = (event) => {
+  if (!currentUser.value && event.isOver) {
+    router.push({ name: 'LogIn' });
+  } else if (!event.isOver && event.isFreeEntrance && currentUser.value && !props.isSpectatorSubscribed(event.id) && !event.isUserInEvent) {
+    openModal(event.id, 'modalValidation');
+  } else if (!event.isOver && event.isFreeEntrance && !currentUser.value) {
+    router.push({ name: 'Booking', params: { idEvent: event.id } });
+  }
+};
 
 // Limpiar event listeners cuando el componente se destruya
 onBeforeUnmount(() => {

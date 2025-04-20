@@ -40,69 +40,22 @@
     <div class="mt-4" v-if="spectator">
       <div v-if="events.length">
         <div class="indicator w-full flex flex-col gap-4">
-          <div
+          <EventCard
             v-for="event in events"
             :key="event.id"
-            class="card w-full bg-base-100 border border-base-600"
-          >
-            <span
-              v-if="!event?.isCheckinActive"
-              class="indicator-item badge badge-primary"
-              >Pronto</span
-            >
-            <div class="card-body">
-              <h2 class="card-title">{{ event.name }}</h2>
-              <p><strong>Lugar:</strong> {{ event.place }}</p>
-              <p><strong>Fecha:</strong> {{ formatDatePart(event.date, 'date') }}</p>
-              <p><strong>Hora:</strong> {{ formatDatePart(event.date, 'time') }}</p>
-              <p>
-                <strong>Te acompañan:</strong>
-                {{ getNumberOfCompanionsForEvent(event.id) }} personas
-              </p>
-              <p v-if="event.hostName">
-                <strong>Anfitrión:</strong> {{ event.hostName }}
-              </p>
-              <div class="card-actions justify-start mt-4">
-                <button
-                  v-if="event.isCheckinActive || spectator.forceCheckinActive"
-                  class="btn-md btn btn-primary text-white w-full"
-                  @click="goToEvent(event)"
-                >
-                  {{ spectator.isChecked ? "Entrar" : "Hacer checkin" }}
-                </button>
-                <div
-                  v-else
-                  class="alert alert-info rounded-none flex text-left"
-                >
-                  <!-- <InformationCircleIcon
-                    class="-ml-1 mr-3 h-5 min-w-5"
-                    aria-hidden="true"
-                  /> -->
-                  <span class="text-xs"
-                    >El día del concierto se habilitará el acceso a tu checkin.
-                  </span>
-                </div>
-                <div
-                  class="w-full"
-                  v-if="
-                    (!event.isFreeEntrance && spectator.isHost) ||
-                    event.isFreeEntrance
-                  "
-                >
-                  <a
-                    :href="`https://wa.me/?text=https://cuarenta-minutos.web.app/sign-in/${event.id}/?referenceLink=true%26hostId=${spectator.uId}`"
-                  >
-                    <button class="btn btn-active mt-2 w-full">
-                      <ShareIcon
-                        class="-ml-1 mr-3 h-4 w-4"
-                        aria-hidden="true"
-                      />Compartir evento
-                    </button>
-                  </a>
-                </div>
-              </div>
-            </div>
-          </div>
+            :event="event"
+            :isLoggedIn="true"
+            :numberOfCompanions="getNumberOfCompanionsForEvent(event.id)"
+            :showCheckinMessage="!event.isCheckinActive"
+            :checkinMessageText="'El día del concierto se habilitará el acceso a tu checkin.'"
+            :showActionButton="!!(event.isCheckinActive || spectator?.forceCheckinActive)"
+            :actionButtonText="spectator?.isChecked ? 'Entrar' : 'Hacer checkin'"
+            :showShareButton="(!event.isFreeEntrance && spectator?.isHost) || event.isFreeEntrance"
+            :spectatorId="spectator?.uId"
+            :showLogo="false"
+            buttonStyle="black"
+            @action="goToEvent"
+          />
         </div>
         <p class="mt-4 text-sm italic text-gray-400">
           En caso de cualquier inconveniente, muestra esta pantalla para validar
@@ -170,11 +123,11 @@ import {
 } from "firebase/firestore";
 import { auth } from '@/firebase';
 import { onAuthStateChanged, signOut, sendPasswordResetEmail } from 'firebase/auth';
-import { ShareIcon, CheckCircleIcon, LockClosedIcon } from "@heroicons/vue/24/outline";
+import { CheckCircleIcon, LockClosedIcon } from "@heroicons/vue/24/outline";
 import { fetchSpectators } from '@/utils';
 import { getFunctions, httpsCallable } from 'firebase/functions';
-import { format } from "date-fns";
-import { es } from "date-fns/locale";
+// Imports de date-fns ya no son necesarios aquí
+import EventCard from '@/components/EventCard.vue';
 
 //functions sendEmail
 const functions = getFunctions()
@@ -334,20 +287,10 @@ const addSubscribedEventId = async (spectatorId, eventId, numberOfPeople) => {
   }
 };
 
-// Función para formatear la fecha
-const formatDate = (timestamp) => {
-  if (!timestamp || typeof timestamp.toDate !== 'function') {
-    return "Fecha no disponible";
-  }
-  
-  // Usamos la misma lógica de formato de fecha de ActiveEvents con date-fns
-  return format(timestamp.toDate(), "EEEE dd 'de' MMMM '|' HH.mm 'hrs'", {
-    locale: es,
-  });
-};
+// Función de formateo ahora está en el componente EventCard
 
-// Funciones auxiliares para obtener parte de la fecha (fecha u hora)
-const formatDatePart = (timestamp, part) => {
+// Función para formatear partes de la fecha (ya no se usa con EventCard)
+/*const formatDatePart = (timestamp, part) => {
   if (!timestamp || typeof timestamp.toDate !== 'function') {
     return "No disponible";
   }
@@ -369,7 +312,7 @@ const formatDatePart = (timestamp, part) => {
     console.error("Error formateando fecha:", error);
     return "No disponible";
   }
-};
+*/
 
 // Función para navegar a la página del evento
 const goToEvent = (event) => {
