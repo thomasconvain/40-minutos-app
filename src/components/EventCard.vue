@@ -52,12 +52,7 @@
               Checkin abierto, debes <router-link to="/login" class="underline font-medium">entrar</router-link> con tu usuario y contraseña
             </template>
             <template v-else-if="customMessageClass && !event.isCheckinActive">
-              <strong>Nota:</strong> Puedes revisar tu reserva <router-link to="/login" class="underline font-medium">entrando a tu cuenta</router-link>.<br>
-              Dudas aquí <a href="https://wa.me/56989612263" class="ml-1 inline-flex items-center text-green-400">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-4 w-4 mr-1">
-                  <path stroke-linecap="round" stroke-linejoin="round" d="M8.625 12a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H8.25m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H12m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0h-.375M21 12c0 4.556-4.03 8.25-9 8.25a9.764 9.764 0 01-2.555-.337A5.972 5.972 0 015.41 20.97a5.969 5.969 0 01-.474-.065 4.48 4.48 0 00.978-2.025c.09-.457-.133-.901-.467-1.226C3.93 16.178 3 14.189 3 12c0-4.556 4.03-8.25 9-8.25s9 3.694 9 8.25z" />
-                </svg>
-              </a>
+              {{ chapterSynopsis }} 
             </template>
             <template v-else>
               {{ checkinMessageText }}
@@ -105,9 +100,13 @@
 </template>
 
 <script setup>
-import { computed } from "vue";
+import { computed, ref, watchEffect } from "vue";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
+import { db } from "@/firebase";
+import { doc, getDoc } from "firebase/firestore";
+
+const chapterSynopsis = ref('Puedes revisar tu reserva');
 
 const props = defineProps({
   event: {
@@ -194,6 +193,29 @@ const whatsappShareLink = computed(() => {
 const handleAction = () => {
   emit('action', props.event);
 };
+
+// Obtener sinopsis del capítulo
+const fetchChapterSynopsis = async () => {
+  if (props.event.chapterId) {
+    try {
+      const chapterDocRef = doc(db, "chapters", props.event.chapterId);
+      const chapterDoc = await getDoc(chapterDocRef);
+      
+      if (chapterDoc.exists() && chapterDoc.data().synopsis) {
+        chapterSynopsis.value = chapterDoc.data().synopsis;
+      }
+    } catch (error) {
+      console.error("Error fetching chapter synopsis:", error);
+    }
+  }
+};
+
+// Ejecutar la búsqueda cuando cambie el ID del evento o el chapterId
+watchEffect(() => {
+  if (props.event && props.event.chapterId) {
+    fetchChapterSynopsis();
+  }
+});
 </script>
 
 <style scoped>
