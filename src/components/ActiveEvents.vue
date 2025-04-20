@@ -12,7 +12,7 @@
                   :event="event"
                   :isLoggedIn="!!currentUser"
                   :numberOfCompanions="event.isUserInEvent && event.spectatorInfo ? event.spectatorInfo.numberOfCompanions || 0 : undefined"
-                  :showCheckinMessage="event.isCheckinActive"
+                  :showCheckinMessage="true"
                   :checkinMessageText="''"
                   :customMessageClass="true"
                   :showActionButton="(!event.isOver && event.isFreeEntrance && !currentUser) || 

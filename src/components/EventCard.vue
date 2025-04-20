@@ -40,12 +40,24 @@
           :class="{
             'alert alert-info rounded-none flex text-left mt-2': !customMessageClass && !event.isCheckinActive,
             'alert alert-success rounded-none flex text-left mt-2': !customMessageClass && event.isCheckinActive && $attrs.class?.includes('bg-black'),
-            'p-3 rounded-none flex text-left mt-2 bg-amber-500/20 border-l-4 border-amber-500': customMessageClass
+            'p-3 rounded-none flex text-left mt-2 bg-amber-500/20 border-l-4 border-amber-500': customMessageClass && event.isCheckinActive,
+            'p-3 rounded-none flex text-left mt-2 bg-black border-l-4 border-gray-500': customMessageClass && !event.isCheckinActive
           }"
         >
-          <span :class="{'text-xs': !customMessageClass, 'text-sm text-white': customMessageClass}">
-            <template v-if="customMessageClass">
+          <span :class="{
+              'text-xs': !customMessageClass,
+              'text-sm text-white': customMessageClass
+            }">
+            <template v-if="customMessageClass && event.isCheckinActive">
               Checkin abierto, debes <router-link to="/login" class="underline font-medium">entrar</router-link> con tu usuario y contraseña
+            </template>
+            <template v-else-if="customMessageClass && !event.isCheckinActive">
+              <strong>Nota:</strong> Puedes revisar tu reserva <router-link to="/login" class="underline font-medium">entrando a tu cuenta</router-link>.<br>
+              Dudas aquí <a href="https://wa.me/56989612263" class="ml-1 inline-flex items-center text-green-400">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-4 w-4 mr-1">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M8.625 12a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H8.25m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H12m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0h-.375M21 12c0 4.556-4.03 8.25-9 8.25a9.764 9.764 0 01-2.555-.337A5.972 5.972 0 015.41 20.97a5.969 5.969 0 01-.474-.065 4.48 4.48 0 00.978-2.025c.09-.457-.133-.901-.467-1.226C3.93 16.178 3 14.189 3 12c0-4.556 4.03-8.25 9-8.25s9 3.694 9 8.25z" />
+                </svg>
+              </a>
             </template>
             <template v-else>
               {{ checkinMessageText }}
@@ -190,9 +202,10 @@ const handleAction = () => {
   overflow: hidden;
 }
 
-/* Ajuste para tamaño mínimo de tarjeta */
+/* Ajuste para que el tamaño se adapte al contenido */
 .card-body {
-  min-height: 200px;
+  display: flex;
+  flex-direction: column;
 }
 
 /* Estilos para adaptar el componente en contextos de fondo oscuro */
