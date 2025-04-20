@@ -4,6 +4,16 @@
       <button class="btn btn-square rounded-lg bg-white border-none" @click="$router.go(-1)">
         <HomeIcon class="h-5 w-5" aria-hidden="true" />
       </button>
+      
+      <!-- Botón de compartir link con tooltip -->
+      <div v-if="spectator && spectator.numberOfPeople > 1" class="tooltip tooltip-left" data-tip="Comparte el link del programa del concierto a tu grupo">
+        <a :href='`https://wa.me/?text=https://cuarenta-minutos.web.app/event/${spectatorParams}/${eventParams}/?referenceLink=true%26idVisitor=visitor-${randomId}`'>
+          <button class="btn btn-outline btn-ghost btn-sm rounded-full">
+            <ShareIcon class="h-4 w-4 mr-1" aria-hidden="true" />
+            Compartir
+          </button>
+        </a>
+      </div>
     </div>
     <h1 class="text-2xl font-bold mb-6">{{ nameEvent }}</h1>
     <p class="mb-4">{{ eventDescription }}</p>
@@ -36,14 +46,6 @@
     <!-- Contenido de la pestaña "Obras" -->
     <div v-if="activeTab === 'programa'">
       <div v-if="themes.length">
-        <div class="my-4" v-if="spectator.numberOfPeople > 1">
-          <div class="alert alert-info rounded-none">
-            <span class="text-xs">Comparte al link del programa del concierto a tu grupo para que puedan seguir con la experiencia en sus propios dispositivos</span>
-          </div>
-          <a :href='`https://wa.me/?text=https://cuarenta-minutos.web.app/event/${spectatorParams}/${eventParams}/?referenceLink=true%26idVisitor=visitor-${randomId}`'>
-            <button class="btn btn-active mt-2 w-full"><ShareIcon class="-ml-1 mr-3 h-4 w-4" aria-hidden="true" />Compartir link</button>
-          </a>
-        </div>
         <ul>
           <li v-for="theme in themes" :key="theme.id" class="mb-4 bg-white rounded-md">
             <ThemeItem 

@@ -38,7 +38,7 @@
                 <span class="text-xs">Comparte al link del programa del concierto a tu grupo para que puedan seguir con la experiencia en sus propios dispositivos</span>
               </div>
               <a :href='`https://wa.me/?text=https://cuarenta-minutos.web.app/sign-in/${eventParams}/?referenceLink=true%26hostId=${spectator.uId}`'>
-                <button class="btn btn-active mt-2 w-full"><ShareIcon class="-ml-1 mr-3 h-4 w-4" aria-hidden="true" />Compartir link</button>
+                <button class="btn btn-active mt-2 w-full"><ShareIcon class="-ml-1 mr-3 h-4 w-4" aria-hidden="true" />Acompañantes link</button>
               </a>
             </div>
           </div>
@@ -86,15 +86,69 @@ const id = route.params.idSpectator;
 
 const fetchSpectator = async () => {
   const db = getFirestore();
-  const docRef = doc(db, 'spectators', id);
   
   try {
-    const docSnap = await getDoc(docRef);
-    if (docSnap.exists()) {
-      spectator.value = docSnap.data();
-      numberOfCompanions.value = spectator.value.numberOfPeople - 1 ;
-    } else {
-      console.error('No se encontró el documento con el ID proporcionado');
+    // Cargar el documento del espectador
+    const spectatorRef = doc(db, 'spectators', id);
+    const spectatorSnap = await getDoc(spectatorRef);
+    
+    if (!spectatorSnap.exists()) {
+      console.error('No se encontró el documento del espectador con el ID proporcionado');
+      return;
+    }
+    
+    // Guardar los datos del espectador
+    spectator.value = spectatorSnap.data();
+    
+    // No establecer un valor por defecto todavía, primero intentaremos obtener el valor del eventSpectator
+    
+    // Ahora intentar cargar los datos específicos del evento
+    try {
+      const eventRef = doc(db, 'events', route.params.idEvent);
+      const eventSnap = await getDoc(eventRef);
+      
+      if (eventSnap.exists()) {
+        const eventData = eventSnap.data();
+        
+        // Verificar si el array eventSpectators existe
+        if (Array.isArray(eventData.eventSpectators)) {
+          console.log('Total de eventSpectators:', eventData.eventSpectators.length);
+          
+          // Buscar el espectador específico para este evento
+          const spectatorIndex = eventData.eventSpectators.findIndex(s => s.id === id);
+          console.log('Índice del espectador en eventSpectators:', spectatorIndex);
+          
+          if (spectatorIndex !== -1) {
+            const eventSpectator = eventData.eventSpectators[spectatorIndex];
+            console.log('eventSpectator encontrado:', eventSpectator);
+            
+            // Obtener el valor de numberOfCompanions de eventSpectator 
+            console.log('Usando numberOfCompanions de eventSpectator:', eventSpectator.numberOfCompanions);
+            numberOfCompanions.value = eventSpectator.numberOfCompanions || 0;
+            
+            // También actualizar la preferencia de pago si existe
+            if (eventSpectator.uniquePaymentForGroup !== undefined) {
+              uniquePaymentForGroup.value = eventSpectator.uniquePaymentForGroup;
+            }
+          } else {
+            console.log('Espectador no encontrado en eventSpectators, usando valor general');
+            // Si no encontramos el eventSpectator, usamos el valor general como respaldo
+            numberOfCompanions.value = spectator.value.numberOfPeople - 1;
+          }
+        } else {
+          console.log('El evento no tiene eventSpectators o no es un array, usando valor general');
+          // Si no hay eventSpectators, usamos el valor general
+          numberOfCompanions.value = spectator.value.numberOfPeople - 1;
+        }
+      } else {
+        console.log('El evento no existe, usando valor general');
+        // Si no hay evento, usamos el valor general
+        numberOfCompanions.value = spectator.value.numberOfPeople - 1;
+      }
+    } catch (eventError) {
+      console.error('Error al cargar datos del evento:', eventError);
+      // En caso de error, usamos el valor general
+      numberOfCompanions.value = spectator.value.numberOfPeople - 1;
     }
   } catch (error) {
     console.error('Error al obtener los datos del espectador:', error);
@@ -168,7 +222,9 @@ const validateCheckin = async () => {
         eventSpectators[spectatorIndex] = {
           ...eventSpectators[spectatorIndex],
           isChecked: true,
-          wasCheckedIn: true
+          wasCheckedIn: true,
+          numberOfCompanions: numberOfCompanions.value,
+          uniquePaymentForGroup: uniquePaymentForGroup.value
         };
         
         // Guardar los cambios en el documento del evento
