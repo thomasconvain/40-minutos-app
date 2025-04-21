@@ -12,8 +12,8 @@
         <h2 class="card-title text-xl md:text-2xl font-bold mb-1">{{ event.place }}</h2>
       </div>
       
-      <!-- Segunda sección: Fecha -->
-      <div>
+      <!-- Segunda sección: Fecha (ocultar si tiene mensaje de advertencia) -->
+      <div v-if="!(event.isActive && !event.isOpen && event.showWarningMessage && contentManagerData.warningMessage)">
         <span class="inline-block px-3 py-1 text-xs md:text-sm rounded-full mb-2"
           :class="{'border border-gray-300 bg-gray-50 text-gray-600': !$attrs.class?.includes('bg-black'), 
                   'border border-gray-700 bg-black text-gray-300': $attrs.class?.includes('bg-black')}">
@@ -38,9 +38,17 @@
           <strong>Anfitrión:</strong> {{ event.hostName }}
         </p>
         
-        <!-- Mensaje condicional para checkin -->
+        <!-- Mensaje de advertencia si el evento está activo pero cerrado y con showWarningMessage=true -->
+        <div 
+          v-if="event.isActive && !event.isOpen && event.showWarningMessage && contentManagerData.warningMessage" 
+          class="alert alert-warning rounded-none flex text-left mt-2"
+        >
+          <span class="text-sm">{{ contentManagerData.warningMessage }}</span>
+        </div>
+        
+        <!-- Mensaje condicional para checkin - ocultar si hay mensaje de advertencia -->
         <div
-          v-if="showCheckinMessage"
+          v-if="showCheckinMessage && !(event.isActive && !event.isOpen && event.showWarningMessage && contentManagerData.warningMessage)"
           :class="{
             'alert alert-info rounded-none flex text-left mt-2': !customMessageClass && !event.isCheckinActive,
             'alert alert-success rounded-none flex text-left mt-2': !customMessageClass && event.isCheckinActive && $attrs.class?.includes('bg-black'),
@@ -67,9 +75,9 @@
       
       <!-- Cuarta sección: Botones (separados del resto) -->
       <div class="card-actions justify-start mt-2 pt-2">
-        <!-- Botón quiero asistir / hacer checkin -->
+        <!-- Botón quiero asistir / hacer checkin - ocultarlo si hay mensaje de advertencia -->
         <button
-          v-if="showActionButton"
+          v-if="showActionButton && !(event.isActive && !event.isOpen && event.showWarningMessage && contentManagerData.warningMessage)"
           :class="[
             'btn btn-sm md:btn-md border-transparent',
             buttonStyle === 'white' ? 'bg-white text-black hover:bg-gray-200' : 'bg-black text-white hover:bg-gray-800'
@@ -111,6 +119,9 @@ import { db } from "@/firebase";
 import { doc, getDoc } from "firebase/firestore";
 
 const chapterSynopsis = ref('Puedes revisar tu reserva');
+const contentManagerData = ref({
+  warningMessage: ''
+});
 
 const props = defineProps({
   event: {
@@ -214,10 +225,30 @@ const fetchChapterSynopsis = async () => {
   }
 };
 
-// Ejecutar la búsqueda cuando cambie el ID del evento o el chapterId
+// Función para obtener los datos del content-manager
+const fetchContentManager = async () => {
+  if (props.event && props.event.contentReferenceId) {
+    try {
+      const contentRef = doc(db, 'content-manager', props.event.contentReferenceId);
+      const contentSnap = await getDoc(contentRef);
+      
+      if (contentSnap.exists()) {
+        contentManagerData.value = contentSnap.data();
+      }
+    } catch (error) {
+      console.error("Error fetching content manager data:", error);
+    }
+  }
+};
+
+// Ejecutar la búsqueda cuando cambie el ID del evento, chapterId o contentReferenceId
 watchEffect(() => {
   if (props.event && props.event.chapterId) {
     fetchChapterSynopsis();
+  }
+  
+  if (props.event && props.event.contentReferenceId) {
+    fetchContentManager();
   }
 });
 </script>
