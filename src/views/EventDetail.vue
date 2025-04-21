@@ -6,11 +6,11 @@
       </button>
       
       <!-- Botón de compartir link con tooltip -->
-      <div v-if="spectator && spectator.numberOfPeople > 1" class="tooltip tooltip-left" data-tip="Comparte el link del programa del concierto a tu grupo">
+      <div v-if="eventSpectator && eventSpectator.numberOfCompanions > 0" class="tooltip tooltip-left" data-tip="Comparte el link del programa del concierto a tu grupo">
         <a :href='`https://wa.me/?text=https://cuarenta-minutos.web.app/event/${spectatorParams}/${eventParams}/?referenceLink=true%26idVisitor=visitor-${randomId}`'>
           <button class="btn btn-outline btn-ghost btn-sm rounded-full">
             <ShareIcon class="h-4 w-4 mr-1" aria-hidden="true" />
-            Compartir
+            Acompañantes
           </button>
         </a>
       </div>
@@ -21,8 +21,8 @@
     <div class="flex w-full bg-gray-200/70 rounded-lg p-2 mb-3">
       <InformationCircleIcon class="h-5 w-5 mr-2 flex-shrink-0" aria-hidden="true" />
       <div class="flex flex-col sm:flex-row sm:items-center justify-between w-full">
-        <span class="text-xs">Recuerda finalizar el proceso con checkout</span>
-        <a v-if="activeTab !== 'programa'" href="#" @click.prevent="activeTab = 'programa'" class="text-xs font-semibold underline mt-1 sm:mt-0">Ir al checkout</a>
+        <span class="text-xs">Para finalizar el proceso hacer
+        <a href="#checkout-button" class="text-xs font-semibold mt-1 sm:mt-0">Checkout</a> </span>
       </div>
     </div>
     
@@ -195,6 +195,7 @@
     
     
     <button
+      id="checkout-button"
       v-if="activeTab === 'programa'"
       type="button"
       :disabled="isButtonDisabled"
@@ -225,6 +226,7 @@ const idEvent = route.params.idEvent;
 const idSpectator = route.params.idSpectator;
 const eventDescription = ref('');
 const spectator = ref(null);
+const eventSpectator = ref(null);
 const id = route.params.idSpectator;
 const randomId = ref('');
 const spectatorParams = ref('');
@@ -281,6 +283,13 @@ const fetchEventThemes = async () => {
       const eventData = eventDocSnap.data();
       const themesIds = eventData.themes_id;
       spectatorsShouldPayInTheApp.value = eventData.spectatorsShouldPayInTheApp;
+      
+      // Buscar el espectador en eventSpectators para tener acceso a numberOfCompanions
+      const eventSpectators = eventData.eventSpectators || [];
+      const spectatorInEvent = eventSpectators.find(s => s.id === idSpectator);
+      if (spectatorInEvent) {
+        eventSpectator.value = spectatorInEvent;
+      }
       
       // Obtener datos del content-manager si existe contentReferenceId
       if (eventData.contentReferenceId) {
@@ -631,6 +640,9 @@ const loadExistingRatings = async () => {
     
     // Buscar el espectador actual en el array
     const spectator = eventSpectators.find(s => s.id === idSpectator);
+    
+    // Asignar el spectator encontrado a eventSpectator para usarlo en otras partes
+    eventSpectator.value = spectator;
     
     if (!spectator || !spectator.ratings) return;
     
