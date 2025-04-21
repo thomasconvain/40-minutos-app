@@ -110,7 +110,14 @@
       <span v-if="!isLoading">Pagar con tarjeta</span>
       <span v-if="isLoading">Te estamos redirigiendo...</span>
     </button>
-    <button class="btn btn-active mt-2 w-full text-gray-400" @click="goToThankYouPage">Prefiero pagar por transferencia</button>
+    <button v-if="!showBankTransfer" class="btn btn-active mt-2 w-full text-gray-400" @click="goToThankYouPage">Prefiero pagar por transferencia</button>
+    
+    <div v-if="showBankTransfer" class="mt-4">
+      <BankTransferDetails :eventId="eventParams" ref="bankTransferDetailsRef" />
+      <div class="flex mt-4 gap-2">
+        <button class="btn btn-primary text-white flex-1" @click="confirmBankTransfer">Confirmar transferencia</button>
+      </div>
+    </div>
   </div>
   </div>
 </template>
@@ -122,6 +129,7 @@ import { CreditCardIcon } from '@heroicons/vue/24/outline'
 import { useRouter, useRoute } from 'vue-router';
 import { getFirestore, doc, getDoc } from 'firebase/firestore';
 import { InformationCircleIcon, ShareIcon } from '@heroicons/vue/24/outline'
+import BankTransferDetails from '@/components/BankTransferDetails.vue';
 
 
 const router = useRouter();
@@ -144,6 +152,8 @@ const rowTableArray = ref();
 const uniquePaymentForGroup = ref(true);
 const isViewLoading = ref(false);
 const randomId = ref('');
+const showBankTransfer = ref(false);
+const bankTransferDetailsRef = ref(null);
 
 onMounted(async () => {
   // Captura los parámetros actuales de la URL
@@ -152,7 +162,7 @@ onMounted(async () => {
   eventParams.value = route.params.idEvent;
   if (spectatorParams.value && !route.query.referenceLink) {
     await fetchSpectator();
-    if (!spectator.value.uniquePaymentForGroup) {
+    if (spectator.value && !spectator.value.uniquePaymentForGroup) {
       setGroupValuesToZero()
     }
   } else {
@@ -301,7 +311,19 @@ function generateRandomId() {
   randomId.value = result;
 }
 
-const goToThankYouPage = () => {
+// Mostrar los detalles de transferencia bancaria
+const showTransferDetails = () => {
+  showBankTransfer.value = true;
+  // Si el componente de detalles de transferencia ya está cargado, validamos el email
+  validateEmail();
+  if (emailError.value) {
+    showBankTransfer.value = false;
+    return;
+  }
+};
+
+// Confirmar transferencia bancaria y redirigir a la página de agradecimiento
+const confirmBankTransfer = () => {
   router.push({
     name: 'ThankYou',
     query: { 
@@ -312,6 +334,11 @@ const goToThankYouPage = () => {
       paymentMethod: 'bankTransfer',
       amount: (uniquePaymentForGroup.value && spectator && !route.query.referenceLink) ? amount[0] * spectator.value.numberOfPeople : totalAmountToPay.value }
   });
+};
+
+// Esta función se usa en el template
+const goToThankYouPage = () => {
+  showTransferDetails();
 };
 </script>
 
