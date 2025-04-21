@@ -168,27 +168,45 @@ const setDefaultUniqueSpectator = (number) => {
     amount[index] = uniquePaymentForGroup.value == true ?  amount[0] : (amount.length = 1, amount[0]); // Inicializamos el valor de cada input
   });
 }
-// Función para obtener los datos del espectador desde Firestore
+// Función para obtener los datos del espectador desde Firestore y del evento
 const fetchSpectator = async () => {
   isViewLoading.value = true;
   const db = getFirestore();
-  const docRef = doc(db, 'spectators', spectatorParams.value);
+  const spectatorDocRef = doc(db, 'spectators', spectatorParams.value);
+  const eventDocRef = doc(db, 'events', eventParams.value);
   try {
-    const docSnap = await getDoc(docRef);
-    if (docSnap.exists()) {
-      spectator.value = docSnap.data();
+    const [spectatorSnap, eventSnap] = await Promise.all([
+      getDoc(spectatorDocRef),
+      getDoc(eventDocRef)
+    ]);
+    
+    if (spectatorSnap.exists() && eventSnap.exists()) {
+      spectator.value = spectatorSnap.data();
       email.value = spectator.value.email;
-      spectatorArray.value = getNumberArray(1);
-      rowTableArray.value = getNumberArray(spectator.value.numberOfPeople);
-      const items = spectatorArray.value;
-      items.forEach((item, index) => {
-        amount[index] = 12000; // Inicializamos el valor de cada input
-      });
+      
+      // Buscar el espectador en eventSpectators del evento
+      const eventData = eventSnap.data();
+      const spectatorInEvent = eventData.eventSpectators.find(s => s.id === spectatorParams.value);
+      
+      if (spectatorInEvent) {
+        // Calcular numberOfPeople como numberOfCompanions + 1 (el espectador principal)
+        const numberOfPeople = spectatorInEvent.numberOfCompanions + 1;
+        spectator.value.numberOfPeople = numberOfPeople;
+        
+        spectatorArray.value = getNumberArray(1);
+        rowTableArray.value = getNumberArray(numberOfPeople);
+        const items = spectatorArray.value;
+        items.forEach((item, index) => {
+          amount[index] = 12000; // Inicializamos el valor de cada input
+        });
+      } else {
+        console.error('No se encontró el espectador en el evento');
+      }
     } else {
       console.error('No se encontró el documento con el ID proporcionado');
     }
   } catch (error) {
-    console.error('Error al obtener los datos del espectador:', error);
+    console.error('Error al obtener los datos:', error);
   }
   isViewLoading.value = false;
 };
