@@ -10,22 +10,26 @@
       <!-- Primera sección: Título y subtítulo -->
       <div>
         <h2 class="card-title text-xl md:text-2xl font-bold mb-1">{{ event.place }}</h2>
-        <p class="text-sm md:text-base mb-1">{{ event.name }}</p>
       </div>
       
       <!-- Segunda sección: Fecha -->
       <div>
-        <span class="inline-block px-3 py-1 text-xs md:text-sm rounded-full" 
+        <span class="inline-block px-3 py-1 text-xs md:text-sm rounded-full mb-2"
           :class="{'border border-gray-300 bg-gray-50 text-gray-600': !$attrs.class?.includes('bg-black'), 
                   'border border-gray-700 bg-black text-gray-300': $attrs.class?.includes('bg-black')}">
           {{ formatDate(event.date) }}
         </span>
       </div>
+
+      <!-- Nombre del evento -->
+       <div>
+        <p class="text-sm md:text-base text-gray"><strong>{{ event.name }}</strong></p>
+       </div>
       
       <!-- Tercera sección: Información adicional (condicional) -->
       <div v-if="(isLoggedIn && numberOfCompanions !== undefined) || event.hostName || showCheckinMessage" class="mt-1">
         <!-- Número de acompañantes (solo si está logeado) -->
-        <p v-if="isLoggedIn && numberOfCompanions !== undefined" class="mb-1">
+        <p v-if="isLoggedIn && numberOfCompanions !== undefined && numberOfCompanions !== 0" class="text-sm mb-1">
           Te acompañan {{ numberOfCompanions }} personas
         </p>
         
@@ -40,13 +44,13 @@
           :class="{
             'alert alert-info rounded-none flex text-left mt-2': !customMessageClass && !event.isCheckinActive,
             'alert alert-success rounded-none flex text-left mt-2': !customMessageClass && event.isCheckinActive && $attrs.class?.includes('bg-black'),
-            'p-3 rounded-none flex text-left mt-2 bg-amber-500/20 border-l-4 border-amber-500': customMessageClass && event.isCheckinActive,
-            'p-3 rounded-none flex text-left mt-2 bg-black border-l-4 border-gray-500': customMessageClass && !event.isCheckinActive
+            'p-3 rounded-none flex text-left mt-1 bg-amber-500/20 border-l-4 border-amber-500': customMessageClass && event.isCheckinActive,
+            'p-3 rounded-none flex text-left mt-1 bg-black border-l-4 border-gray-500': customMessageClass && !event.isCheckinActive
           }"
         >
           <span :class="{
               'text-xs': !customMessageClass,
-              'text-sm text-white': customMessageClass
+              'text-sm text-gray': customMessageClass
             }">
             <template v-if="customMessageClass && event.isCheckinActive">
               Checkin abierto, debes <router-link to="/login" class="underline font-medium">entrar</router-link> con tu usuario y contraseña
@@ -62,7 +66,7 @@
       </div>
       
       <!-- Cuarta sección: Botones (separados del resto) -->
-      <div class="card-actions justify-start mt-auto pt-2">
+      <div class="card-actions justify-start mt-2 pt-2">
         <!-- Botón quiero asistir / hacer checkin -->
         <button
           v-if="showActionButton"
