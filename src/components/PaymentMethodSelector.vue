@@ -1,6 +1,5 @@
 <template>
   <div class="w-full">
-    <p class="mb-4">Selecciona cómo quieres realizar tu aporte de {{ formatAmount(amount) }}</p>
     <div class="flex flex-col gap-3">
       <div class="card bg-base-100 border cursor-pointer transition-all" 
            :class="{'border-primary shadow-md': modelValue === 'card', 'border-base-300 hover:border-primary': modelValue !== 'card'}"
@@ -44,14 +43,6 @@ defineProps({
   }
 });
 
-// Formatear el monto para mostrar
-const formatAmount = (amount) => {
-  return new Intl.NumberFormat('es-CL', {
-    style: 'currency',
-    currency: 'CLP',
-    minimumFractionDigits: 0,
-  }).format(amount);
-};
 </script>
 
 <style scoped>
