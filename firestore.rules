@@ -63,5 +63,11 @@ service cloud.firestore {
       // Permitir crear, actualizar o eliminar evaluaciones sin autenticación
       allow create, update, delete: if true;
     }
+    
+    // Regla para los pagos
+    match /payments/{paymentId} {
+      // Permitir crear, leer y actualizar pagos sin autenticación
+      allow create, read, update: if true;
+    }
   }
 }

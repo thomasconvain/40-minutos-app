@@ -85,7 +85,7 @@
       <p>Tu aporte total: {{ uniquePaymentForGroup && spectator ? formatAmount(amount[0] * spectator?.numberOfPeople) : formatAmount(totalAmountToPay) }}</p>
       <button v-if="spectator?.numberOfPeople > 1 && isFirstGreaterThanZero" class="btn btn-link btn-sm text-gray-400" @click="setGroupValuesToZero">Prefiero aportar solamente lo mío</button>
     </div>
-    <div class="mt-6">
+    <!-- <div class="mt-6">
       <label for="email" class="block text-sm font-medium text-gray-700">Tu correo</label>
       <div class="mt-1">
         <input
@@ -98,7 +98,7 @@
         />
       </div>
       <p v-if="emailError" class="text-red-500 text-sm mt-1">{{ emailError }}</p>
-    </div>
+    </div> -->
 
     <button
       type="button"
