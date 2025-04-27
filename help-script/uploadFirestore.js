@@ -65,7 +65,7 @@ const uploadOrUpdateDataInFirestore = async () => {
       phone: row.phone.replace(/\s/g, ''),
       subscribedEventsId: subscribedEventsArray,
       companionsInfo: companionsInfoArray,
-      isCheckinActive: row.isCheckinActive,
+      isCheckInActive: row.isCheckinActive,
       isChecked: row.isChecked,
       uniquePaymentForGroup: row.uniquePaymentForGroup
     };

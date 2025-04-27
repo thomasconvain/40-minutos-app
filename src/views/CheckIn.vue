@@ -208,28 +208,30 @@ const validateCheckin = async () => {
       // Ya no actualizamos isChecked globalmente para evitar afectar otros eventos
     });
 
-    // Obtener el documento del evento para actualizar el eventSpectator específico
+    // Obtener el documento del evento para actualizar el zSpectator específico (nueva estructura)
     const eventDoc = await getDoc(eventRef);
     if (eventDoc.exists()) {
       const eventData = eventDoc.data();
-      const eventSpectators = eventData.eventSpectators || [];
+      const zSpectator = eventData.zSpectator || [];
       
-      // Buscar el índice del espectador actual en el array de eventSpectators
-      const spectatorIndex = eventSpectators.findIndex(s => s.id === id);
+      // Buscar el índice del espectador actual en el array de zSpectator
+      const spectatorIndex = zSpectator.findIndex(s => s.spectatorId === id);
       
       if (spectatorIndex !== -1) {
         // Actualizar solo el registro del espectador para este evento específico
-        eventSpectators[spectatorIndex] = {
-          ...eventSpectators[spectatorIndex],
-          isChecked: true,
-          wasCheckedIn: true,
+        // usando los nuevos campos de la estructura
+        zSpectator[spectatorIndex] = {
+          ...zSpectator[spectatorIndex],
+          hasCheckIn: true,
           numberOfCompanions: numberOfCompanions.value,
-          uniquePaymentForGroup: uniquePaymentForGroup.value
+          // Mantenemos los demás campos como evaluationId y paymentId
+          evaluationId: zSpectator[spectatorIndex].evaluationId,
+          paymentId: zSpectator[spectatorIndex].paymentId
         };
         
         // Guardar los cambios en el documento del evento
         await updateDoc(eventRef, {
-          eventSpectators: eventSpectators
+          zSpectator: zSpectator
         });
       }
     }

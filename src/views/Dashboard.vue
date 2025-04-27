@@ -17,7 +17,7 @@
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
       <div v-for="event in activeEvents" :key="event.id" class="card bg-base-100 bg-opacity-70 shadow-xl">
         <div class="card-body">
-          <h2 class="card-title">{{ event.place || event.name || event.hostName }}</h2>
+          <h2 class="card-title">{{ venueName(event) || assemblyName(event) || hostName(event) }}</h2>
           
           <div class="flex mt-1 mb-1 text-sm text-gray-500">
             {{ formatDate(event.date) }}
@@ -30,12 +30,12 @@
             <div class="grid grid-cols-2 gap-2">
               <div class="text-center p-1 bg-primary/10 rounded-md">
                 <div class="stat-title text-black">Inscritos</div>
-                <div class="stat-value text-xl text-black">{{ calculateTotalReservations(event)  }}</div>
+                <div class="stat-value text-xl text-black">{{ calculateTotalReservations(event) }}</div>
               </div>
               
               <div class="text-center">
                 <div class="stat-title">Reservas</div>
-                <div class="stat-value text-xl">{{ event.eventSpectators?.length || 0 }}</div>
+                <div class="stat-value text-xl">{{ event.zSpectator?.length || 0 }}</div>
               </div>
             </div>
             
@@ -69,7 +69,8 @@ import {
   where, 
   orderBy,
   doc,
-  updateDoc
+  updateDoc,
+  getDoc
 } from 'firebase/firestore';
 import { auth, db } from '@/firebase';
 import { signOut, onAuthStateChanged } from 'firebase/auth';
@@ -110,15 +111,15 @@ const fetchActiveEvents = async () => {
       // If logged in, show all active events
       q = query(
         collection(db, "events"),
-        where("isActive", "==", true),
+        where("settings.isActive", "==", true),
         orderBy("date", "asc")
       );
     } else {
-      // If not logged in, only show public events (isFreeEntrance == true)
+      // If not logged in, only show public events (settings.isPrivate == false)
       q = query(
         collection(db, "events"),
-        where("isActive", "==", true),
-        where("isFreeEntrance", "==", true),
+        where("settings.isActive", "==", true),
+        where("settings.isPrivate", "==", false),
         orderBy("date", "asc")
       );
     }
@@ -131,6 +132,62 @@ const fetchActiveEvents = async () => {
       checkinCount: 0,
       spectators: []
     }));
+    
+    // Recopilar IDs únicos de venues, hosts y assemblies
+    const venueIds = new Set();
+    const hostIds = new Set();
+    const assemblyIds = new Set();
+    
+    activeEvents.value.forEach(event => {
+      if (event.venueId) venueIds.add(event.venueId);
+      if (event.hostId) hostIds.add(event.hostId);
+      if (event.assemblyId) assemblyIds.add(event.assemblyId);
+    });
+    
+    // Cargar datos de venues
+    if (venueIds.size > 0) {
+      const venuePromises = Array.from(venueIds).map(async (venueId) => {
+        try {
+          const venueDoc = await getDoc(doc(db, 'venues', venueId));
+          if (venueDoc.exists()) {
+            venueNames.value[venueId] = venueDoc.data().name || 'Lugar no disponible';
+          }
+        } catch (error) {
+          console.error(`Error fetching venue ${venueId}:`, error);
+        }
+      });
+      await Promise.all(venuePromises);
+    }
+    
+    // Cargar datos de hosts
+    if (hostIds.size > 0) {
+      const hostPromises = Array.from(hostIds).map(async (hostId) => {
+        try {
+          const hostDoc = await getDoc(doc(db, 'hosts', hostId));
+          if (hostDoc.exists()) {
+            hostNames.value[hostId] = hostDoc.data().name || '';
+          }
+        } catch (error) {
+          console.error(`Error fetching host ${hostId}:`, error);
+        }
+      });
+      await Promise.all(hostPromises);
+    }
+    
+    // Cargar datos de assemblies
+    if (assemblyIds.size > 0) {
+      const assemblyPromises = Array.from(assemblyIds).map(async (assemblyId) => {
+        try {
+          const assemblyDoc = await getDoc(doc(db, 'assembly', assemblyId));
+          if (assemblyDoc.exists()) {
+            assemblyNames.value[assemblyId] = assemblyDoc.data().name || 'Ensamble no disponible';
+          }
+        } catch (error) {
+          console.error(`Error fetching assembly ${assemblyId}:`, error);
+        }
+      });
+      await Promise.all(assemblyPromises);
+    }
 
     // Fetch spectator counts for each event
     for (const event of activeEvents.value) {
@@ -146,32 +203,22 @@ const fetchActiveEvents = async () => {
 // Fetch spectators for a specific event
 const fetchEventSpectators = async (event) => {
   try {
-    // Get spectators from the event's eventSpectators array
-    if (event.eventSpectators && Array.isArray(event.eventSpectators)) {
-      event.spectatorCount = event.eventSpectators.length;
+    // Get spectators from the new zSpectator array structure
+    if (event.zSpectator && Array.isArray(event.zSpectator)) {
+      event.spectatorCount = event.zSpectator.length;
       
-      // Contar directamente desde el arreglo eventSpectators
-      let checkinCount = 0;
-      let checkoutCount = 0;
-      let wasCheckedInCount = 0;
-      let wasCheckedOutCount = 0;
+      // Contar directamente desde el arreglo zSpectator 
+      let wasCheckedInCount = 0;  // Definir las variables
+      let wasCheckedOutCount = 0; // Definir las variables
       
-      // Procesar cada espectador en el evento
-      event.eventSpectators.forEach(spectator => {
-        // Contar estados actuales
-        if (spectator.isChecked) {
-          checkinCount++;
+      // Procesar cada espectador en el evento usando los nuevos campos
+      event.zSpectator.forEach(spectator => {
+        // Contar estados usando los campos correctos hasCheckIn y hasCheckOut
+        if (spectator.hasCheckIn) {
+          wasCheckedInCount++; // Contador de check-ins
         }
-        if (spectator.isCheckedOut) {
-          checkoutCount++;
-        }
-        
-        // Contar estados históricos
-        if (spectator.wasCheckedIn) {
-          wasCheckedInCount++;
-        }
-        if (spectator.wasCheckedOut) {
-          wasCheckedOutCount++;
+        if (spectator.hasCheckOut) {
+          wasCheckedOutCount++; // Contador de check-outs
         }
       });
       
@@ -235,21 +282,46 @@ const fetchEventSpectators = async (event) => {
       }
       
       // Actualizar los contadores en el objeto del evento para visualización
-      event.checkinCount = wasCheckedInCount;  // Usar wasCheckedIn en lugar de isChecked
-      event.checkoutCount = wasCheckedOutCount;  // Usar wasCheckedOut en lugar de isCheckedOut
-      event.currentCheckinCount = checkinCount;  // Guardar estos por si acaso
-      event.currentCheckoutCount = checkoutCount;
+      event.checkinCount = wasCheckedInCount;  // Usar el contador de wasCheckedInCount
+      event.checkoutCount = wasCheckedOutCount;  // Usar el contador de wasCheckedOutCount
     }
   } catch (error) {
     console.error(`Error fetching spectators for event ${event.id}:`, error);
   }
 };
 
-// Calculate total reservations including companions
+// Funciones para obtener nombres de entidades relacionadas
+const venueNames = ref({});
+const hostNames = ref({});
+const assemblyNames = ref({});
+
+// Funciones para obtener nombres de entidades relacionadas
+const venueName = (event) => {
+  if (event.venueId && venueNames.value[event.venueId]) {
+    return venueNames.value[event.venueId];
+  }
+  return "Lugar no disponible";
+};
+
+const hostName = (event) => {
+  if (event.hostId && hostNames.value[event.hostId]) {
+    return hostNames.value[event.hostId];
+  }
+  return "";
+};
+
+const assemblyName = (event) => {
+  if (event.assemblyId && assemblyNames.value[event.assemblyId]) {
+    return assemblyNames.value[event.assemblyId];
+  }
+  return "Ensamble no disponible";
+};
+
+// Calculate total reservations including companions with new data structure
 const calculateTotalReservations = (event) => {
   let total = 0;
-  if (event.eventSpectators && Array.isArray(event.eventSpectators)) {
-    total = event.eventSpectators.reduce((sum, spectator) => {
+  if (event.zSpectator && Array.isArray(event.zSpectator)) {
+    total = event.zSpectator.reduce((sum, spectator) => {
       // Count the spectator (1) plus any companions
       const companions = spectator.numberOfCompanions || 0;
       return sum + 1 + companions;

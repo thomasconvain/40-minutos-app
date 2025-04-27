@@ -127,9 +127,10 @@ import { ref, reactive, computed, onMounted } from 'vue';
 import { createPaymentLink } from '@/services/mercadoPago';
 import { CreditCardIcon } from '@heroicons/vue/24/outline'
 import { useRouter, useRoute } from 'vue-router';
-import { getFirestore, doc, getDoc } from 'firebase/firestore';
+import { getFirestore, doc, getDoc, updateDoc, collection, setDoc } from 'firebase/firestore';
 import { InformationCircleIcon, ShareIcon } from '@heroicons/vue/24/outline'
 import BankTransferDetails from '@/components/BankTransferDetails.vue';
+import { db } from '@/firebase';
 
 
 const router = useRouter();
@@ -194,12 +195,19 @@ const fetchSpectator = async () => {
       spectator.value = spectatorSnap.data();
       email.value = spectator.value.email;
       
-      // Buscar el espectador en eventSpectators del evento
+      // Buscar el espectador en zSpectator del evento usando la nueva estructura
       const eventData = eventSnap.data();
-      const spectatorInEvent = eventData.eventSpectators.find(s => s.id === spectatorParams.value);
+      const spectatorInEvent = eventData.zSpectator?.find(s => s.spectatorId === spectatorParams.value);
+      
+      // Recuperar los métodos de pago disponibles si el evento acepta pagos
+      if (eventData.settings?.isTipAccepted && eventData.settings?.paymentMethodIds) {
+        // Aquí podríamos cargar los métodos de pago disponibles si es necesario
+        console.log("Métodos de pago disponibles para este evento:", eventData.settings.paymentMethodIds);
+      }
       
       if (spectatorInEvent) {
         // Calcular numberOfPeople como numberOfCompanions + 1 (el espectador principal)
+        // Usando la nueva estructura, spectatorInEvent solo tiene spectatorId y numberOfCompanions
         const numberOfPeople = spectatorInEvent.numberOfCompanions + 1;
         spectator.value.numberOfPeople = numberOfPeople;
         
@@ -245,27 +253,80 @@ const validateEmail = () => {
   }
 };
 
-// Método para generar el link de pago
+// Método para generar el link de pago y guardar la información en la colección payments
 const generatePaymentLink = async () => {
   validateEmail();
   if (emailError.value === '') {
-  isLoading.value = true;
-  try {
-    paymentLink.value = await createPaymentLink({
-      amount: (uniquePaymentForGroup.value && spectator && !route.query.referenceLink) ? amount[0] * spectator.value.numberOfPeople : totalAmountToPay.value,
-      description: description.value,
-      email: email.value,
-      backUrls: {
-        success: `${baseUrl.value}/thankyou?idSpectator=${spectatorParams.value}&numberOfPeople=${countNumberOfPeopleAboveZero.value}`,
-        failure: `${baseUrl.value}/thankyou?idSpectator=${spectatorParams.value}&numberOfPeople=${countNumberOfPeopleAboveZero.value}`,
-        pending: `${baseUrl.value}/thankyou?idSpectator=${spectatorParams.value}&numberOfPeople=${countNumberOfPeopleAboveZero.value}`,
-      },
-    });
-    window.open(paymentLink.value, '_self');
-  } catch (error) {
-    alert('Hubo un problema al generar el link de pago.');
+    isLoading.value = true;
+    try {
+      // Calcular el monto total
+      const totalAmount = (uniquePaymentForGroup.value && spectator.value && !route.query.referenceLink) 
+        ? amount[0] * spectator.value.numberOfPeople 
+        : totalAmountToPay.value;
+      
+      // Crear documento en la colección payments
+      const paymentData = {
+        amount: totalAmount,
+        eventId: route.params.idEvent,
+        spectatorId: route.params.idSpectator,
+        method: 'mercadoPago',
+        status: 'pending',
+        createdAt: new Date(),
+        metadata: {
+          uniquePaymentForGroup: uniquePaymentForGroup.value,
+          email: email.value
+        }
+      };
+      
+      // Crear el documento en la colección payments
+      const paymentRef = doc(collection(db, 'payments'));
+      const paymentId = paymentRef.id;
+      await setDoc(paymentRef, paymentData);
+      
+      // Actualizar el campo paymentId en zSpectator
+      const eventRef = doc(db, 'events', route.params.idEvent);
+      const eventDoc = await getDoc(eventRef);
+      
+      if (eventDoc.exists()) {
+        const eventData = eventDoc.data();
+        const zSpectator = eventData.zSpectator || [];
+        
+        // Buscar el índice del espectador actual
+        const spectatorIndex = zSpectator.findIndex(s => s.spectatorId === route.params.idSpectator);
+        
+        if (spectatorIndex !== -1) {
+          // Actualizar la referencia al pago
+          zSpectator[spectatorIndex] = {
+            ...zSpectator[spectatorIndex],
+            paymentId: paymentId
+          };
+          
+          // Guardar los cambios en el documento del evento
+          await updateDoc(eventRef, {
+            zSpectator: zSpectator
+          });
+        }
+      }
+      
+      // Generar el link de pago de MercadoPago
+      paymentLink.value = await createPaymentLink({
+        amount: totalAmount,
+        description: description.value,
+        email: email.value,
+        backUrls: {
+          success: `${baseUrl.value}/thankyou?idSpectator=${spectatorParams.value}&numberOfPeople=${countNumberOfPeopleAboveZero.value}&paymentId=${paymentId}`,
+          failure: `${baseUrl.value}/thankyou?idSpectator=${spectatorParams.value}&numberOfPeople=${countNumberOfPeopleAboveZero.value}&paymentId=${paymentId}`,
+          pending: `${baseUrl.value}/thankyou?idSpectator=${spectatorParams.value}&numberOfPeople=${countNumberOfPeopleAboveZero.value}&paymentId=${paymentId}`,
+        },
+      });
+      
+      // Redirigir al usuario a la página de pago
+      window.open(paymentLink.value, '_self');
+    } catch (error) {
+      console.error('Error al generar el link de pago:', error);
+      alert('Hubo un problema al generar el link de pago.');
+    }
   }
-}
   isLoading.value = false;
 };
 const formatAmount = (amount) => {
@@ -322,18 +383,75 @@ const showTransferDetails = () => {
   }
 };
 
-// Confirmar transferencia bancaria y redirigir a la página de agradecimiento
-const confirmBankTransfer = () => {
-  router.push({
-    name: 'ThankYou',
-    query: { 
-      idSpectator: route.params.idSpectator,
-      numberOfPeople: countNumberOfPeopleAboveZero.value,
-      idVisitor: route.query.idVisitor,
-      idEvent: route.params.idEvent,
-      paymentMethod: 'bankTransfer',
-      amount: (uniquePaymentForGroup.value && spectator && !route.query.referenceLink) ? amount[0] * spectator.value.numberOfPeople : totalAmountToPay.value }
-  });
+// Confirmar transferencia bancaria y guardar la información de pago en la nueva colección
+const confirmBankTransfer = async () => {
+  try {
+    // Calcular el monto total
+    const totalAmount = (uniquePaymentForGroup.value && spectator.value && !route.query.referenceLink) 
+      ? amount[0] * spectator.value.numberOfPeople 
+      : totalAmountToPay.value;
+    
+    // Crear documento en la colección payments
+    const paymentData = {
+      amount: totalAmount,
+      eventId: route.params.idEvent,
+      spectatorId: route.params.idSpectator,
+      method: 'bankTransfer',
+      status: 'pending',
+      createdAt: new Date(),
+      metadata: {
+        uniquePaymentForGroup: uniquePaymentForGroup.value,
+        email: email.value
+      }
+    };
+    
+    // Crear el documento en la colección payments
+    const paymentRef = doc(collection(db, 'payments'));
+    const paymentId = paymentRef.id;
+    await setDoc(paymentRef, paymentData);
+    
+    // Actualizar el campo paymentId en zSpectator
+    const eventRef = doc(db, 'events', route.params.idEvent);
+    const eventDoc = await getDoc(eventRef);
+    
+    if (eventDoc.exists()) {
+      const eventData = eventDoc.data();
+      const zSpectator = eventData.zSpectator || [];
+      
+      // Buscar el índice del espectador actual
+      const spectatorIndex = zSpectator.findIndex(s => s.spectatorId === route.params.idSpectator);
+      
+      if (spectatorIndex !== -1) {
+        // Actualizar la referencia al pago
+        zSpectator[spectatorIndex] = {
+          ...zSpectator[spectatorIndex],
+          paymentId: paymentId
+        };
+        
+        // Guardar los cambios en el documento del evento
+        await updateDoc(eventRef, {
+          zSpectator: zSpectator
+        });
+      }
+    }
+    
+    // Redirigir a la página de agradecimiento
+    router.push({
+      name: 'ThankYou',
+      query: { 
+        idSpectator: route.params.idSpectator,
+        numberOfPeople: countNumberOfPeopleAboveZero.value,
+        idVisitor: route.query.idVisitor,
+        idEvent: route.params.idEvent,
+        paymentMethod: 'bankTransfer',
+        paymentId: paymentId,
+        amount: totalAmount
+      }
+    });
+  } catch (error) {
+    console.error('Error al registrar el pago:', error);
+    alert('Hubo un error al procesar el pago. Por favor, inténtalo de nuevo.');
+  }
 };
 
 // Esta función se usa en el template

@@ -211,7 +211,7 @@
 <script setup>
 import { ref, onMounted, onBeforeUnmount, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import { doc, getDoc, updateDoc, getFirestore, collection, getDocs } from 'firebase/firestore';
+import { doc, getDoc, updateDoc, getFirestore, collection, getDocs, setDoc } from 'firebase/firestore';
 import { db } from '@/firebase';
 import ThemeItem from '@/components/ThemeItem.vue';
 import MusicianCard from '@/components/MusicianCard.vue';
@@ -282,13 +282,24 @@ const fetchEventThemes = async () => {
     if (eventDocSnap.exists()) {
       const eventData = eventDocSnap.data();
       const themesIds = eventData.themes_id;
-      spectatorsShouldPayInTheApp.value = eventData.spectatorsShouldPayInTheApp;
       
-      // Buscar el espectador en eventSpectators para tener acceso a numberOfCompanions
-      const eventSpectators = eventData.eventSpectators || [];
-      const spectatorInEvent = eventSpectators.find(s => s.id === idSpectator);
+      // Determinar si los espectadores deben pagar según el campo isTipAccepted
+      spectatorsShouldPayInTheApp.value = eventData.settings?.isTipAccepted || false;
+      
+      // Si hay pagos, se podrían cargar los métodos de pago aquí utilizando paymentMethodIds
+      if (spectatorsShouldPayInTheApp.value && eventData.settings?.paymentMethodIds) {
+        // Código para cargar métodos de pago si es necesario
+        console.log("Métodos de pago disponibles:", eventData.settings.paymentMethodIds);
+      }
+      
+      // Buscar el espectador en zSpectator para tener acceso a numberOfCompanions
+      const zSpectator = eventData.zSpectator || [];
+      const spectatorInEvent = zSpectator.find(s => s.spectatorId === idSpectator);
       if (spectatorInEvent) {
-        eventSpectator.value = spectatorInEvent;
+        eventSpectator.value = {
+          id: idSpectator,
+          numberOfCompanions: spectatorInEvent.numberOfCompanions
+        };
       }
       
       // Obtener datos del content-manager si existe contentReferenceId
@@ -419,35 +430,52 @@ const saveSpectatorRatings = async () => {
     }
     
     const eventData = eventDoc.data();
-    const eventSpectators = eventData.eventSpectators || [];
+    const zSpectator = eventData.zSpectator || [];
     
-    // Buscar el espectador actual en el array
-    const spectatorIndex = eventSpectators.findIndex(s => s.id === idSpectator);
+    // Buscar el espectador actual en el array usando la nueva estructura
+    const spectatorIndex = zSpectator.findIndex(s => s.spectatorId === idSpectator);
     
     if (spectatorIndex === -1) {
       console.error('No se encontró el espectador en el evento');
       return;
     }
     
-    // Crear objeto de ratings consolidado
-    const spectatorRatings = {
-      themes: ratings.value.map(item => ({ id: item.themeId, rating: item.rating })),
-      assembly: assemblyRating.value > 0 ? assemblyRating.value : null,
-      chapter: chapterRating.value > 0 ? chapterRating.value : null,
-      musicians: musiciansRatings.value.map(item => ({ id: item.musicianId, rating: item.rating }))
+    // Crear objeto de evaluaciones consolidado
+    const evaluationData = {
+      eventId: idEvent,
+      spectatorId: idSpectator,
+      ratings: {
+        themes: ratings.value.map(item => ({ id: item.themeId, rating: item.rating })),
+        assembly: assemblyRating.value > 0 ? assemblyRating.value : null,
+        chapter: chapterRating.value > 0 ? chapterRating.value : null,
+        musicians: musiciansRatings.value.map(item => ({ id: item.musicianId, rating: item.rating }))
+      },
+      createdAt: new Date()
     };
     
-    // Actualizar el eventSpectator con todas las calificaciones
-    eventSpectators[spectatorIndex] = {
-      ...eventSpectators[spectatorIndex],
-      ratings: spectatorRatings,
-      ratedAt: new Date().toISOString()
-    };
+    // Verificar si ya existe una evaluación
+    let evaluationId = zSpectator[spectatorIndex].evaluationId;
     
-    // Guardar los cambios en el documento del evento
-    await updateDoc(eventRef, {
-      eventSpectators: eventSpectators
-    });
+    if (evaluationId) {
+      // Actualizar la evaluación existente
+      await updateDoc(doc(db, 'evaluations', evaluationId), evaluationData);
+    } else {
+      // Crear un nuevo documento de evaluación
+      const newEvaluationRef = doc(collection(db, 'evaluations'));
+      evaluationId = newEvaluationRef.id;
+      await setDoc(newEvaluationRef, evaluationData);
+      
+      // Actualizar la referencia en zSpectator
+      zSpectator[spectatorIndex] = {
+        ...zSpectator[spectatorIndex],
+        evaluationId: evaluationId
+      };
+      
+      // Guardar los cambios en el documento del evento
+      await updateDoc(eventRef, {
+        zSpectator: zSpectator
+      });
+    }
     
     console.log('Evaluaciones guardadas con éxito');
   } catch (error) {
@@ -624,7 +652,7 @@ const handleCarouselScroll = () => {
   }
 };
 
-// Cargar evaluaciones existentes del espectador 
+// Cargar evaluaciones existentes del espectador usando la nueva estructura
 const loadExistingRatings = async () => {
   try {
     const eventRef = doc(db, 'events', idEvent);
@@ -636,40 +664,58 @@ const loadExistingRatings = async () => {
     }
     
     const eventData = eventDoc.data();
-    const eventSpectators = eventData.eventSpectators || [];
+    const zSpectator = eventData.zSpectator || [];
     
-    // Buscar el espectador actual en el array
-    const spectator = eventSpectators.find(s => s.id === idSpectator);
+    // Buscar el espectador actual en el array usando la nueva estructura
+    const spectatorData = zSpectator.find(s => s.spectatorId === idSpectator);
     
-    // Asignar el spectator encontrado a eventSpectator para usarlo en otras partes
-    eventSpectator.value = spectator;
+    // Asignar la información básica a eventSpectator para usarlo en otras partes
+    eventSpectator.value = {
+      id: idSpectator,
+      numberOfCompanions: spectatorData?.numberOfCompanions || 0
+    };
     
-    if (!spectator || !spectator.ratings) return;
+    // Si no hay espectador o no tiene evaluación, no hay nada que cargar
+    if (!spectatorData || !spectatorData.evaluationId) return;
     
-    // Cargar las calificaciones guardadas
-    if (spectator.ratings.themes) {
-      ratings.value = spectator.ratings.themes.map(item => ({ 
+    // Obtener el documento de evaluación usando la referencia
+    const evaluationRef = doc(db, 'evaluations', spectatorData.evaluationId);
+    const evaluationDoc = await getDoc(evaluationRef);
+    
+    if (!evaluationDoc.exists()) {
+      console.error('No se encontró el documento de evaluación');
+      return;
+    }
+    
+    const evaluationData = evaluationDoc.data();
+    
+    // Solo seguir si hay calificaciones en la evaluación
+    if (!evaluationData.ratings) return;
+    
+    // Cargar las calificaciones desde el documento de evaluación
+    if (evaluationData.ratings.themes) {
+      ratings.value = evaluationData.ratings.themes.map(item => ({ 
         themeId: item.id, 
         rating: item.rating 
       }));
     }
     
-    if (spectator.ratings.musicians) {
-      musiciansRatings.value = spectator.ratings.musicians.map(item => ({
+    if (evaluationData.ratings.musicians) {
+      musiciansRatings.value = evaluationData.ratings.musicians.map(item => ({
         musicianId: item.id,
         rating: item.rating
       }));
     }
     
-    if (spectator.ratings.assembly) {
-      assemblyRating.value = spectator.ratings.assembly;
+    if (evaluationData.ratings.assembly) {
+      assemblyRating.value = evaluationData.ratings.assembly;
     }
     
-    if (spectator.ratings.chapter) {
-      chapterRating.value = spectator.ratings.chapter;
+    if (evaluationData.ratings.chapter) {
+      chapterRating.value = evaluationData.ratings.chapter;
     }
     
-    console.log('Evaluaciones cargadas con éxito');
+    console.log('Evaluaciones cargadas con éxito desde colección evaluations');
   } catch (error) {
     console.error('Error al cargar evaluaciones:', error);
   }
