@@ -305,12 +305,12 @@ const fetchEventThemes = async () => {
         eventSpectator.value = {
           id: idSpectator,
           numberOfCompanions: spectatorInEvent.numberOfCompanions,
-          hasCheckOut: spectatorInEvent.hasCheckout || false
+          hasCheckOut: spectatorInEvent.hasCheckOut || false
         };
         
         // Si ya hizo checkout, mostrar advertencia
-        if (spectatorInEvent.hasCheckout) {
-          console.warn('ATENCIÓN: Este espectador ya completó sus evaluaciones anteriormente (hasCheckout=true).');
+        if (spectatorInEvent.hasCheckOut) {
+          console.warn('ATENCIÓN: Este espectador ya completó sus evaluaciones anteriormente (hasCheckOut=true).');
           console.warn('Las evaluaciones que haga ahora no se guardarán en la base de datos.');
         }
       }
@@ -514,8 +514,8 @@ const goToCheckout = async () => {
         const spectatorData = zSpectator[spectatorIndex];
         
         // Verificar si el espectador ya hizo checkout antes (ya evaluó)
-        if (spectatorData.hasCheckout) {
-          console.warn(`El espectador ya realizó checkout anteriormente (hasCheckout=true). No se guardarán nuevas evaluaciones.`);
+        if (spectatorData.hasCheckOut) {
+          console.warn(`El espectador ya realizó checkout anteriormente (hasCheckOut=true). No se guardarán nuevas evaluaciones.`);
         } else {
           console.log(`Procesando evaluaciones para el espectador ${idSpectator} (primer checkout)`);
           
@@ -557,10 +557,10 @@ const goToCheckout = async () => {
           
           // 5. Marcar que el espectador ha hecho checkout para evitar evaluaciones duplicadas
           try {
-            // Actualizar el campo hasCheckout a true
+            // Actualizar el campo hasCheckOut a true
             zSpectator[spectatorIndex] = {
               ...spectatorData,
-              hasCheckout: true
+              hasCheckOut: true
             };
             
             // Guardar el cambio en el documento del evento
@@ -568,9 +568,9 @@ const goToCheckout = async () => {
               zSpectator: zSpectator
             });
             
-            console.log(`✅ Espectador marcado como hasCheckout=true exitosamente`);
+            console.log(`✅ Espectador marcado como hasCheckOut=true exitosamente`);
           } catch (updateError) {
-            console.error(`Error al actualizar hasCheckout del espectador:`, updateError);
+            console.error(`Error al actualizar hasCheckOut del espectador:`, updateError);
             saveSuccessful = false;
           }
         }
@@ -680,9 +680,9 @@ const saveSpectatorRatings = async () => {
     let evaluationId = zSpectator[spectatorIndex].evaluationId;
     
     // Verificar si el espectador ya ha hecho checkout (ya evaluó)
-    const hasCheckout = zSpectator[spectatorIndex].hasCheckout === true;
+    const hasCheckOut = zSpectator[spectatorIndex].hasCheckOut === true;
     
-    if (hasCheckout) {
+    if (hasCheckOut) {
       console.log('El espectador ya ha hecho checkout anteriormente. No se guardarán nuevas evaluaciones.');
       // No hacemos nada, pero no lanzamos error para que la navegación pueda continuar
       return;
@@ -947,11 +947,11 @@ const loadExistingRatings = async () => {
     eventSpectator.value = {
       id: idSpectator,
       numberOfCompanions: spectatorData?.numberOfCompanions || 0,
-      hasCheckout: spectatorData?.hasCheckout || false
+      hasCheckOut: spectatorData?.hasCheckOut || false
     };
     
     // Si el espectador ya ha hecho checkout, mostramos una advertencia
-    if (spectatorData?.hasCheckout) {
+    if (spectatorData?.hasCheckOut) {
       console.warn('El espectador ya ha hecho checkout anteriormente. Las evaluaciones son de solo lectura.');
     }
     

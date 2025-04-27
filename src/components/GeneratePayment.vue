@@ -359,6 +359,20 @@ const countNumberOfPeopleAboveZero = computed(() => {
   }
 });
 
+// Deshabilitar el botón de pago si no hay un monto válido o un email válido
+const isButtonDisabled = computed(() => {
+  const totalAmount = (uniquePaymentForGroup.value && spectator.value && !route.query.referenceLink) 
+    ? amount[0] * spectator.value.numberOfPeople 
+    : totalAmountToPay.value;
+  
+  // Validar el email con una expresión regular
+  const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  const isEmailValid = emailPattern.test(email.value);
+  
+  // Retornar true (deshabilitado) si alguna condición no se cumple
+  return totalAmount <= 0 || !isEmailValid || isLoading.value;
+});
+
 // Definir la función para generar el ID aleatorio
 function generateRandomId() {
   const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -374,23 +388,40 @@ function generateRandomId() {
 
 // Mostrar los detalles de transferencia bancaria
 const showTransferDetails = () => {
-  showBankTransfer.value = true;
-  // Si el componente de detalles de transferencia ya está cargado, validamos el email
+  // Validamos el email antes de mostrar los detalles
   validateEmail();
   if (emailError.value) {
+    // Si hay un error en el email, no mostramos los detalles de transferencia
     showBankTransfer.value = false;
+    // Hacer scroll al campo de email para que el usuario pueda ver el error
+    setTimeout(() => {
+      document.getElementById('email').focus();
+    }, 100);
     return;
   }
+  // Si el email es válido, mostramos los detalles de transferencia
+  showBankTransfer.value = true;
 };
 
 // Confirmar transferencia bancaria y guardar la información de pago en la nueva colección
 const confirmBankTransfer = async () => {
+  // Validar email nuevamente
+  validateEmail();
+  if (emailError.value) {
+    return;
+  }
+  
+  // Verificar que exista un monto válido
+  const totalAmount = (uniquePaymentForGroup.value && spectator.value && !route.query.referenceLink) 
+    ? amount[0] * spectator.value.numberOfPeople 
+    : totalAmountToPay.value;
+  
+  if (totalAmount <= 0) {
+    alert('Por favor, selecciona un monto para realizar el aporte.');
+    return;
+  }
+  
   try {
-    // Calcular el monto total
-    const totalAmount = (uniquePaymentForGroup.value && spectator.value && !route.query.referenceLink) 
-      ? amount[0] * spectator.value.numberOfPeople 
-      : totalAmountToPay.value;
-    
     // Crear documento en la colección payments
     const paymentData = {
       amount: totalAmount,
@@ -454,9 +485,14 @@ const confirmBankTransfer = async () => {
   }
 };
 
-// Esta función se usa en el template
+// Esta función se usa en el template para mostrar los detalles de transferencia bancaria
 const goToThankYouPage = () => {
   showTransferDetails();
+  
+  // Si el componente de detalles bancarios existe y el email es válido, asegurarnos de que se actualicen los datos
+  if (showBankTransfer.value && bankTransferDetailsRef.value) {
+    bankTransferDetailsRef.value.fetchBankAccount();
+  }
 };
 </script>
 
