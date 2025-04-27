@@ -10,6 +10,7 @@
         <p v-if="paymentId !== 'null'" class="text-sm mt-2">
           Si quieres llevar este concierto a tu casa, colegio u oficina; o quieres preguntarnos algo; o tal vez solo dejarnos tu feedback sobre tu experiencia (ya sea por mensaje escrito o audio)
           <a v-if="paymentId !== 'null'" href="https://wa.me/56989612263?text=Hola%2C%20quiero%20dar%20feedback%20sobre%20el%20concierto%20de%2040%20Minutos" class="btn btn-neutral text-white mt-4 w-full">Pincha acá</a>
+          <button class="btn btn-outline border-black bg-transparent text-black mt-2 w-full" @click="finishConcert">Finalizar concierto</button>
         </p>
     </div>
   </div>
@@ -18,15 +19,21 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import axios from 'axios';
-import { useRoute } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 import { getFirestore, doc, getDoc, updateDoc, arrayUnion } from 'firebase/firestore'; // Importa lo necesario de Firestore
 import { db } from '@/firebase';
 
 const route = useRoute();
+const router = useRouter();
 
 // Definir variable reactiva para almacenar los detalles del pago
 const paymentDetails = ref(null);
 const event = ref();
+
+// Función para finalizar el concierto y regresar a la página principal
+const finishConcert = () => {
+  router.push('/');
+};
 
 // Obtener los parámetros de la URL
 const paymentId = route.query.payment_id;

@@ -39,6 +39,7 @@
         <PaymentMethodSelector
           v-model="selectedPaymentMethod"
           :amount="totalAmountToPay"
+          :eventId="eventParams"
         />
       </div>
       

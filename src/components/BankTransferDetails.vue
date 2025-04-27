@@ -43,6 +43,7 @@
           </tr>
         </tbody>
       </table>
+      
     </div>
   </div>
 </template>
@@ -104,11 +105,12 @@ const fetchBankAccount = async () => {
         if (transferMethod) {
           // Extraer datos de la cuenta bancaria del método de transferencia
           bankAccount.value = {
-            name: transferMethod.name,
-            id: transferMethod.id, // RUT está en id
-            bank: transferMethod.bank,
-            type: transferMethod.type, // Tipo está en type
-            bankAccount: transferMethod.number // Número está en number
+            name: transferMethod.name || transferMethod.accountName || '',
+            id: transferMethod.id || transferMethod.identificationNumber || '',
+            bank: transferMethod.bank || '',
+            type: transferMethod.type || transferMethod.accountType || '',
+            bankAccount: transferMethod.number || transferMethod.accountNumber || '',
+            instructions: transferMethod.instructions || ''
           };
           
           // Crear el texto para copiar
