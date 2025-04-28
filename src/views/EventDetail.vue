@@ -211,7 +211,7 @@
 <script setup>
 import { ref, onMounted, onBeforeUnmount, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import { doc, getDoc, updateDoc, getFirestore, collection, getDocs, setDoc, arrayUnion } from 'firebase/firestore';
+import { doc, getDoc, updateDoc, getFirestore, collection, setDoc, arrayUnion } from 'firebase/firestore';
 import { db } from '@/firebase';
 import ThemeItem from '@/components/ThemeItem.vue';
 import MusicianCard from '@/components/MusicianCard.vue';

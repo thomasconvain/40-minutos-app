@@ -1,5 +1,5 @@
 <template>
-  <div class="card w-full bg-base-100 border border-base-600 relative h-auto">
+  <div class="card w-full md:w-46 mx-auto bg-base-100 border border-base-600 relative h-auto">
     <!-- Indicador de estado "Pronto" (arriba a la derecha) -->
     <span
       v-if="!event.status?.isCheckInOpen"
@@ -9,7 +9,7 @@
     <div class="card-body p-4 flex flex-col gap-1">
       <!-- Primera sección: Título y subtítulo (venue) -->
       <div>
-        <h2 class="card-title text-xl md:text-2xl font-bold mb-1">{{ venueName }}</h2>
+        <h2 class="card-title text-xl md:text-2xl font-bold mb-1">{{ hostName }}</h2>
       </div>
       
       <!-- Segunda sección: Fecha (ocultar si tiene mensaje de advertencia) -->
@@ -23,7 +23,7 @@
 
       <!-- Nombre del evento (assembly) -->
        <div>
-        <p class="text-sm md:text-base text-gray"><strong>{{ assemblyName }}</strong></p>
+        <p class="text-sm md:text-base text-blank">{{ assemblyName }}</p>
        </div>
       
       <!-- Tercera sección: Información adicional (condicional) -->
@@ -32,12 +32,7 @@
         <p v-if="isLoggedIn && numberOfCompanions !== undefined && numberOfCompanions !== 0" class="text-sm mb-1">
           Te acompañan {{ numberOfCompanions }} personas
         </p>
-        
-        <!-- Info de anfitrión si existe -->
-        <p v-if="hostName" class="mb-1">
-          <strong>Anfitrión:</strong> {{ hostName }}
-        </p>
-        
+                
         <!-- Mensaje de advertencia si el evento está activo pero cerrado -->
         <div 
           v-if="event.settings?.isActive && !event.status?.isReservationOpen && contentManagerData.warningMessage" 
