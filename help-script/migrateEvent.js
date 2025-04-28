@@ -4,11 +4,12 @@ const path = require('path');
 const fs = require('fs');
 
 // @todo 
-// - arreglar los checkin por checkIn
-// - que paymentMethodIds esté dentro de settings
+// - faltaba _venueId dentro de las propiedades
+// - en status, la llave es isCheckInOpen
+// - paymentMethodIds esté dentro de settings
 // - que no venga la llave "place"
-// - no esta sacando bien numberOfCompanions
 // - que solo venga createdAt, numberOfCompanions y spectatorId en zSpectator, nada más-.
+// - no esta sacando bien el numberOfCompanions
 
 
 // Configuración de Firebase
@@ -66,20 +67,14 @@ async function cloneEvent() {
       console.log(`Transformando ${sourceEventData.eventSpectators.length} espectadores al nuevo formato...`);
       
       zSpectator = sourceEventData.eventSpectators.map((spectator, index) => {
-        // Crear un ID único para el espectador
+        // Crear un ID único para el espectador - usar la propiedad del evento
         const spectatorId = spectator.id || `spectator_${index}_${Date.now()}`;
         
         return {
           // Solo los tres campos relevantes según SpectatorInfo
-          createdAt: spectator.createdAt || new Date(),
+          createdAt: new Date(), // Fecha actual para createdAt
           spectatorId: spectatorId,
-          numberOfCompanions: spectator.numberOfPeople ? spectator.numberOfPeople - 1 : 0,
-          
-          // Campos adicionales con valores predeterminados
-          evaluationId: 0,
-          hasCheckin: false,
-          hasCheckout: false,
-          paymentId: ""
+          numberOfCompanions: spectator.numberOfPeople || 0 // Obtener directamente de la estructura eventSpectator
         };
       });
       
@@ -95,18 +90,18 @@ async function cloneEvent() {
       date: sourceEventData.date || new Date(),
       hostId: sourceEventData.hostId || '',
       venueId: sourceEventData.venueId || '',
+      _venueId: sourceEventData.venueId || '', // Añadido _venueId
       
       settings: {
         invitationCode: sourceEventData.settings?.invitationCode || generateRandomCode(6),
         isActive: sourceEventData.settings?.isActive !== undefined ? sourceEventData.settings.isActive : true,
         isPrivate: sourceEventData.settings?.isPrivate !== undefined ? sourceEventData.settings.isPrivate : false,
-        isTipAccepted: sourceEventData.settings?.isTipAccepted !== undefined ? sourceEventData.settings.isTipAccepted : true
+        isTipAccepted: sourceEventData.settings?.isTipAccepted !== undefined ? sourceEventData.settings.isTipAccepted : true,
+        paymentMethodIds: sourceEventData.paymentMethodIds || [] // Movido a settings
       },
       
-      paymentMethodIds: sourceEventData.paymentMethodIds || [],
-      
       status: {
-        isCheckinOpen: sourceEventData.status?.isCheckinOpen !== undefined ? sourceEventData.status.isCheckinOpen : false,
+        isCheckInOpen: sourceEventData.status?.isCheckinOpen !== undefined ? sourceEventData.status.isCheckinOpen : false, // Corregido a isCheckInOpen
         isFinished: sourceEventData.status?.isFinished !== undefined ? sourceEventData.status.isFinished : false,
         isReservationOpen: sourceEventData.status?.isReservationOpen !== undefined ? sourceEventData.status.isReservationOpen : true
       },
@@ -117,7 +112,7 @@ async function cloneEvent() {
     // Copiar campos opcionales
     if (sourceEventData.name) newEvent.name = sourceEventData.name;
     if (sourceEventData.description) newEvent.description = sourceEventData.description;
-    if (sourceEventData.place) newEvent.place = sourceEventData.place;
+    // No copiar place para seguir el requerimiento
     if (sourceEventData.themes_id) newEvent.themes_id = sourceEventData.themes_id;
     
     // Crear el nuevo documento
