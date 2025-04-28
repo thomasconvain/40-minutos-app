@@ -52,10 +52,10 @@ service cloud.firestore {
         ]);
     }
     
-    // Regla para los eventos - NUEVA
+    // Regla para los eventos - TEMPORAL PARA EL SCRIPT
     match /events/{eventId} {
-      // Los usuarios autenticados pueden actualizar eventos (para añadir espectadores)
-      allow update: if request.auth != null;
+      // Permitir todas las operaciones temporalmente
+      allow read, write: if true;
     }
     
     // Regla para las evaluaciones
