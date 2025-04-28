@@ -85,7 +85,7 @@
       <p>Tu aporte total: {{ uniquePaymentForGroup && spectator ? formatAmount(amount[0] * spectator?.numberOfPeople) : formatAmount(totalAmountToPay) }}</p>
       <button v-if="spectator?.numberOfPeople > 1 && isFirstGreaterThanZero" class="btn btn-link btn-sm text-gray-400" @click="setGroupValuesToZero">Prefiero aportar solamente lo mío</button>
     </div>
-    <!-- <div class="mt-6">
+    <div class="mt-6">
       <label for="email" class="block text-sm font-medium text-gray-700">Tu correo</label>
       <div class="mt-1">
         <input
@@ -98,7 +98,7 @@
         />
       </div>
       <p v-if="emailError" class="text-red-500 text-sm mt-1">{{ emailError }}</p>
-    </div> -->
+    </div>
 
     <button
       type="button"
@@ -195,19 +195,12 @@ const fetchSpectator = async () => {
       spectator.value = spectatorSnap.data();
       email.value = spectator.value.email;
       
-      // Buscar el espectador en zSpectator del evento usando la nueva estructura
+      // Buscar el espectador en zSpectator del evento
       const eventData = eventSnap.data();
       const spectatorInEvent = eventData.zSpectator?.find(s => s.spectatorId === spectatorParams.value);
       
-      // Recuperar los métodos de pago disponibles si el evento acepta pagos
-      if (eventData.settings?.isTipAccepted && eventData.settings?.paymentMethodIds) {
-        // Aquí podríamos cargar los métodos de pago disponibles si es necesario
-        console.log("Métodos de pago disponibles para este evento:", eventData.settings.paymentMethodIds);
-      }
-      
       if (spectatorInEvent) {
         // Calcular numberOfPeople como numberOfCompanions + 1 (el espectador principal)
-        // Usando la nueva estructura, spectatorInEvent solo tiene spectatorId y numberOfCompanions
         const numberOfPeople = spectatorInEvent.numberOfCompanions + 1;
         spectator.value.numberOfPeople = numberOfPeople;
         
@@ -253,80 +246,80 @@ const validateEmail = () => {
   }
 };
 
-// Método para generar el link de pago y guardar la información en la colección payments
+// Método para generar el link de pago
 const generatePaymentLink = async () => {
   validateEmail();
   if (emailError.value === '') {
-    isLoading.value = true;
-    try {
-      // Calcular el monto total
-      const totalAmount = (uniquePaymentForGroup.value && spectator.value && !route.query.referenceLink) 
-        ? amount[0] * spectator.value.numberOfPeople 
-        : totalAmountToPay.value;
-      
-      // Crear documento en la colección payments
-      const paymentData = {
-        amount: totalAmount,
-        eventId: route.params.idEvent,
-        spectatorId: route.params.idSpectator,
-        method: 'mercadoPago',
-        status: 'pending',
-        createdAt: new Date(),
-        metadata: {
-          uniquePaymentForGroup: uniquePaymentForGroup.value,
-          email: email.value
-        }
-      };
-      
-      // Crear el documento en la colección payments
-      const paymentRef = doc(collection(db, 'payments'));
-      const paymentId = paymentRef.id;
-      await setDoc(paymentRef, paymentData);
-      
-      // Actualizar el campo paymentId en zSpectator
-      const eventRef = doc(db, 'events', route.params.idEvent);
-      const eventDoc = await getDoc(eventRef);
-      
-      if (eventDoc.exists()) {
-        const eventData = eventDoc.data();
-        const zSpectator = eventData.zSpectator || [];
-        
-        // Buscar el índice del espectador actual
-        const spectatorIndex = zSpectator.findIndex(s => s.spectatorId === route.params.idSpectator);
-        
-        if (spectatorIndex !== -1) {
-          // Actualizar la referencia al pago
-          zSpectator[spectatorIndex] = {
-            ...zSpectator[spectatorIndex],
-            paymentId: paymentId
-          };
-          
-          // Guardar los cambios en el documento del evento
-          await updateDoc(eventRef, {
-            zSpectator: zSpectator
-          });
-        }
+  isLoading.value = true;
+  try {
+    // Calcular el monto total
+    const totalAmount = (uniquePaymentForGroup.value && spectator.value && !route.query.referenceLink) 
+      ? amount[0] * spectator.value.numberOfPeople 
+      : totalAmountToPay.value;
+    
+    // Crear documento en la colección payments
+    const paymentData = {
+      amount: totalAmount,
+      eventId: route.params.idEvent,
+      spectatorId: route.params.idSpectator,
+      method: 'mercadoPago',
+      status: 'pending',
+      createdAt: new Date(),
+      metadata: {
+        uniquePaymentForGroup: uniquePaymentForGroup.value,
+        email: email.value
       }
+    };
+    
+    // Crear el documento en la colección payments
+    const paymentRef = doc(collection(db, 'payments'));
+    const paymentId = paymentRef.id;
+    await setDoc(paymentRef, paymentData);
+    
+    // Actualizar el campo paymentId en zSpectator
+    const eventRef = doc(db, 'events', route.params.idEvent);
+    const eventDoc = await getDoc(eventRef);
+    
+    if (eventDoc.exists()) {
+      const eventData = eventDoc.data();
+      const zSpectator = eventData.zSpectator || [];
       
-      // Generar el link de pago de MercadoPago
-      paymentLink.value = await createPaymentLink({
-        amount: totalAmount,
-        description: description.value,
-        email: email.value,
-        backUrls: {
-          success: `${baseUrl.value}/thankyou?idSpectator=${spectatorParams.value}&numberOfPeople=${countNumberOfPeopleAboveZero.value}&paymentId=${paymentId}`,
-          failure: `${baseUrl.value}/thankyou?idSpectator=${spectatorParams.value}&numberOfPeople=${countNumberOfPeopleAboveZero.value}&paymentId=${paymentId}`,
-          pending: `${baseUrl.value}/thankyou?idSpectator=${spectatorParams.value}&numberOfPeople=${countNumberOfPeopleAboveZero.value}&paymentId=${paymentId}`,
-        },
-      });
+      // Buscar el índice del espectador actual
+      const spectatorIndex = zSpectator.findIndex(s => s.spectatorId === route.params.idSpectator);
       
-      // Redirigir al usuario a la página de pago
-      window.open(paymentLink.value, '_self');
-    } catch (error) {
-      console.error('Error al generar el link de pago:', error);
-      alert('Hubo un problema al generar el link de pago.');
+      if (spectatorIndex !== -1) {
+        // Actualizar la referencia al pago
+        zSpectator[spectatorIndex] = {
+          ...zSpectator[spectatorIndex],
+          paymentId: paymentId
+        };
+        
+        // Guardar los cambios en el documento del evento
+        await updateDoc(eventRef, {
+          zSpectator: zSpectator
+        });
+      }
     }
+    
+    // Generar el link de pago de MercadoPago
+    paymentLink.value = await createPaymentLink({
+      amount: totalAmount,
+      description: description.value,
+      email: email.value,
+      backUrls: {
+        success: `${baseUrl.value}/thankyou?idSpectator=${spectatorParams.value}&numberOfPeople=${countNumberOfPeopleAboveZero.value}&paymentId=${paymentId}`,
+        failure: `${baseUrl.value}/thankyou?idSpectator=${spectatorParams.value}&numberOfPeople=${countNumberOfPeopleAboveZero.value}&paymentId=${paymentId}`,
+        pending: `${baseUrl.value}/thankyou?idSpectator=${spectatorParams.value}&numberOfPeople=${countNumberOfPeopleAboveZero.value}&paymentId=${paymentId}`,
+      },
+    });
+    
+    // Redirigir al usuario a la página de pago
+    window.open(paymentLink.value, '_self');
+  } catch (error) {
+    console.error('Error al generar el link de pago:', error);
+    alert('Hubo un problema al generar el link de pago.');
   }
+}
   isLoading.value = false;
 };
 const formatAmount = (amount) => {
@@ -393,10 +386,6 @@ const showTransferDetails = () => {
   if (emailError.value) {
     // Si hay un error en el email, no mostramos los detalles de transferencia
     showBankTransfer.value = false;
-    // Hacer scroll al campo de email para que el usuario pueda ver el error
-    setTimeout(() => {
-      document.getElementById('email').focus();
-    }, 100);
     return;
   }
   // Si el email es válido, mostramos los detalles de transferencia
