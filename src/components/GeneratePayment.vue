@@ -302,14 +302,17 @@ const generatePaymentLink = async () => {
     }
     
     // Generar el link de pago de MercadoPago
+    // Asegurar que usamos HTTPS para todas las URLs de retorno
+    const secureBaseUrl = baseUrl.value.replace('http://', 'https://');
+    
     paymentLink.value = await createPaymentLink({
       amount: totalAmount,
       description: description.value,
       email: email.value,
       backUrls: {
-        success: `${baseUrl.value}/thankyou?idSpectator=${spectatorParams.value}&numberOfPeople=${countNumberOfPeopleAboveZero.value}&paymentId=${paymentId}`,
-        failure: `${baseUrl.value}/thankyou?idSpectator=${spectatorParams.value}&numberOfPeople=${countNumberOfPeopleAboveZero.value}&paymentId=${paymentId}`,
-        pending: `${baseUrl.value}/thankyou?idSpectator=${spectatorParams.value}&numberOfPeople=${countNumberOfPeopleAboveZero.value}&paymentId=${paymentId}`,
+        success: `${secureBaseUrl}/thankyou?idSpectator=${spectatorParams.value}&numberOfPeople=${countNumberOfPeopleAboveZero.value}&paymentId=${paymentId}`,
+        failure: `${secureBaseUrl}/thankyou?idSpectator=${spectatorParams.value}&numberOfPeople=${countNumberOfPeopleAboveZero.value}&paymentId=${paymentId}`,
+        pending: `${secureBaseUrl}/thankyou?idSpectator=${spectatorParams.value}&numberOfPeople=${countNumberOfPeopleAboveZero.value}&paymentId=${paymentId}`,
       },
     });
     

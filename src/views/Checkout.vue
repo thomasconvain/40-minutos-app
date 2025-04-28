@@ -275,14 +275,17 @@ const confirmPayment = async () => {
     // Proceder según el método de pago seleccionado
     if (selectedPaymentMethod.value === 'card') {
       // Generar el link de pago de MercadoPago y redirigir
+      // Asegurar que usamos HTTPS para todas las URLs de retorno
+      const secureBaseUrl = baseUrl.value.replace('http://', 'https://');
+      
       const paymentLink = await createPaymentLink({
         amount: totalAmountToPay.value,
         description: description.value,
         email: email.value,
         backUrls: {
-          success: `${baseUrl.value}/thankyou?idSpectator=${spectatorParams.value}&paymentId=${paymentId}&idEvent=${eventParams.value}`,
-          failure: `${baseUrl.value}/thankyou?idSpectator=${spectatorParams.value}&paymentId=${paymentId}&idEvent=${eventParams.value}`,
-          pending: `${baseUrl.value}/thankyou?idSpectator=${spectatorParams.value}&paymentId=${paymentId}&idEvent=${eventParams.value}`,
+          success: `${secureBaseUrl}/thankyou?idSpectator=${spectatorParams.value}&paymentId=${paymentId}&idEvent=${eventParams.value}`,
+          failure: `${secureBaseUrl}/thankyou?idSpectator=${spectatorParams.value}&paymentId=${paymentId}&idEvent=${eventParams.value}`,
+          pending: `${secureBaseUrl}/thankyou?idSpectator=${spectatorParams.value}&paymentId=${paymentId}&idEvent=${eventParams.value}`,
         },
       });
       

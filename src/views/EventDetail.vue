@@ -743,48 +743,80 @@ function generateRandomId() {
 const fetchMusicians = async () => {
   isLoadingMusicians.value = true;
   try {
-    // Obtener datos del ensamble para conseguir la lista de músicos
-    const assemblySnapshot = await getDocs(collection(db, 'assembly'));
+    // Primero obtener el evento para conseguir el assemblyId
+    const eventDocRef = doc(db, 'events', idEvent);
+    const eventDocSnap = await getDoc(eventDocRef);
     
-    if (!assemblySnapshot.empty) {
-      const assemblyDoc = assemblySnapshot.docs[0];
-      const assemblyDataRaw = assemblyDoc.data();
-      
-      // Guardar los datos del ensamble
-      assemblyData.value = {
-        id: assemblyDoc.id,
-        ...assemblyDataRaw
-      };
-      
-      const assemblyMembers = assemblyDataRaw.members || [];
-      
-      // Obtener detalles de cada músico
-      const musiciansData = [];
-      
-      for (const member of assemblyMembers) {
-        if (member.musicianId) {
-          try {
-            const musicianDoc = await getDoc(doc(db, 'musicians', member.musicianId));
+    if (!eventDocSnap.exists()) {
+      console.error('No se encontró el evento');
+      musicians.value = []; // Inicializar array vacío
+      return;
+    }
+    
+    const eventData = eventDocSnap.data();
+    const assemblyId = eventData?.assemblyId;
+    
+    if (!assemblyId) {
+      console.warn('El evento no tiene assemblyId definido');
+      musicians.value = []; // Inicializar array vacío
+      return;
+    }
+    
+    // Ahora obtenemos el ensamble específico usando el assemblyId
+    const assemblyDocRef = doc(db, 'assembly', assemblyId);
+    const assemblyDocSnap = await getDoc(assemblyDocRef);
+    
+    if (!assemblyDocSnap.exists()) {
+      console.error(`No se encontró el ensamble con ID: ${assemblyId}`);
+      musicians.value = []; // Inicializar array vacío
+      return;
+    }
+    
+    const assemblyDataRaw = assemblyDocSnap.data();
+    
+    // Guardar los datos del ensamble
+    assemblyData.value = {
+      id: assemblyDocRef.id,
+      ...assemblyDataRaw
+    };
+    
+    const assemblyMembers = assemblyDataRaw?.members || [];
+    
+    if (assemblyMembers.length === 0) {
+      console.warn('El ensamble no tiene miembros definidos');
+      musicians.value = []; // Inicializar array vacío
+      return;
+    }
+    
+    // Obtener detalles de cada músico
+    const musiciansData = [];
+    
+    for (const member of assemblyMembers) {
+      if (member?.musicianId) {
+        try {
+          const musicianDoc = await getDoc(doc(db, 'musicians', member.musicianId));
+          
+          if (musicianDoc.exists()) {
+            const musicianData = musicianDoc.data();
             
-            if (musicianDoc.exists()) {
-              const musicianData = musicianDoc.data();
-              
-              musiciansData.push({
-                id: musicianDoc.id,
-                ...musicianData,
-                instrument: member.instrument // Instrumento específico en este ensamble
-              });
-            }
-          } catch (error) {
-            console.error(`Error al obtener músico:`, error);
+            musiciansData.push({
+              id: musicianDoc.id,
+              ...musicianData,
+              instrument: member.instrument || 'No especificado' // Instrumento específico en este ensamble
+            });
+          } else {
+            console.warn(`No se encontró el músico con ID: ${member.musicianId}`);
           }
+        } catch (error) {
+          console.error(`Error al obtener músico ${member.musicianId}:`, error);
         }
       }
-      
-      musicians.value = musiciansData;
     }
+    
+    musicians.value = musiciansData;
   } catch (error) {
     console.error('Error al obtener datos de músicos:', error);
+    musicians.value = []; // Inicializar array vacío en caso de error
   } finally {
     isLoadingMusicians.value = false;
   }
