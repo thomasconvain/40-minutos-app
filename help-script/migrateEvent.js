@@ -3,15 +3,6 @@ const { getFirestore, collection, doc, getDoc, setDoc, updateDoc } = require('fi
 const path = require('path');
 const fs = require('fs');
 
-// @todo 
-// - faltaba _venueId dentro de las propiedades
-// - en status, la llave es isCheckInOpen
-// - paymentMethodIds esté dentro de settings
-// - que no venga la llave "place"
-// - que solo venga createdAt, numberOfCompanions y spectatorId en zSpectator, nada más-.
-// - no esta sacando bien el numberOfCompanions
-
-
 // Configuración de Firebase
 const firebaseConfig = {
   apiKey: "AIzaSyBLgwoTQ1EB59nr9rerF0gonBbblZ9IJ0g",
@@ -74,7 +65,7 @@ async function cloneEvent() {
           // Solo los tres campos relevantes según SpectatorInfo
           createdAt: new Date(), // Fecha actual para createdAt
           spectatorId: spectatorId,
-          numberOfCompanions: spectator.numberOfPeople || 0 // Obtener directamente de la estructura eventSpectator
+          numberOfCompanions: spectator.numberOfCompanions || 0 // Obtener directamente de numberOfCompanions
         };
       });
       
@@ -112,8 +103,7 @@ async function cloneEvent() {
     // Copiar campos opcionales
     if (sourceEventData.name) newEvent.name = sourceEventData.name;
     if (sourceEventData.description) newEvent.description = sourceEventData.description;
-    // No copiar place para seguir el requerimiento
-    if (sourceEventData.themes_id) newEvent.themes_id = sourceEventData.themes_id;
+    // No copiar place ni themes_id ya que está en chapterId
     
     // Crear el nuevo documento
     const eventsCollection = collection(db, 'events');
