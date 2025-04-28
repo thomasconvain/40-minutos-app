@@ -3,6 +3,14 @@ const { getFirestore, collection, doc, getDoc, setDoc, updateDoc } = require('fi
 const path = require('path');
 const fs = require('fs');
 
+// @todo 
+// - arreglar los checkin por checkIn
+// - que paymentMethodIds esté dentro de settings
+// - que no venga la llave "place"
+// - no esta sacando bien numberOfCompanions
+// - que solo venga createdAt, numberOfCompanions y spectatorId en zSpectator, nada más-.
+
+
 // Configuración de Firebase
 const firebaseConfig = {
   apiKey: "AIzaSyBLgwoTQ1EB59nr9rerF0gonBbblZ9IJ0g",
