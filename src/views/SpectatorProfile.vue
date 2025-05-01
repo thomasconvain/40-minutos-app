@@ -46,11 +46,11 @@
             :event="event"
             :isLoggedIn="true"
             :numberOfCompanions="getNumberOfCompanionsForEvent(event.id)"
-            :showCheckinMessage="!event.isCheckinActive"
+            :showCheckinMessage="!event.status?.isCheckInOpen"
             :checkinMessageText="'El día del concierto se habilitará el acceso a tu checkin.'"
-            :showActionButton="!!(event.isCheckinActive || spectator?.forceCheckinActive)"
-            :actionButtonText="spectator?.isChecked ? 'Entrar' : 'Hacer checkin'"
-            :showShareButton="(!event.isFreeEntrance && spectator?.isHost) || event.isFreeEntrance"
+            :showActionButton="!!(event.status?.isCheckInOpen || spectator?.forceCheckinActive)"
+            :actionButtonText="spectator?.hasCheckIn ? 'Entrar' : 'Hacer checkin'"
+            :showShareButton="(event.settings?.isPrivate && spectator?.isHost) || !event.settings?.isPrivate"
             :spectatorId="spectator?.uId"
             :showLogo="false"
             buttonStyle="black"
@@ -227,6 +227,8 @@ const fetchSpectator = async () => {
 const fetchEvents = async (eventIds) => {
   if (!eventIds || eventIds.length === 0) return;
   
+  console.log("Buscando eventos con IDs:", eventIds);
+  
   const db = getFirestore();
   const eventsCollection = collection(db, "events");
 
@@ -235,10 +237,31 @@ const fetchEvents = async (eventIds) => {
       getDoc(doc(eventsCollection, eventId))
     );
     const eventDocs = await Promise.all(eventDocsPromises);
+    
+    // Log para depuración
+    eventDocs.forEach(doc => {
+      if (doc.exists()) {
+        console.log("Evento encontrado:", doc.id, "settings.isActive:", doc.data().settings?.isActive);
+      } else {
+        console.log("Evento no encontrado:", doc.id);
+      }
+    });
 
     events.value = eventDocs
-      .filter((eventDoc) => eventDoc.exists() && eventDoc.data().isActive === true)
-      .map((eventDoc) => ({ id: eventDoc.id, ...eventDoc.data() }));
+      .filter((eventDoc) => eventDoc.exists() && eventDoc.data().settings?.isActive === true)
+      .map((eventDoc) => {
+        const data = eventDoc.data();
+        console.log("Evento procesado:", eventDoc.id, "data:", JSON.stringify(data));
+        return { 
+          id: eventDoc.id, 
+          ...data,
+          // Compatibilidad con el modelo antiguo para el componente EventCard
+          isCheckinActive: data.status?.isCheckInOpen || false,
+          isOpen: data.status?.isReservationOpen || false
+        };
+      });
+    
+    console.log("Eventos filtrados y procesados:", events.value.length);
     
     // Para cada evento, obtener el número de asistentes
     for (const event of events.value) {
@@ -252,9 +275,12 @@ const fetchEvents = async (eventIds) => {
 // Función para obtener el número de acompañantes para un evento específico
 const getNumberOfCompanionsForEvent = (eventId) => {
   const event = events.value.find(e => e.id === eventId);
-  if (!event || !event.eventSpectators) return 0;
   
-  const userSpectator = event.eventSpectators.find(spec => spec.email === spectator.value?.email);
+  // Usar zSpectator en lugar de eventSpectators para la nueva estructura
+  if (!event || !event.zSpectator) return 0;
+  
+  // Buscar por spectatorId en lugar de email
+  const userSpectator = event.zSpectator.find(spec => spec.spectatorId === spectator.value?.uId);
   return userSpectator ? userSpectator.numberOfCompanions : 0;
 };
 
@@ -318,9 +344,9 @@ const addSubscribedEventId = async (spectatorId, eventId, numberOfPeople) => {
 const goToEvent = (event) => {
   if (!event || !event.id) return;
   
-  // Verificar si el espectador ya hizo check-in para este evento específico
-  const spectatorWasCheckedIn = event.eventSpectators?.some(spec => 
-    spec.email === spectator.value?.email && spec.wasCheckedIn === true
+  // Verificar si el espectador ya hizo check-in para este evento específico usando la nueva estructura
+  const spectatorWasCheckedIn = event.zSpectator?.some(spec => 
+    spec.spectatorId === spectator.value?.uId && spec.hasCheckIn === true
   );
   
   router.push({

@@ -9,7 +9,22 @@ service cloud.firestore {
     
     // Regla para los temas
     match /themes/{themeId} {
-      allow update: if request.resource.data.keys().hasAny(['ratings']);
+      allow update: if true;
+    }
+    
+    // Regla para los músicos
+    match /musicians/{musicianId} {
+      allow update: if true;
+    }
+    
+    // Regla para los capítulos
+    match /chapters/{chapterId} {
+      allow update: if true;
+    }
+    
+    // Regla para el ensamble
+    match /assembly/{assemblyId} {
+      allow update: if true;
     }
     
     // Regla para los espectadores
@@ -37,10 +52,22 @@ service cloud.firestore {
         ]);
     }
     
-    // Regla para los eventos - NUEVA
+    // Regla para los eventos - TEMPORAL PARA EL SCRIPT
     match /events/{eventId} {
-      // Los usuarios autenticados pueden actualizar eventos (para añadir espectadores)
-      allow update: if request.auth != null;
+      // Permitir todas las operaciones temporalmente
+      allow read, write: if true;
+    }
+    
+    // Regla para las evaluaciones
+    match /evaluations/{evaluationId} {
+      // Permitir crear, actualizar o eliminar evaluaciones sin autenticación
+      allow create, update, delete: if true;
+    }
+    
+    // Regla para los pagos
+    match /payments/{paymentId} {
+      // Permitir crear, leer y actualizar pagos sin autenticación
+      allow create, read, update: if true;
     }
   }
 }

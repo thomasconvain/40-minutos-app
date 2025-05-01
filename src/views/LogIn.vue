@@ -112,11 +112,8 @@ const login = async () => {
           // Añadir el espectador al evento si no está ya incluido
           const spectatorForEvent = {
             id: docData.id,
-            name: spectatorData.name || '',
-            lastName: spectatorData.lastName || '',
             numberOfCompanions: numberOfCompanions,
-            email: spectatorData.email || '',
-            phone: spectatorData.phone || '',
+            nameComplete: `${spectatorData.name || ''} ${spectatorData.lastName || ''}`.trim(),
           };
           
           // Añadir el espectador al evento

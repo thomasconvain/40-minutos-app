@@ -11,13 +11,13 @@
                 <EventCard
                   :event="event"
                   :isLoggedIn="!!currentUser"
-                  :numberOfCompanions="event.isUserInEvent && event.spectatorInfo ? event.spectatorInfo.numberOfCompanions || 0 : undefined"
+                  :numberOfCompanions="event.isUserInEvent && event.zSpectator ? event.zSpectator.numberOfCompanions || 0 : undefined"
                   :showCheckinMessage="true"
                   :checkinMessageText="''"
                   :customMessageClass="true"
-                  :showActionButton="(!event.isOver && event.isFreeEntrance && !currentUser) || 
-                                    (!event.isOver && event.isFreeEntrance && currentUser && !props.isSpectatorSubscribed(event.id) && !event.isUserInEvent) ||
-                                    (!currentUser && event.isOver)"
+                  :showActionButton="(!event.status?.isFinished && !event.settings?.isPrivate && !currentUser) || 
+                                    (!event.status?.isFinished && !event.settings?.isPrivate && currentUser && !props.isSpectatorSubscribed(event.id) && !event.isUserInEvent) ||
+                                    (!currentUser && event.status?.isFinished && event.settings?.isTipAccepted)"
                   :actionButtonText="getButtonText(event)"
                   :showShareButton="false"
                   :showLogo="false"
@@ -149,28 +149,34 @@ const carouselPosition = ref(0); // Seguimiento de la posición actual en el car
 
 // Añadir computed property para eventos activos
 const activeEvents = computed(() => {
-  return events.value.filter(event => !event.isOver && event.isFreeEntrance);
+  return events.value.filter(event => 
+    event.settings?.isActive && !event.status?.isFinished && !event.settings?.isPrivate
+  );
 });
 
 const fetchActiveEvents = async () => {
   try {
+    console.log('Iniciando fetchActiveEvents()');
     const q = query(
       collection(db, "events"),
-      where("isActive", "==", true),
-      where("isFreeEntrance", "==", true),
+      where("settings.isActive", "==", true),
+      where("settings.isPrivate", "==", false),
       orderBy("date", "asc") // Cambia a "desc" para orden descendente
     );
 
     const querySnapshot = await getDocs(q);
+    console.log('Eventos recibidos de Firestore:', querySnapshot.docs.length);
     events.value = querySnapshot.docs.map((doc) => {
       const eventData = doc.data();
-      // Verificar si el usuario actual está en la lista de eventSpectators por email
+      console.log('Evento ID:', doc.id, 'isActive:', eventData.settings?.isActive, 'isPrivate:', eventData.settings?.isPrivate, 'isFinished:', eventData.status?.isFinished);
+      // Verificar si el usuario actual está en la lista de zSpectator por ID
       let isUserInEvent = false;
       let spectatorInfo = null;
       
-      if (currentUser.value && eventData.eventSpectators) {
-        const userEmail = currentUser.value.email;
-        const userSpectator = eventData.eventSpectators.find(spec => spec.email === userEmail);
+      if (currentUser.value && eventData.zSpectator) {
+        // Asumimos que tenemos el spectatorId asociado al usuario actual
+        const spectatorId = currentUser.value.uid; // O el ID que uses para identificar al espectador
+        const userSpectator = eventData.zSpectator.find(spec => spec.spectatorId === spectatorId);
         
         if (userSpectator) {
           isUserInEvent = true;
@@ -213,9 +219,9 @@ const checkIdAndRedirect = async () => {
       return;
     }
 
-    // Consulta Firebase usando el campo "invitationCode"
+    // Consulta Firebase usando el campo "settings.invitationCode"
     const eventsCollection = collection(db, "events");
-    const q = query(eventsCollection, where("invitationCode", "==", codeIdForPrivateEvents.value));
+    const q = query(eventsCollection, where("settings.invitationCode", "==", codeIdForPrivateEvents.value));
     const querySnapshot = await getDocs(q);
 
     if (!querySnapshot.empty) {
@@ -274,7 +280,13 @@ onMounted(() => {
     currentUser.value = user;
   });
   
-  fetchActiveEvents();
+  fetchActiveEvents().then(() => {
+    // Mostrar los eventos filtrados en la consola
+    console.log('Eventos filtrados por computed property:', activeEvents.value.length);
+    if (activeEvents.value.length === 0) {
+      console.log('No hay eventos activos que mostrar. Verificar configuración de eventos en Firestore.');
+    }
+  });
   
   if (props.openModalSuccessAfterLogin) {
     openModal(null, 'modalSuccess');
@@ -289,9 +301,9 @@ onMounted(() => {
 
 // Función para determinar el texto del botón según el estado del evento
 const getButtonText = (event) => {
-  if (!currentUser.value && event.isOver) {
+  if (!currentUser.value && event.status?.isFinished && event.settings?.isTipAccepted) {
     return "Realizar mi aporte";
-  } else if (!event.isOver && event.isFreeEntrance && currentUser.value && !props.isSpectatorSubscribed(event.id) && !event.isUserInEvent) {
+  } else if (!event.status?.isFinished && !event.settings?.isPrivate && currentUser.value && !props.isSpectatorSubscribed(event.id) && !event.isUserInEvent) {
     return "Consigue tu ticket en un click";
   } else {
     return "Quiero asistir";
@@ -300,11 +312,11 @@ const getButtonText = (event) => {
 
 // Función para manejar la acción del botón según el estado del evento
 const handleEventAction = (event) => {
-  if (!currentUser.value && event.isOver) {
+  if (!currentUser.value && event.status?.isFinished && event.settings?.isTipAccepted) {
     router.push({ name: 'LogIn' });
-  } else if (!event.isOver && event.isFreeEntrance && currentUser.value && !props.isSpectatorSubscribed(event.id) && !event.isUserInEvent) {
+  } else if (!event.status?.isFinished && !event.settings?.isPrivate && currentUser.value && !props.isSpectatorSubscribed(event.id) && !event.isUserInEvent) {
     openModal(event.id, 'modalValidation');
-  } else if (!event.isOver && event.isFreeEntrance && !currentUser.value) {
+  } else if (!event.status?.isFinished && !event.settings?.isPrivate && !currentUser.value) {
     router.push({ name: 'Booking', params: { idEvent: event.id } });
   }
 };

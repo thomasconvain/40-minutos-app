@@ -1,19 +1,19 @@
 <template>
-  <div class="card w-full bg-base-100 border border-base-600 relative h-auto">
+  <div class="card w-full md:w-46 mx-auto bg-base-100 border border-base-600 relative h-auto">
     <!-- Indicador de estado "Pronto" (arriba a la derecha) -->
     <span
-      v-if="!event.isCheckinActive"
+      v-if="!event.status?.isCheckInOpen"
       class="absolute top-2 right-2 badge badge-primary z-10"
     >Pronto</span>
     
     <div class="card-body p-4 flex flex-col gap-1">
-      <!-- Primera sección: Título y subtítulo -->
+      <!-- Primera sección: Título y subtítulo (venue) -->
       <div>
-        <h2 class="card-title text-xl md:text-2xl font-bold mb-1">{{ event.place }}</h2>
+        <h2 class="card-title text-xl md:text-2xl font-bold mb-1">{{ hostName }}</h2>
       </div>
       
       <!-- Segunda sección: Fecha (ocultar si tiene mensaje de advertencia) -->
-      <div v-if="!(event.isActive && !event.isOpen && event.showWarningMessage && contentManagerData.warningMessage)">
+      <div v-if="!(event.settings?.isActive && !event.status?.isReservationOpen && contentManagerData.warningMessage)">
         <span class="inline-block px-3 py-1 text-xs md:text-sm rounded-full mb-2"
           :class="{'border border-gray-300 bg-gray-50 text-gray-600': !$attrs.class?.includes('bg-black'), 
                   'border border-gray-700 bg-black text-gray-300': $attrs.class?.includes('bg-black')}">
@@ -21,26 +21,21 @@
         </span>
       </div>
 
-      <!-- Nombre del evento -->
+      <!-- Nombre del evento (assembly) -->
        <div>
-        <p class="text-sm md:text-base text-gray"><strong>{{ event.name }}</strong></p>
+        <p class="text-sm md:text-base text-blank">{{ assemblyName }}</p>
        </div>
       
       <!-- Tercera sección: Información adicional (condicional) -->
-      <div v-if="(isLoggedIn && numberOfCompanions !== undefined) || event.hostName || showCheckinMessage" class="mt-1">
+      <div v-if="(isLoggedIn && numberOfCompanions !== undefined) || hostName || showCheckinMessage" class="mt-1">
         <!-- Número de acompañantes (solo si está logeado) -->
         <p v-if="isLoggedIn && numberOfCompanions !== undefined && numberOfCompanions !== 0" class="text-sm mb-1">
           Te acompañan {{ numberOfCompanions }} personas
         </p>
-        
-        <!-- Info de anfitrión si existe -->
-        <p v-if="event.hostName" class="mb-1">
-          <strong>Anfitrión:</strong> {{ event.hostName }}
-        </p>
-        
-        <!-- Mensaje de advertencia si el evento está activo pero cerrado y con showWarningMessage=true -->
+                
+        <!-- Mensaje de advertencia si el evento está activo pero cerrado -->
         <div 
-          v-if="event.isActive && !event.isOpen && event.showWarningMessage && contentManagerData.warningMessage" 
+          v-if="event.settings?.isActive && !event.status?.isReservationOpen && contentManagerData.warningMessage" 
           class="alert alert-warning rounded-none flex text-left mt-2"
         >
           <span class="text-sm">{{ contentManagerData.warningMessage }}</span>
@@ -48,22 +43,22 @@
         
         <!-- Mensaje condicional para checkin - ocultar si hay mensaje de advertencia -->
         <div
-          v-if="showCheckinMessage && !(event.isActive && !event.isOpen && event.showWarningMessage && contentManagerData.warningMessage)"
+          v-if="showCheckinMessage && !(event.settings?.isActive && !event.status?.isReservationOpen && contentManagerData.warningMessage)"
           :class="{
-            'alert alert-info rounded-none flex text-left mt-2': !customMessageClass && !event.isCheckinActive,
-            'alert alert-success rounded-none flex text-left mt-2': !customMessageClass && event.isCheckinActive && $attrs.class?.includes('bg-black'),
-            'p-3 rounded-none flex text-left mt-1 bg-amber-500/20 border-l-4 border-amber-500': customMessageClass && event.isCheckinActive,
-            'p-3 rounded-none flex text-left mt-1 bg-black border-l-4 border-gray-500': customMessageClass && !event.isCheckinActive
+            'alert alert-info rounded-none flex text-left mt-2': !customMessageClass && !event.status?.isCheckInOpen,
+            'alert alert-success rounded-none flex text-left mt-2': !customMessageClass && event.status?.isCheckInOpen && $attrs.class?.includes('bg-black'),
+            'p-3 rounded-none flex text-left mt-1 bg-amber-500/20 border-l-4 border-amber-500': customMessageClass && event.status?.isCheckInOpen,
+            'p-3 rounded-none flex text-left mt-1 bg-black border-l-4 border-gray-500': customMessageClass && !event.status?.isCheckInOpen
           }"
         >
           <span :class="{
               'text-xs': !customMessageClass,
               'text-sm text-gray': customMessageClass
             }">
-            <template v-if="customMessageClass && event.isCheckinActive">
+            <template v-if="customMessageClass && event.status?.isCheckInOpen">
               Checkin abierto, debes <router-link to="/login" class="underline font-medium">entrar</router-link> con tu usuario y contraseña
             </template>
-            <template v-else-if="customMessageClass && !event.isCheckinActive">
+            <template v-else-if="customMessageClass && !event.status?.isCheckInOpen">
               {{ chapterSynopsis }} 
             </template>
             <template v-else>
@@ -77,7 +72,7 @@
       <div class="card-actions justify-start mt-2 pt-2">
         <!-- Botón quiero asistir / hacer checkin - ocultarlo si hay mensaje de advertencia -->
         <button
-          v-if="showActionButton && !(event.isActive && !event.isOpen && event.showWarningMessage && contentManagerData.warningMessage)"
+          v-if="showActionButton && !(event.settings?.isActive && !event.status?.isReservationOpen && contentManagerData.warningMessage)"
           :class="[
             'btn btn-sm md:btn-md border-transparent',
             buttonStyle === 'white' ? 'bg-white text-black hover:bg-gray-200' : 'bg-black text-white hover:bg-gray-800'
@@ -122,6 +117,9 @@ const chapterSynopsis = ref('Puedes revisar tu reserva');
 const contentManagerData = ref({
   warningMessage: ''
 });
+const venueName = ref('');
+const hostName = ref('');
+const assemblyName = ref('');
 
 const props = defineProps({
   event: {
@@ -200,7 +198,9 @@ const formatDate = (timestamp) => {
 // Link para compartir por WhatsApp
 const whatsappShareLink = computed(() => {
   const baseUrl = "https://wa.me/?text=";
-  const eventUrl = `https://cuarenta-minutos.web.app/sign-in/${props.event.id}/?referenceLink=true%26hostId=${props.spectatorId}`;
+  // Usamos _ref en lugar de id si está disponible, de lo contrario usamos id
+  const eventId = props.event._ref || props.event.id;
+  const eventUrl = `https://cuarenta-minutos.web.app/sign-in/${eventId}/?referenceLink=true%26hostId=${props.spectatorId}`;
   return `${baseUrl}${encodeURIComponent(eventUrl)}`;
 });
 
@@ -241,6 +241,56 @@ const fetchContentManager = async () => {
   }
 };
 
+// Función para obtener datos del venue
+const fetchVenueData = async () => {
+  if (props.event && props.event.venueId) {
+    try {
+      const venueDocRef = doc(db, "venues", props.event.venueId);
+      const venueDoc = await getDoc(venueDocRef);
+      
+      if (venueDoc.exists()) {
+        venueName.value = venueDoc.data().name || 'Lugar no disponible';
+      }
+    } catch (error) {
+      console.error("Error fetching venue data:", error);
+      venueName.value = 'Lugar no disponible';
+    }
+  }
+};
+
+// Función para obtener datos del host
+const fetchHostData = async () => {
+  if (props.event && props.event.hostId) {
+    try {
+      const hostDocRef = doc(db, "hosts", props.event.hostId);
+      const hostDoc = await getDoc(hostDocRef);
+      
+      if (hostDoc.exists()) {
+        hostName.value = hostDoc.data().name || '';
+      }
+    } catch (error) {
+      console.error("Error fetching host data:", error);
+    }
+  }
+};
+
+// Función para obtener datos del assembly
+const fetchAssemblyData = async () => {
+  if (props.event && props.event.assemblyId) {
+    try {
+      const assemblyDocRef = doc(db, "assembly", props.event.assemblyId);
+      const assemblyDoc = await getDoc(assemblyDocRef);
+      
+      if (assemblyDoc.exists()) {
+        assemblyName.value = assemblyDoc.data().name || 'Ensamble no disponible';
+      }
+    } catch (error) {
+      console.error("Error fetching assembly data:", error);
+      assemblyName.value = 'Ensamble no disponible';
+    }
+  }
+};
+
 // Ejecutar la búsqueda cuando cambie el ID del evento, chapterId o contentReferenceId
 watchEffect(() => {
   if (props.event && props.event.chapterId) {
@@ -249,6 +299,18 @@ watchEffect(() => {
   
   if (props.event && props.event.contentReferenceId) {
     fetchContentManager();
+  }
+  
+  if (props.event && props.event.venueId) {
+    fetchVenueData();
+  }
+  
+  if (props.event && props.event.hostId) {
+    fetchHostData();
+  }
+  
+  if (props.event && props.event.assemblyId) {
+    fetchAssemblyData();
   }
 });
 </script>

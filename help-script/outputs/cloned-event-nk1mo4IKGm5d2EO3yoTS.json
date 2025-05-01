@@ -1,0 +1,215 @@
+{
+  "sourceEventId": "W3JiRa9wz4G7axLTDjbW",
+  "newEventId": "nk1mo4IKGm5d2EO3yoTS",
+  "newEvent": {
+    "_ref": "nk1mo4IKGm5d2EO3yoTS",
+    "assemblyId": "",
+    "chapterId": "iPJxKimARSYU8JyQajFk",
+    "contentReferenceId": "GQOAnY5EH827JeV3rakU",
+    "date": {
+      "seconds": 1747353600,
+      "nanoseconds": 857000000
+    },
+    "hostId": "",
+    "venueId": "",
+    "_venueId": "",
+    "settings": {
+      "invitationCode": "JT39IK",
+      "isActive": true,
+      "isPrivate": false,
+      "isTipAccepted": true,
+      "paymentMethodIds": []
+    },
+    "status": {
+      "isCheckInOpen": false,
+      "isFinished": false,
+      "isReservationOpen": true
+    },
+    "zSpectator": [
+      {
+        "createdAt": "2025-04-28T04:08:22.994Z",
+        "spectatorId": "hUFyUgjDqPfheqnFR1TDv597w6f2",
+        "numberOfCompanions": 0
+      },
+      {
+        "createdAt": "2025-04-28T04:08:22.994Z",
+        "spectatorId": "2O15OdUa5Rfos2mOPc00IddK95s2",
+        "numberOfCompanions": 3
+      },
+      {
+        "createdAt": "2025-04-28T04:08:22.994Z",
+        "spectatorId": "4QwgrFBZqhhH9AhuAQ9dl6yTVZC3",
+        "numberOfCompanions": 3
+      },
+      {
+        "createdAt": "2025-04-28T04:08:22.994Z",
+        "spectatorId": "bZORI4ruPdfK8JNGqCNuoStKVJf2",
+        "numberOfCompanions": 4
+      },
+      {
+        "createdAt": "2025-04-28T04:08:22.994Z",
+        "spectatorId": "oi9HMqUV1YQ6eTyDU1kVZDE829Y2",
+        "numberOfCompanions": 1
+      },
+      {
+        "createdAt": "2025-04-28T04:08:22.994Z",
+        "spectatorId": "KdPSEkvEM1f2c0Rl74DJhjL5Jv12",
+        "numberOfCompanions": 3
+      },
+      {
+        "createdAt": "2025-04-28T04:08:22.994Z",
+        "spectatorId": "0jZ58P1iDxWaAn0vmc5y3zRqq1g1",
+        "numberOfCompanions": 5
+      },
+      {
+        "createdAt": "2025-04-28T04:08:22.994Z",
+        "spectatorId": "6WMckRCtSHYoPUOGd9WLLkSJnt82",
+        "numberOfCompanions": 1
+      },
+      {
+        "createdAt": "2025-04-28T04:08:22.994Z",
+        "spectatorId": "amq7jJ3hzhTMdmLcufSCrK9u6f72",
+        "numberOfCompanions": 0
+      },
+      {
+        "createdAt": "2025-04-28T04:08:22.994Z",
+        "spectatorId": "L4h5QHX15xhIDdJfDl4I8aESUbo1",
+        "numberOfCompanions": 1
+      },
+      {
+        "createdAt": "2025-04-28T04:08:22.994Z",
+        "spectatorId": "FRHCijJAu3NmRrDo9KTVOHQmst72",
+        "numberOfCompanions": 1
+      },
+      {
+        "createdAt": "2025-04-28T04:08:22.994Z",
+        "spectatorId": "tAPsUXbtUAgVtXiC9MWZQBvyXB93",
+        "numberOfCompanions": 0
+      },
+      {
+        "createdAt": "2025-04-28T04:08:22.994Z",
+        "spectatorId": "t0NvJsMMezZenWZtyRvIjLk0AJ93",
+        "numberOfCompanions": 1
+      },
+      {
+        "createdAt": "2025-04-28T04:08:22.994Z",
+        "spectatorId": "xc89iaR0ehc2DQlhIwoaYCnXgss1",
+        "numberOfCompanions": 0
+      },
+      {
+        "createdAt": "2025-04-28T04:08:22.994Z",
+        "spectatorId": "MiAJwVkAGeTy97vFq56d5ATCtfH2",
+        "numberOfCompanions": 2
+      },
+      {
+        "createdAt": "2025-04-28T04:08:22.994Z",
+        "spectatorId": "eejJ4wynylYTlReVTIwkMvjA6DF2",
+        "numberOfCompanions": 0
+      },
+      {
+        "createdAt": "2025-04-28T04:08:22.994Z",
+        "spectatorId": "r7bniPrQn8e9BxacEj1rAX7g0PV2",
+        "numberOfCompanions": 1
+      },
+      {
+        "createdAt": "2025-04-28T04:08:22.994Z",
+        "spectatorId": "IRKBEpeIIIMAjIWHQbWhbIgQgP82",
+        "numberOfCompanions": 0
+      },
+      {
+        "createdAt": "2025-04-28T04:08:22.994Z",
+        "spectatorId": "mWvd3tur7BVxyAKYe6vTbinNrMd2",
+        "numberOfCompanions": 1
+      },
+      {
+        "createdAt": "2025-04-28T04:08:22.994Z",
+        "spectatorId": "N8WxVbUYg2SEeMfKRzGKCZvW6YE3",
+        "numberOfCompanions": 2
+      },
+      {
+        "createdAt": "2025-04-28T04:08:22.994Z",
+        "spectatorId": "hQ2IYQtCKpaqIVfYL7zsHZrX1qw1",
+        "numberOfCompanions": 3
+      },
+      {
+        "createdAt": "2025-04-28T04:08:22.994Z",
+        "spectatorId": "s3nqj4GoGfO7sB6O1cXAcYhPbkD3",
+        "numberOfCompanions": 3
+      },
+      {
+        "createdAt": "2025-04-28T04:08:22.994Z",
+        "spectatorId": "5FUpXO0jnrhCpnU8OXyDD9rK9Fj1",
+        "numberOfCompanions": 2
+      },
+      {
+        "createdAt": "2025-04-28T04:08:22.994Z",
+        "spectatorId": "EoMOlkSZJCcnJfNpSqpi43GzQpb2",
+        "numberOfCompanions": 1
+      },
+      {
+        "createdAt": "2025-04-28T04:08:22.994Z",
+        "spectatorId": "VwtvJYklB1TIBmiSHKrzoKuoFj82",
+        "numberOfCompanions": 1
+      },
+      {
+        "createdAt": "2025-04-28T04:08:22.994Z",
+        "spectatorId": "YwlOTJEPlhcNODzDmekL4lArdKZ2",
+        "numberOfCompanions": 0
+      },
+      {
+        "createdAt": "2025-04-28T04:08:22.994Z",
+        "spectatorId": "xpBNUXJqRJSq0WhDL39uI1e7WBg2",
+        "numberOfCompanions": 0
+      },
+      {
+        "createdAt": "2025-04-28T04:08:22.994Z",
+        "spectatorId": "XVXAH0JZVmRmVpZ78LSEwyK2Fjk2",
+        "numberOfCompanions": 0
+      },
+      {
+        "createdAt": "2025-04-28T04:08:22.994Z",
+        "spectatorId": "cfSSryV3wQYd3EYsMCUmhS7t4hp1",
+        "numberOfCompanions": 4
+      },
+      {
+        "createdAt": "2025-04-28T04:08:22.994Z",
+        "spectatorId": "DHDEDxaFmjbc9crsc7Jzv0ACNdH2",
+        "numberOfCompanions": 1
+      },
+      {
+        "createdAt": "2025-04-28T04:08:22.994Z",
+        "spectatorId": "u60HfxjqYDhphcShKSWEOABQdTA3",
+        "numberOfCompanions": 1
+      },
+      {
+        "createdAt": "2025-04-28T04:08:22.994Z",
+        "spectatorId": "ZUWpLMSS2YURLTSmP1r4EDD4qDw1",
+        "numberOfCompanions": 0
+      },
+      {
+        "createdAt": "2025-04-28T04:08:22.994Z",
+        "spectatorId": "D8Kmjl7Zykhfketufk9WIfBAAwA3",
+        "numberOfCompanions": 0
+      },
+      {
+        "createdAt": "2025-04-28T04:08:22.994Z",
+        "spectatorId": "GOL6vag5IyWomW3lM0w6Wdqlrih1",
+        "numberOfCompanions": 0
+      },
+      {
+        "createdAt": "2025-04-28T04:08:22.994Z",
+        "spectatorId": "DlVupzn16JTG56ZbLLk4GOMmk7I3",
+        "numberOfCompanions": 0
+      }
+    ],
+    "name": "Capítulo introductorio",
+    "themes_id": [
+      "NSyNIC9ybNL8R4TzKSrs",
+      "YRhPgSyVw8LPZTAOiuXA",
+      "DtrJxQJTK9OMNqAW72D9",
+      "8mm2hbWkdbRQeQMegqD3",
+      "DUuYXBqNVGhq2aNJaHFt",
+      "vU5uVnQ1WDhxncDNB0ik"
+    ]
+  }
+}

@@ -22,7 +22,7 @@
       <InformationCircleIcon class="h-5 w-5 mr-2 flex-shrink-0" aria-hidden="true" />
       <div class="flex flex-col sm:flex-row sm:items-center justify-between w-full">
         <span class="text-xs">Para finalizar el proceso hacer
-        <a href="#checkout-button" class="text-xs font-semibold mt-1 sm:mt-0">Checkout</a> </span>
+        <a @click="switchToProgramaAndScrollToCheckout" class="text-xs font-semibold mt-1 sm:mt-0 cursor-pointer">Checkout</a> </span>
       </div>
     </div>
     
@@ -211,7 +211,7 @@
 <script setup>
 import { ref, onMounted, onBeforeUnmount, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import { doc, getDoc, updateDoc, getFirestore, collection, getDocs } from 'firebase/firestore';
+import { doc, getDoc, updateDoc, getFirestore, collection, setDoc, arrayUnion } from 'firebase/firestore';
 import { db } from '@/firebase';
 import ThemeItem from '@/components/ThemeItem.vue';
 import MusicianCard from '@/components/MusicianCard.vue';
@@ -270,25 +270,49 @@ const handleRateChange = async (themeId, rating) => {
   }
   
   // Guardar inmediatamente la evaluación para que persista entre cambios de tab
-  await saveSpectatorRatings();
+  try {
+    await saveSpectatorRatings();
+  } catch (error) {
+    console.error('Error al guardar el rating:', error);
+    // El rating se mantiene en memoria aunque falle el guardado en Firestore
+  }
 };
 
 // Función para obtener los themes_id del evento y luego los detalles de los temas
 const fetchEventThemes = async () => {
+  console.log('Iniciando fetchEventThemes para idEvent:', idEvent);
   const eventDocRef = doc(db, 'events', idEvent);
 
   try {
     const eventDocSnap = await getDoc(eventDocRef);
     if (eventDocSnap.exists()) {
       const eventData = eventDocSnap.data();
-      const themesIds = eventData.themes_id;
-      spectatorsShouldPayInTheApp.value = eventData.spectatorsShouldPayInTheApp;
+      console.log('Datos del evento obtenidos:', { id: idEvent, chapterId: eventData.chapterId });
       
-      // Buscar el espectador en eventSpectators para tener acceso a numberOfCompanions
-      const eventSpectators = eventData.eventSpectators || [];
-      const spectatorInEvent = eventSpectators.find(s => s.id === idSpectator);
+      // Determinar si los espectadores deben pagar según el campo isTipAccepted
+      spectatorsShouldPayInTheApp.value = eventData.settings?.isTipAccepted || false;
+      
+      // Si hay pagos, se podrían cargar los métodos de pago aquí utilizando paymentMethodIds
+      if (spectatorsShouldPayInTheApp.value && eventData.settings?.paymentMethodIds) {
+        // Código para cargar métodos de pago si es necesario
+        console.log("Métodos de pago disponibles:", eventData.settings.paymentMethodIds);
+      }
+      
+      // Buscar el espectador en zSpectator para tener acceso a numberOfCompanions y hasCheckout
+      const zSpectator = eventData.zSpectator || [];
+      const spectatorInEvent = zSpectator.find(s => s.spectatorId === idSpectator);
       if (spectatorInEvent) {
-        eventSpectator.value = spectatorInEvent;
+        eventSpectator.value = {
+          id: idSpectator,
+          numberOfCompanions: spectatorInEvent.numberOfCompanions,
+          hasCheckOut: spectatorInEvent.hasCheckOut || false
+        };
+        
+        // Si ya hizo checkout, mostrar advertencia
+        if (spectatorInEvent.hasCheckOut) {
+          console.warn('ATENCIÓN: Este espectador ya completó sus evaluaciones anteriormente (hasCheckOut=true).');
+          console.warn('Las evaluaciones que haga ahora no se guardarán en la base de datos.');
+        }
       }
       
       // Obtener datos del content-manager si existe contentReferenceId
@@ -320,18 +344,64 @@ const fetchEventThemes = async () => {
       
       // Obtener datos del capítulo si existe chapterId
       if (eventData.chapterId) {
-        fetchChapterData(eventData.chapterId);
+        console.log('Obteniendo datos del capítulo con ID:', eventData.chapterId);
+        await fetchChapterData(eventData.chapterId);
+        
+        // Una vez que tenemos el capítulo, obtenemos los themesId directamente
+        const chapterRef = doc(db, 'chapters', eventData.chapterId);
+        const latestChapterSnap = await getDoc(chapterRef);
+        
+        if (latestChapterSnap.exists() && latestChapterSnap.data().themesId) {
+          const latestThemesIds = latestChapterSnap.data().themesId;
+          console.log('themesId obtenidos directamente del documento chapter:', latestThemesIds);
+          
+          // Para cada theme_id, obtenemos los detalles del tema
+          const themeDocsPromises = latestThemesIds.map(themeId => getDoc(doc(db, 'themes', themeId)));
+          const themeDocs = await Promise.all(themeDocsPromises);
+
+          // Log para ver cuántos temas se encontraron
+          console.log(`Se encontraron ${themeDocs.length} documentos de temas`);
+          console.log('Documentos existentes:', themeDocs.filter(doc => doc.exists()).length);
+          
+          themes.value = themeDocs
+            .filter(themeDoc => {
+              const exists = themeDoc.exists();
+              if (!exists) {
+                console.warn(`Tema con ID ${themeDoc.id} no existe en Firestore`);
+              }
+              return exists;
+            })
+            .map(themeDoc => {
+              const themeData = themeDoc.data();
+              console.log(`Tema encontrado: ${themeDoc.id}, activo: ${themeData.isActive}, orden: ${themeData.order}`);
+              return { id: themeDoc.id, ...themeData };
+            })
+            .filter(theme => {
+              const isActive = theme.isActive !== false; // Si no está definido, asumimos que está activo
+              if (!isActive) {
+                console.warn(`Tema ${theme.id} está marcado como inactivo`);
+              }
+              return isActive;
+            })
+            .sort((a, b) => {
+              // Si no tienen orden definido, darles valores por defecto altos
+              const orderA = a.order !== undefined ? a.order : 999;
+              const orderB = b.order !== undefined ? b.order : 999;
+              return orderA - orderB;
+            });
+          
+          console.log(`Temas finales después de filtrado: ${themes.value.length}`);
+          themes.value.forEach(theme => {
+            console.log(`- ${theme.id}: ${theme.title || 'Sin título'}`);
+          });
+        } else {
+          console.warn('No se encontraron themesId en el capítulo actualizado');
+          themes.value = [];
+        }
+      } else {
+        console.warn('No se encontró chapterId en el evento');
+        themes.value = [];
       }
-
-      // Para cada theme_id, obtenemos los detalles del tema
-      const themeDocsPromises = themesIds.map(themeId => getDoc(doc(db, 'themes', themeId)));
-      const themeDocs = await Promise.all(themeDocsPromises);
-
-      themes.value = themeDocs
-        .filter(themeDoc => themeDoc.exists())
-        .map(themeDoc => ({ id: themeDoc.id, ...themeDoc.data() }))
-        .filter(theme => theme.isActive) 
-        .sort((a, b) => a.order - b.order);
     } else {
       console.error('No se encontró el evento con el ID proporcionado');
     }
@@ -356,29 +426,169 @@ const fetchSpectator = async () => {
   }
 };
 
+// Función para agregar un rating a una colección (themes, musicians, etc.)
+const addRatingToDocument = async (collectionName, documentId, ratingValue) => {
+  if (!documentId || !ratingValue) {
+    console.warn(`Falta documentId o ratingValue para ${collectionName}`);
+    return false;
+  }
+  
+  console.log(`Intentando agregar rating ${ratingValue} a ${collectionName}/${documentId}`);
+  
+  try {
+    const docRef = doc(db, collectionName, documentId);
+    const docSnap = await getDoc(docRef);
+    
+    if (!docSnap.exists()) {
+      console.error(`Documento ${collectionName}/${documentId} no existe`);
+      return false;
+    }
+    
+    const docData = docSnap.data();
+    
+    // Verificar si el documento ya tiene un array ratings
+    if (Array.isArray(docData.ratings)) {
+      console.log(`Documento ${collectionName}/${documentId} ya tiene ratings:`, docData.ratings);
+      
+      // Usar arrayUnion para añadir al array existente
+      console.log(`Añadiendo ${ratingValue} al array ratings existente con arrayUnion()`);
+      await updateDoc(docRef, {
+        ratings: arrayUnion(ratingValue)
+      });
+      
+      console.log(`Rating añadido a ${collectionName}/${documentId} usando arrayUnion`);
+    } else {
+      // Si no existe el array, crearlo usando un método diferente
+      console.log(`Creando nuevo array ratings para ${collectionName}/${documentId} con valor inicial [${ratingValue}]`);
+      try {
+        // Intentar primero con setDoc para mantener otros campos
+        const allData = { ...docData, ratings: [ratingValue] };
+        await setDoc(docRef, allData);
+        console.log(`Campo ratings creado usando setDoc con todos los campos existentes`);
+      } catch (setDocError) {
+        console.warn(`Error al usar setDoc para crear ratings: ${setDocError.message}`);
+        // Intentar solo con updateDoc como fallback
+        await updateDoc(docRef, {
+          ratings: [ratingValue]
+        });
+        console.log(`Campo ratings creado usando updateDoc`);
+      }
+      
+      console.log(`Nuevo array ratings creado para ${collectionName}/${documentId}`);
+    }
+    
+    // Verificar el resultado
+    const updatedDoc = await getDoc(docRef);
+    if (updatedDoc.exists() && Array.isArray(updatedDoc.data().ratings)) {
+      console.log(`✅ Verificación: ratings en ${collectionName}/${documentId}:`, updatedDoc.data().ratings);
+      return true;
+    } else {
+      console.error(`❌ Error: No se pudo verificar ratings en ${collectionName}/${documentId}`);
+      return false;
+    }
+  } catch (error) {
+    console.error(`Error al guardar rating en ${collectionName}/${documentId}:`, error);
+    return false;
+  }
+};
+
 // Función para actualizar los ratings al hacer clic en Checkout
 const goToCheckout = async () => {
   isLoading.value = true;
+  let saveSuccessful = true;
+  
   try {
-    // Recorrer cada rating y actualizar el documento correspondiente en Firebase
-    for (const { themeId, rating } of ratings.value) {
-      const themeRef = doc(db, 'themes', themeId);
-      const themeDoc = await getDoc(themeRef);
+    // Obtener datos actualizados del evento
+    const eventRef = doc(db, 'events', idEvent);
+    const eventDoc = await getDoc(eventRef);
+    
+    if (eventDoc.exists()) {
+      const eventData = eventDoc.data();
+      const zSpectator = eventData.zSpectator || [];
+      const spectatorIndex = zSpectator.findIndex(s => s.spectatorId === idSpectator);
       
-      if (themeDoc.exists()) {
-        // Obtener el array de ratings actual y añadir el nuevo rating
-        const currentRatings = themeDoc.data().ratings || [];
-        currentRatings.push(rating);
+      if (spectatorIndex === -1) {
+        console.error(`No se encontró el espectador ${idSpectator} en el evento ${idEvent}`);
+        saveSuccessful = false;
+      } else {
+        const spectatorData = zSpectator[spectatorIndex];
         
-        // Actualizar el documento con el nuevo array de ratings
-        await updateDoc(themeRef, {
-          ratings: currentRatings
-        });
+        // Verificar si el espectador ya hizo checkout antes (ya evaluó)
+        if (spectatorData.hasCheckOut) {
+          console.warn(`El espectador ya realizó checkout anteriormente (hasCheckOut=true). No se guardarán nuevas evaluaciones.`);
+        } else {
+          console.log(`Procesando evaluaciones para el espectador ${idSpectator} (primer checkout)`);
+          
+          // 1. Guardar ratings de temas
+          for (const { themeId, rating } of ratings.value) {
+            const success = await addRatingToDocument('themes', themeId, rating);
+            if (!success) {
+              console.error(`No se pudo guardar rating para tema ${themeId}`);
+              saveSuccessful = false;
+            }
+          }
+          
+          // 2. Guardar ratings de músicos
+          for (const { musicianId, rating } of musiciansRatings.value) {
+            const success = await addRatingToDocument('musicians', musicianId, rating);
+            if (!success) {
+              console.error(`No se pudo guardar rating para músico ${musicianId}`);
+              saveSuccessful = false;
+            }
+          }
+          
+          // 3. Guardar rating del capítulo
+          if (chapterRating.value > 0 && chapterData.value?.id) {
+            const success = await addRatingToDocument('chapters', chapterData.value.id, chapterRating.value);
+            if (!success) {
+              console.error(`No se pudo guardar rating para capítulo ${chapterData.value.id}`);
+              saveSuccessful = false;
+            }
+          }
+          
+          // 4. Guardar rating del ensamble
+          if (assemblyRating.value > 0 && assemblyData.value?.id) {
+            const success = await addRatingToDocument('assembly', assemblyData.value.id, assemblyRating.value);
+            if (!success) {
+              console.error(`No se pudo guardar rating para ensamble ${assemblyData.value.id}`);
+              saveSuccessful = false;
+            }
+          }
+          
+          // 5. Marcar que el espectador ha hecho checkout para evitar evaluaciones duplicadas
+          try {
+            // Actualizar el campo hasCheckOut a true
+            zSpectator[spectatorIndex] = {
+              ...spectatorData,
+              hasCheckOut: true
+            };
+            
+            // Guardar el cambio en el documento del evento
+            await updateDoc(eventRef, {
+              zSpectator: zSpectator
+            });
+            
+            console.log(`✅ Espectador marcado como hasCheckOut=true exitosamente`);
+          } catch (updateError) {
+            console.error(`Error al actualizar hasCheckOut del espectador:`, updateError);
+            saveSuccessful = false;
+          }
+        }
       }
     }
     
-    // Guardar todas las evaluaciones del espectador en el eventSpectator
-    await saveSpectatorRatings();
+    // Siempre guardar las evaluaciones del espectador en el documento evaluations
+    // para mantener un registro de sus calificaciones específicas
+    try {
+      await saveSpectatorRatings();
+    } catch (evaluationError) {
+      console.error('Error al guardar evaluaciones:', evaluationError);
+      saveSuccessful = false;
+    }
+    
+    if (!saveSuccessful) {
+      console.warn('No se pudieron guardar algunas evaluaciones, pero se continuará con el proceso');
+    }
     
     if(spectatorsShouldPayInTheApp.value) {
       // Una vez que se actualizan los ratings, redirigir al checkout
@@ -402,8 +612,30 @@ const goToCheckout = async () => {
     }
   } catch (error) {
     console.error('Error al enviar los ratings:', error);
+    
+    // Incluso si falla todo el proceso, intentamos redirigir al usuario
+    if(spectatorsShouldPayInTheApp.value) {
+      router.push({
+        name: 'Checkout',
+        params: { idSpectator, idEvent, nameEvent },
+        query: { referenceLink: route.query.referenceLink, idVisitor: route.query.idVisitor}
+      });
+    } else {
+      router.push({
+        name: 'ThankYou',
+        query: { 
+          idSpectator: idSpectator,
+          referenceLink: route.query.referenceLink,
+          idVisitor: route.query.idVisitor,
+          idEvent: idEvent,
+          paymentMethod: 'no payment',
+          amount: 0
+        }
+      });
+    }
+  } finally {
+    isLoading.value = false;
   }
-  isLoading.value = false;
 };
 
 // Función para guardar todas las evaluaciones del espectador
@@ -419,39 +651,78 @@ const saveSpectatorRatings = async () => {
     }
     
     const eventData = eventDoc.data();
-    const eventSpectators = eventData.eventSpectators || [];
+    const zSpectator = eventData.zSpectator || [];
     
-    // Buscar el espectador actual en el array
-    const spectatorIndex = eventSpectators.findIndex(s => s.id === idSpectator);
+    // Buscar el espectador actual en el array usando la nueva estructura
+    const spectatorIndex = zSpectator.findIndex(s => s.spectatorId === idSpectator);
     
     if (spectatorIndex === -1) {
       console.error('No se encontró el espectador en el evento');
       return;
     }
     
-    // Crear objeto de ratings consolidado
-    const spectatorRatings = {
-      themes: ratings.value.map(item => ({ id: item.themeId, rating: item.rating })),
-      assembly: assemblyRating.value > 0 ? assemblyRating.value : null,
-      chapter: chapterRating.value > 0 ? chapterRating.value : null,
-      musicians: musiciansRatings.value.map(item => ({ id: item.musicianId, rating: item.rating }))
+    // Crear objeto de evaluaciones consolidado
+    const evaluationData = {
+      eventId: idEvent,
+      spectatorId: idSpectator,
+      ratings: {
+        themes: ratings.value.map(item => ({ id: item.themeId, rating: item.rating })),
+        assembly: assemblyRating.value > 0 ? assemblyRating.value : null,
+        chapter: chapterRating.value > 0 ? chapterRating.value : null,
+        musicians: musiciansRatings.value.map(item => ({ id: item.musicianId, rating: item.rating }))
+      },
+      createdAt: new Date(),
+      // Añadimos el timestamp para facilitar el debug
+      updatedAt: new Date()
     };
     
-    // Actualizar el eventSpectator con todas las calificaciones
-    eventSpectators[spectatorIndex] = {
-      ...eventSpectators[spectatorIndex],
-      ratings: spectatorRatings,
-      ratedAt: new Date().toISOString()
-    };
+    // Verificar si ya existe una evaluación
+    let evaluationId = zSpectator[spectatorIndex].evaluationId;
     
-    // Guardar los cambios en el documento del evento
-    await updateDoc(eventRef, {
-      eventSpectators: eventSpectators
-    });
+    // Verificar si el espectador ya ha hecho checkout (ya evaluó)
+    const hasCheckOut = zSpectator[spectatorIndex].hasCheckOut === true;
+    
+    if (hasCheckOut) {
+      console.log('El espectador ya ha hecho checkout anteriormente. No se guardarán nuevas evaluaciones.');
+      // No hacemos nada, pero no lanzamos error para que la navegación pueda continuar
+      return;
+    }
+    
+    if (evaluationId) {
+      // Actualizar la evaluación existente
+      try {
+        await updateDoc(doc(db, 'evaluations', evaluationId), evaluationData);
+      } catch (updateError) {
+        console.error('Error al actualizar evaluación existente:', updateError);
+        throw updateError;
+      }
+    } else {
+      // Crear un nuevo documento de evaluación
+      try {
+        const newEvaluationRef = doc(collection(db, 'evaluations'));
+        evaluationId = newEvaluationRef.id;
+        await setDoc(newEvaluationRef, evaluationData);
+        
+        // Actualizar la referencia en zSpectator
+        zSpectator[spectatorIndex] = {
+          ...zSpectator[spectatorIndex],
+          evaluationId: evaluationId
+        };
+        
+        // Guardar los cambios en el documento del evento
+        await updateDoc(eventRef, {
+          zSpectator: zSpectator
+        });
+      } catch (createError) {
+        console.error('Error al crear nueva evaluación:', createError);
+        throw createError;
+      }
+    }
     
     console.log('Evaluaciones guardadas con éxito');
   } catch (error) {
     console.error('Error al guardar las evaluaciones:', error);
+    throw error; // Re-lanzamos el error para que pueda ser capturado por la función llamante
   }
 };
 
@@ -472,48 +743,80 @@ function generateRandomId() {
 const fetchMusicians = async () => {
   isLoadingMusicians.value = true;
   try {
-    // Obtener datos del ensamble para conseguir la lista de músicos
-    const assemblySnapshot = await getDocs(collection(db, 'assembly'));
+    // Primero obtener el evento para conseguir el assemblyId
+    const eventDocRef = doc(db, 'events', idEvent);
+    const eventDocSnap = await getDoc(eventDocRef);
     
-    if (!assemblySnapshot.empty) {
-      const assemblyDoc = assemblySnapshot.docs[0];
-      const assemblyDataRaw = assemblyDoc.data();
-      
-      // Guardar los datos del ensamble
-      assemblyData.value = {
-        id: assemblyDoc.id,
-        ...assemblyDataRaw
-      };
-      
-      const assemblyMembers = assemblyDataRaw.members || [];
-      
-      // Obtener detalles de cada músico
-      const musiciansData = [];
-      
-      for (const member of assemblyMembers) {
-        if (member.musicianId) {
-          try {
-            const musicianDoc = await getDoc(doc(db, 'musicians', member.musicianId));
+    if (!eventDocSnap.exists()) {
+      console.error('No se encontró el evento');
+      musicians.value = []; // Inicializar array vacío
+      return;
+    }
+    
+    const eventData = eventDocSnap.data();
+    const assemblyId = eventData?.assemblyId;
+    
+    if (!assemblyId) {
+      console.warn('El evento no tiene assemblyId definido');
+      musicians.value = []; // Inicializar array vacío
+      return;
+    }
+    
+    // Ahora obtenemos el ensamble específico usando el assemblyId
+    const assemblyDocRef = doc(db, 'assembly', assemblyId);
+    const assemblyDocSnap = await getDoc(assemblyDocRef);
+    
+    if (!assemblyDocSnap.exists()) {
+      console.error(`No se encontró el ensamble con ID: ${assemblyId}`);
+      musicians.value = []; // Inicializar array vacío
+      return;
+    }
+    
+    const assemblyDataRaw = assemblyDocSnap.data();
+    
+    // Guardar los datos del ensamble
+    assemblyData.value = {
+      id: assemblyDocRef.id,
+      ...assemblyDataRaw
+    };
+    
+    const assemblyMembers = assemblyDataRaw?.members || [];
+    
+    if (assemblyMembers.length === 0) {
+      console.warn('El ensamble no tiene miembros definidos');
+      musicians.value = []; // Inicializar array vacío
+      return;
+    }
+    
+    // Obtener detalles de cada músico
+    const musiciansData = [];
+    
+    for (const member of assemblyMembers) {
+      if (member?.musicianId) {
+        try {
+          const musicianDoc = await getDoc(doc(db, 'musicians', member.musicianId));
+          
+          if (musicianDoc.exists()) {
+            const musicianData = musicianDoc.data();
             
-            if (musicianDoc.exists()) {
-              const musicianData = musicianDoc.data();
-              
-              musiciansData.push({
-                id: musicianDoc.id,
-                ...musicianData,
-                instrument: member.instrument // Instrumento específico en este ensamble
-              });
-            }
-          } catch (error) {
-            console.error(`Error al obtener músico:`, error);
+            musiciansData.push({
+              id: musicianDoc.id,
+              ...musicianData,
+              instrument: member.instrument || 'No especificado' // Instrumento específico en este ensamble
+            });
+          } else {
+            console.warn(`No se encontró el músico con ID: ${member.musicianId}`);
           }
+        } catch (error) {
+          console.error(`Error al obtener músico ${member.musicianId}:`, error);
         }
       }
-      
-      musicians.value = musiciansData;
     }
+    
+    musicians.value = musiciansData;
   } catch (error) {
     console.error('Error al obtener datos de músicos:', error);
+    musicians.value = []; // Inicializar array vacío en caso de error
   } finally {
     isLoadingMusicians.value = false;
   }
@@ -540,14 +843,24 @@ const scrollCarousel = (direction) => {
 const rateAssembly = async (rating) => {
   assemblyRating.value = rating;
   // Guardar inmediatamente la evaluación para que persista entre cambios de tab
-  await saveSpectatorRatings();
+  try {
+    await saveSpectatorRatings();
+  } catch (error) {
+    console.error('Error al guardar calificación del ensamble:', error);
+    // La calificación se mantiene en memoria aunque falle el guardado
+  }
 };
 
 // Función para calificar el capítulo
 const rateChapter = async (rating) => {
   chapterRating.value = rating;
   // Guardar inmediatamente la evaluación para que persista entre cambios de tab
-  await saveSpectatorRatings();
+  try {
+    await saveSpectatorRatings();
+  } catch (error) {
+    console.error('Error al guardar calificación del capítulo:', error);
+    // La calificación se mantiene en memoria aunque falle el guardado
+  }
 };
 
 // Función para manejar la calificación de músicos
@@ -564,7 +877,12 @@ const handleMusicianRating = async (musicianId, rating) => {
   }
   
   // Guardar inmediatamente la evaluación para que persista entre cambios de tab
-  await saveSpectatorRatings();
+  try {
+    await saveSpectatorRatings();
+  } catch (error) {
+    console.error('Error al guardar calificación del músico:', error);
+    // La calificación se mantiene en memoria aunque falle el guardado
+  }
 };
 
 // Función para obtener la calificación de un músico específico
@@ -581,8 +899,12 @@ const getThemeRating = (themeId) => {
 
 // Función para obtener los datos del capítulo
 const fetchChapterData = async (chapterId) => {
-  if (!chapterId) return;
+  if (!chapterId) {
+    console.warn('fetchChapterData llamado sin chapterId');
+    return;
+  }
   
+  console.log('fetchChapterData iniciado con chapterId:', chapterId);
   isLoadingChapter.value = true;
   try {
     const chapterRef = doc(db, 'chapters', chapterId);
@@ -590,14 +912,26 @@ const fetchChapterData = async (chapterId) => {
     
     if (chapterSnap.exists()) {
       const data = chapterSnap.data();
+      console.log('Datos del capítulo obtenidos:', data);
+      
+      // Verificar específicamente si existe themesId y qué contiene
+      if (data.themesId) {
+        console.log(`El capítulo tiene ${data.themesId.length} temas asociados:`, data.themesId);
+      } else {
+        console.warn('El capítulo no tiene themesId definido');
+      }
+      
       chapterData.value = {
         id: chapterId,
         title: data.title || 'Capítulo del concierto',
         synopsis: data.synopsis || '',
-        description: data.description || ''
+        description: data.description || '',
+        themesId: data.themesId || [] // Añadimos themesId para acceder a los temas
       };
+      
+      console.log('chapterData asignado:', chapterData.value);
     } else {
-      console.log('No se encontró el capítulo con ID:', chapterId);
+      console.warn('No se encontró el capítulo con ID:', chapterId);
       chapterData.value = null;
     }
   } catch (error) {
@@ -624,7 +958,7 @@ const handleCarouselScroll = () => {
   }
 };
 
-// Cargar evaluaciones existentes del espectador 
+// Cargar evaluaciones existentes del espectador usando la nueva estructura
 const loadExistingRatings = async () => {
   try {
     const eventRef = doc(db, 'events', idEvent);
@@ -636,40 +970,64 @@ const loadExistingRatings = async () => {
     }
     
     const eventData = eventDoc.data();
-    const eventSpectators = eventData.eventSpectators || [];
+    const zSpectator = eventData.zSpectator || [];
     
-    // Buscar el espectador actual en el array
-    const spectator = eventSpectators.find(s => s.id === idSpectator);
+    // Buscar el espectador actual en el array usando la nueva estructura
+    const spectatorData = zSpectator.find(s => s.spectatorId === idSpectator);
     
-    // Asignar el spectator encontrado a eventSpectator para usarlo en otras partes
-    eventSpectator.value = spectator;
+    // Asignar la información básica a eventSpectator para usarlo en otras partes
+    eventSpectator.value = {
+      id: idSpectator,
+      numberOfCompanions: spectatorData?.numberOfCompanions || 0,
+      hasCheckOut: spectatorData?.hasCheckOut || false
+    };
     
-    if (!spectator || !spectator.ratings) return;
+    // Si el espectador ya ha hecho checkout, mostramos una advertencia
+    if (spectatorData?.hasCheckOut) {
+      console.warn('El espectador ya ha hecho checkout anteriormente. Las evaluaciones son de solo lectura.');
+    }
     
-    // Cargar las calificaciones guardadas
-    if (spectator.ratings.themes) {
-      ratings.value = spectator.ratings.themes.map(item => ({ 
+    // Si no hay espectador o no tiene evaluación, no hay nada que cargar
+    if (!spectatorData || !spectatorData.evaluationId) return;
+    
+    // Obtener el documento de evaluación usando la referencia
+    const evaluationRef = doc(db, 'evaluations', spectatorData.evaluationId);
+    const evaluationDoc = await getDoc(evaluationRef);
+    
+    if (!evaluationDoc.exists()) {
+      console.error('No se encontró el documento de evaluación');
+      return;
+    }
+    
+    const evaluationData = evaluationDoc.data();
+    
+    // Solo seguir si hay calificaciones en la evaluación
+    if (!evaluationData.ratings) return;
+    
+    // Cargar las calificaciones desde el documento de evaluación
+    if (evaluationData.ratings.themes) {
+      ratings.value = evaluationData.ratings.themes.map(item => ({ 
         themeId: item.id, 
         rating: item.rating 
       }));
     }
     
-    if (spectator.ratings.musicians) {
-      musiciansRatings.value = spectator.ratings.musicians.map(item => ({
+    if (evaluationData.ratings.musicians) {
+      musiciansRatings.value = evaluationData.ratings.musicians.map(item => ({
         musicianId: item.id,
         rating: item.rating
       }));
     }
     
-    if (spectator.ratings.assembly) {
-      assemblyRating.value = spectator.ratings.assembly;
+    if (evaluationData.ratings.assembly) {
+      assemblyRating.value = evaluationData.ratings.assembly;
     }
     
-    if (spectator.ratings.chapter) {
-      chapterRating.value = spectator.ratings.chapter;
+    if (evaluationData.ratings.chapter) {
+      chapterRating.value = evaluationData.ratings.chapter;
     }
     
-    console.log('Evaluaciones cargadas con éxito');
+    console.log('Evaluaciones cargadas con éxito desde colección evaluations');
   } catch (error) {
     console.error('Error al cargar evaluaciones:', error);
   }
@@ -693,6 +1051,18 @@ onMounted(() => {
     }
   }, 1000); // Dar tiempo a que el DOM se actualice
 });
+
+// Función para cambiar a la pestaña programa y desplazarse al botón de checkout
+const switchToProgramaAndScrollToCheckout = () => {
+  activeTab.value = 'programa';
+  // Usamos setTimeout para dar tiempo a que se renderice el DOM
+  setTimeout(() => {
+    const checkoutButton = document.getElementById('checkout-button');
+    if (checkoutButton) {
+      checkoutButton.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, 100);
+};
 
 // Limpiar event listeners cuando el componente se destruya
 onBeforeUnmount(() => {

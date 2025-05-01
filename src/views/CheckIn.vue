@@ -100,8 +100,6 @@ const fetchSpectator = async () => {
     // Guardar los datos del espectador
     spectator.value = spectatorSnap.data();
     
-    // No establecer un valor por defecto todavía, primero intentaremos obtener el valor del eventSpectator
-    
     // Ahora intentar cargar los datos específicos del evento
     try {
       const eventRef = doc(db, 'events', route.params.idEvent);
@@ -110,45 +108,36 @@ const fetchSpectator = async () => {
       if (eventSnap.exists()) {
         const eventData = eventSnap.data();
         
-        // Verificar si el array eventSpectators existe
-        if (Array.isArray(eventData.eventSpectators)) {
-          console.log('Total de eventSpectators:', eventData.eventSpectators.length);
+        // Verificar si el array zSpectator existe
+        if (Array.isArray(eventData.zSpectator)) {
+          console.log('Total de espectadores en zSpectator:', eventData.zSpectator.length);
           
-          // Buscar el espectador específico para este evento
-          const spectatorIndex = eventData.eventSpectators.findIndex(s => s.id === id);
-          console.log('Índice del espectador en eventSpectators:', spectatorIndex);
+          // Buscar el espectador específico para este evento en zSpectator
+          const spectatorIndex = eventData.zSpectator.findIndex(s => s.spectatorId === id);
+          console.log('Índice del espectador en zSpectator:', spectatorIndex);
           
           if (spectatorIndex !== -1) {
-            const eventSpectator = eventData.eventSpectators[spectatorIndex];
-            console.log('eventSpectator encontrado:', eventSpectator);
+            const spectatorData = eventData.zSpectator[spectatorIndex];
+            console.log('Datos del espectador en zSpectator:', spectatorData);
             
-            // Obtener el valor de numberOfCompanions de eventSpectator 
-            console.log('Usando numberOfCompanions de eventSpectator:', eventSpectator.numberOfCompanions);
-            numberOfCompanions.value = eventSpectator.numberOfCompanions || 0;
-            
-            // También actualizar la preferencia de pago si existe
-            if (eventSpectator.uniquePaymentForGroup !== undefined) {
-              uniquePaymentForGroup.value = eventSpectator.uniquePaymentForGroup;
-            }
-          } else {
-            console.log('Espectador no encontrado en eventSpectators, usando valor general');
-            // Si no encontramos el eventSpectator, usamos el valor general como respaldo
-            numberOfCompanions.value = spectator.value.numberOfPeople - 1;
+            // Obtener el valor de numberOfCompanions de zSpectator
+            console.log('Usando numberOfCompanions de zSpectator:', spectatorData.numberOfCompanions);
+            numberOfCompanions.value = spectatorData.numberOfCompanions || 0;
+            return;
           }
-        } else {
-          console.log('El evento no tiene eventSpectators o no es un array, usando valor general');
-          // Si no hay eventSpectators, usamos el valor general
-          numberOfCompanions.value = spectator.value.numberOfPeople - 1;
         }
+        
+        // Si no se encontró en zSpectator, usar valor por defecto
+        console.log('Espectador no encontrado en zSpectator o no existe zSpectator, usando valor por defecto');
+        numberOfCompanions.value = spectator.value.numberOfPeople ? (spectator.value.numberOfPeople - 1) : 0;
       } else {
-        console.log('El evento no existe, usando valor general');
-        // Si no hay evento, usamos el valor general
-        numberOfCompanions.value = spectator.value.numberOfPeople - 1;
+        console.log('El evento no existe, usando valor por defecto');
+        numberOfCompanions.value = spectator.value.numberOfPeople ? (spectator.value.numberOfPeople - 1) : 0;
       }
     } catch (eventError) {
       console.error('Error al cargar datos del evento:', eventError);
-      // En caso de error, usamos el valor general
-      numberOfCompanions.value = spectator.value.numberOfPeople - 1;
+      // En caso de error, usamos el valor por defecto
+      numberOfCompanions.value = spectator.value.numberOfPeople ? (spectator.value.numberOfPeople - 1) : 0;
     }
   } catch (error) {
     console.error('Error al obtener los datos del espectador:', error);
@@ -208,28 +197,35 @@ const validateCheckin = async () => {
       // Ya no actualizamos isChecked globalmente para evitar afectar otros eventos
     });
 
-    // Obtener el documento del evento para actualizar el eventSpectator específico
+    // Obtener el documento del evento para actualizar el zSpectator específico (nueva estructura)
     const eventDoc = await getDoc(eventRef);
     if (eventDoc.exists()) {
       const eventData = eventDoc.data();
-      const eventSpectators = eventData.eventSpectators || [];
+      const zSpectator = eventData.zSpectator || [];
       
-      // Buscar el índice del espectador actual en el array de eventSpectators
-      const spectatorIndex = eventSpectators.findIndex(s => s.id === id);
+      // Buscar el índice del espectador actual en el array de zSpectator
+      const spectatorIndex = zSpectator.findIndex(s => s.spectatorId === id);
       
       if (spectatorIndex !== -1) {
         // Actualizar solo el registro del espectador para este evento específico
-        eventSpectators[spectatorIndex] = {
-          ...eventSpectators[spectatorIndex],
-          isChecked: true,
-          wasCheckedIn: true,
+        // usando los nuevos campos de la estructura
+        zSpectator[spectatorIndex] = {
+          spectatorId: id,
+          hasCheckIn: true,
           numberOfCompanions: numberOfCompanions.value,
-          uniquePaymentForGroup: uniquePaymentForGroup.value
+          // Asegurarnos de mantener nameComplete o crearlo si no existe
+          nameComplete: zSpectator[spectatorIndex].nameComplete || 
+            `${spectator.value.name || ''} ${spectator.value.lastName || ''}`.trim(),
+          // Mantenemos los demás campos que existan
+          evaluationId: zSpectator[spectatorIndex].evaluationId || null,
+          hasCheckOut: zSpectator[spectatorIndex].hasCheckOut || false,
+          paymentId: zSpectator[spectatorIndex].paymentId || null,
+          createdAt: zSpectator[spectatorIndex].createdAt || new Date()
         };
         
         // Guardar los cambios en el documento del evento
         await updateDoc(eventRef, {
-          eventSpectators: eventSpectators
+          zSpectator: zSpectator
         });
       }
     }
