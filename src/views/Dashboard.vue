@@ -86,6 +86,10 @@ defineComponent({
 const router = useRouter();
 const activeEvents = ref([]);
 const isLoading = ref(true);
+// Definir venueNames, hostNames y assemblyNames antes de usarlos
+const venueNames = ref({});
+const hostNames = ref({});
+const assemblyNames = ref({});
 
 // Función para formatear la fecha
 const formatDate = (timestamp) => {
@@ -139,7 +143,7 @@ const fetchActiveEvents = async () => {
     const assemblyIds = new Set();
     
     activeEvents.value.forEach(event => {
-      if (event.venueId) venueIds.add(event.venueId);
+      if (event._venueId) venueIds.add(event._venueId);
       if (event.hostId) hostIds.add(event.hostId);
       if (event.assemblyId) assemblyIds.add(event.assemblyId);
     });
@@ -290,15 +294,12 @@ const fetchEventSpectators = async (event) => {
   }
 };
 
-// Funciones para obtener nombres de entidades relacionadas
-const venueNames = ref({});
-const hostNames = ref({});
-const assemblyNames = ref({});
+// Estas variables ya fueron definidas anteriormente
 
 // Funciones para obtener nombres de entidades relacionadas
 const venueName = (event) => {
-  if (event.venueId && venueNames.value[event.venueId]) {
-    return venueNames.value[event.venueId];
+  if (event._venueId && venueNames.value[event._venueId]) {
+    return venueNames.value[event._venueId];
   }
   return "Lugar no disponible";
 };
