@@ -64,41 +64,50 @@ const getPaymentDetails = async () => {
       const paymentExists = payments.some(payment => payment.paymentId === paymentId);
       
       if (!paymentExists) {
+        // Asegurarnos que no haya valores undefined antes de usar arrayUnion
+        const paymentData = {
+          paymentId: paymentId || '',
+          numberOfPeople: numberOfPeople ? parseInt(numberOfPeople) : 1,
+          paymentMethod: 'Mercado Pago',
+          amount: paymentDetails.value && paymentDetails.value.amount ? paymentDetails.value.amount : 0,
+          date: new Date() // Timestamp del momento
+        };
+        
         // Si no existe, añadir el nuevo pago (sin actualizar estado global)
         await updateDoc(spectatorRef, {
-          payments: arrayUnion({
-            paymentId: paymentId,
-            numberOfPeople: numberOfPeople,
-            paymentMethod: 'Mercado Pago',
-            amount: paymentDetails.value.amount,
-            date: new Date() // Timestamp del momento
-          })
+          payments: arrayUnion(paymentData)
           // Ya no actualizamos isCheckedOut globalmente para evitar afectar otros eventos
         });
         
-        // Actualizar el eventSpectator específico en el documento del evento
+        // Actualizar el zSpectator específico en el documento del evento
         if (idEvent) {
           const eventRef = doc(db, 'events', idEvent);
           const eventDoc = await getDoc(eventRef);
           
           if (eventDoc.exists()) {
             const eventData = eventDoc.data();
-            const eventSpectators = eventData.eventSpectators || [];
+            const zSpectator = eventData.zSpectator || [];
             
-            // Buscar el índice del espectador actual en el array de eventSpectators
-            const spectatorIndex = eventSpectators.findIndex(s => s.id === idSpectator);
+            // Buscar el índice del espectador actual en el array de zSpectator
+            const spectatorIndex = zSpectator.findIndex(s => s.spectatorId === idSpectator);
             
             if (spectatorIndex !== -1) {
               // Actualizar solo el registro del espectador para este evento específico
-              eventSpectators[spectatorIndex] = {
-                ...eventSpectators[spectatorIndex],
-                isCheckedOut: true,
-                wasCheckedOut: true
+              zSpectator[spectatorIndex] = {
+                // Mantener todos los campos obligatorios
+                spectatorId: idSpectator,
+                numberOfCompanions: zSpectator[spectatorIndex].numberOfCompanions || 0,
+                nameComplete: zSpectator[spectatorIndex].nameComplete || '',
+                hasCheckIn: zSpectator[spectatorIndex].hasCheckIn || false,
+                hasCheckOut: true, // Marcar como checked out
+                paymentId: paymentId || '',
+                evaluationId: zSpectator[spectatorIndex].evaluationId || null,
+                createdAt: zSpectator[spectatorIndex].createdAt || new Date()
               };
               
               // Guardar los cambios en el documento del evento
               await updateDoc(eventRef, {
-                eventSpectators: eventSpectators
+                zSpectator: zSpectator
               });
             }
           }
@@ -113,15 +122,18 @@ const getPaymentDetails = async () => {
   } catch (error) {
     console.error('Error al obtener detalles del pago:', error);
     const spectatorRef = doc(db, 'spectators', idSpectator);
+    // Asegurarnos que no haya valores undefined antes de usar arrayUnion
+    const failedPaymentData = {
+      paymentId: 'failed payment',
+      numberOfPeople: numberOfPeople ? parseInt(numberOfPeople) : 1,
+      paymentMethod: 'Mercado Pago',
+      amount: 0,
+      date: new Date() // Timestamp del momento
+    };
+    
     await updateDoc(spectatorRef, {
-          payments: arrayUnion({
-            paymentId: 'failed payment',
-            numberOfPeople: numberOfPeople,
-            paymentMethod: 'Mercado Pago',
-            amount: 0,
-            date: new Date() // Timestamp del momento
-          })
-        });
+      payments: arrayUnion(failedPaymentData)
+    });
   }
 };
 
@@ -140,41 +152,50 @@ const updateZeroPaymentSpectator = async () => {
     const paymentExists = payments.some(payment => payment.paymentId === paymentId);
     
     if (!paymentExists) {
+      // Asegurarnos que no haya valores undefined antes de usar arrayUnion
+      const paymentData = {
+        paymentMethod: 'BankTransfer',
+        numberOfPeople: numberOfPeople ? parseInt(numberOfPeople) : 1,
+        paymentId: paymentId || '',
+        amount: route.query.amount ? parseFloat(route.query.amount) : 0,
+        date: new Date() // Timestamp del momento
+      };
+      
       // Si no existe, añadir el nuevo pago (sin actualizar estado global de check-out)
       await updateDoc(spectatorRef, {
-        payments: arrayUnion({
-          paymentMethod: 'BankTransfer',
-          numberOfPeople: numberOfPeople,
-          paymentId: paymentId,
-          amount: route.query.amount,
-          date: new Date() // Timestamp del momento
-        })
+        payments: arrayUnion(paymentData)
         // Ya no actualizamos isCheckedOut globalmente para evitar afectar otros eventos
       });
       
-      // Actualizar el eventSpectator específico en el documento del evento
+      // Actualizar el zSpectator específico en el documento del evento
       if (route.query.idEvent) {
         const eventRef = doc(db, 'events', route.query.idEvent);
         const eventDoc = await getDoc(eventRef);
         
         if (eventDoc.exists()) {
           const eventData = eventDoc.data();
-          const eventSpectators = eventData.eventSpectators || [];
+          const zSpectator = eventData.zSpectator || [];
           
-          // Buscar el índice del espectador actual en el array de eventSpectators
-          const spectatorIndex = eventSpectators.findIndex(s => s.id === idSpectator);
+          // Buscar el índice del espectador actual en el array de zSpectator
+          const spectatorIndex = zSpectator.findIndex(s => s.spectatorId === idSpectator);
           
           if (spectatorIndex !== -1) {
             // Actualizar solo el registro del espectador para este evento específico
-            eventSpectators[spectatorIndex] = {
-              ...eventSpectators[spectatorIndex],
-              isCheckedOut: true,
-              wasCheckedOut: true
+            zSpectator[spectatorIndex] = {
+              // Mantener todos los campos obligatorios
+              spectatorId: idSpectator,
+              numberOfCompanions: zSpectator[spectatorIndex].numberOfCompanions || 0,
+              nameComplete: zSpectator[spectatorIndex].nameComplete || '',
+              hasCheckIn: zSpectator[spectatorIndex].hasCheckIn || false,
+              hasCheckOut: true, // Marcar como checked out
+              paymentId: paymentId || '',
+              evaluationId: zSpectator[spectatorIndex].evaluationId || null,
+              createdAt: zSpectator[spectatorIndex].createdAt || new Date()
             };
             
             // Guardar los cambios en el documento del evento
             await updateDoc(eventRef, {
-              eventSpectators: eventSpectators
+              zSpectator: zSpectator
             });
           }
         }

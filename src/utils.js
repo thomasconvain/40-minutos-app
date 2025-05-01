@@ -35,6 +35,7 @@ export const fetchSpectators = async (eventId) => {
  * @param {object} spectatorData - Datos del espectador
  * @param {string} spectatorData.id - ID del espectador
  * @param {number} spectatorData.numberOfCompanions - Número de acompañantes
+ * @param {string} [spectatorData.nameComplete] - Nombre completo del espectador
  * @returns {Promise<boolean>} - true si la operación fue exitosa, false en caso contrario
  */
 export const addSpectatorToEvent = async (eventId, spectatorData) => {
@@ -57,10 +58,42 @@ export const addSpectatorToEvent = async (eventId, spectatorData) => {
     // Verificar si el espectador ya está registrado en este evento
     const eventData = eventSnap.data();
     if (eventData.zSpectator && eventData.zSpectator.some(spec => spec.spectatorId === spectatorData.id)) {
-      console.log('El espectador ya está registrado en este evento:', {
-        eventId,
-        spectatorId: spectatorData.id
-      });
+      // Si el espectador existe pero no tiene nameComplete, actualizar ese campo
+      const existingIndex = eventData.zSpectator.findIndex(spec => spec.spectatorId === spectatorData.id);
+      if (existingIndex !== -1 && !eventData.zSpectator[existingIndex].nameComplete) {
+        // Obtener los datos del espectador para generar nameComplete
+        const spectatorDocRef = doc(db, 'spectators', spectatorData.id);
+        const spectatorDoc = await getDoc(spectatorDocRef);
+        let nameCompleteValue = '';
+        
+        if (spectatorDoc.exists()) {
+          const spectatorData = spectatorDoc.data();
+          nameCompleteValue = `${spectatorData.name || ''} ${spectatorData.lastName || ''}`.trim();
+        } else {
+          // Si el documento no existe o no tiene estos campos, usar el nameComplete proporcionado
+          nameCompleteValue = spectatorData.nameComplete || '';
+        }
+        
+        // Crear una copia del array para poder modificarlo
+        const updatedSpectators = [...eventData.zSpectator];
+        updatedSpectators[existingIndex] = {
+          ...updatedSpectators[existingIndex],
+          nameComplete: nameCompleteValue
+        };
+        
+        // Actualizar el documento con el nuevo array
+        await updateDoc(eventRef, { zSpectator: updatedSpectators });
+        console.log('Actualizado nameComplete para espectador existente:', {
+          eventId,
+          spectatorId: spectatorData.id,
+          nameComplete: nameCompleteValue
+        });
+      } else {
+        console.log('El espectador ya está registrado en este evento:', {
+          eventId,
+          spectatorId: spectatorData.id
+        });
+      }
       return true; // Retornar true porque el espectador ya está en el evento
     }
 
@@ -68,6 +101,7 @@ export const addSpectatorToEvent = async (eventId, spectatorData) => {
     const spectatorForEvent = {
       spectatorId: spectatorData.id,
       numberOfCompanions: spectatorData.numberOfCompanions || 0,
+      nameComplete: spectatorData.nameComplete || '',
       evaluationId: null,
       hasCheckIn: false,
       hasCheckOut: false,

@@ -210,12 +210,17 @@ const validateCheckin = async () => {
         // Actualizar solo el registro del espectador para este evento específico
         // usando los nuevos campos de la estructura
         zSpectator[spectatorIndex] = {
-          ...zSpectator[spectatorIndex],
+          spectatorId: id,
           hasCheckIn: true,
           numberOfCompanions: numberOfCompanions.value,
-          // Mantenemos los demás campos como evaluationId y paymentId
-          evaluationId: zSpectator[spectatorIndex].evaluationId,
-          paymentId: zSpectator[spectatorIndex].paymentId
+          // Asegurarnos de mantener nameComplete o crearlo si no existe
+          nameComplete: zSpectator[spectatorIndex].nameComplete || 
+            `${spectator.value.name || ''} ${spectator.value.lastName || ''}`.trim(),
+          // Mantenemos los demás campos que existan
+          evaluationId: zSpectator[spectatorIndex].evaluationId || null,
+          hasCheckOut: zSpectator[spectatorIndex].hasCheckOut || false,
+          paymentId: zSpectator[spectatorIndex].paymentId || null,
+          createdAt: zSpectator[spectatorIndex].createdAt || new Date()
         };
         
         // Guardar los cambios en el documento del evento

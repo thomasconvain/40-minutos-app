@@ -248,9 +248,11 @@ const submitForm = async () => {
     const eventIds = route.params.idEvent.split(',').map(id => id.trim());
     for (const eventId of eventIds) {
       // Solo guardar en zSpectator los datos mínimos requeridos según el nuevo modelo
+      // Incluir nameComplete solo en zSpectator, no en el documento de espectadores
       const spectatorForEvent = {
         id: user.uid,
-        numberOfCompanions: numberOfCompanions.value
+        numberOfCompanions: numberOfCompanions.value,
+        nameComplete: `${name.value} ${lastName.value}`.trim() // Nuevo campo nameComplete solo para zSpectator
       };
       
       // Añadir espectador al evento (ahora solo actualiza zSpectator)

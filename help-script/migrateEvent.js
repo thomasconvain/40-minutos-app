@@ -65,13 +65,13 @@ async function cloneEvent() {
           // Solo los tres campos relevantes según SpectatorInfo
           createdAt: new Date(), // Fecha actual para createdAt
           spectatorId: spectatorId,
-          numberOfCompanions: spectator.numberOfCompanions || 0 // Obtener directamente de numberOfCompanions
+          numberOfCompanions: spectator.numberOfCompanions || 0, // Obtener directamente de numberOfCompanions
+          nameComplete: `${spectator.name || ''} ${spectator.lastName || ''}`.trim() // Nuevo campo nameComplete
         };
       });
       
       console.log(`Transformados ${zSpectator.length} espectadores al nuevo formato`);
-    }
-    
+}    
     // Crear el nuevo evento con estructura actualizada
     const newEvent = {
       _ref: '',
