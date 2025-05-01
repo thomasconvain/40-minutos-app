@@ -247,8 +247,20 @@ const fetchEvents = async (eventIds) => {
       }
     });
 
+    // Filtrar eventos donde el usuario esté en zSpectator y el evento esté activo
     events.value = eventDocs
-      .filter((eventDoc) => eventDoc.exists() && eventDoc.data().settings?.isActive === true)
+      .filter((eventDoc) => {
+        if (!eventDoc.exists() || eventDoc.data().settings?.isActive !== true) {
+          return false;
+        }
+        
+        // Verificar que el usuario esté en zSpectator
+        const data = eventDoc.data();
+        const userInZSpectator = data.zSpectator && 
+          data.zSpectator.some(spec => spec.spectatorId === spectator.value?.uId);
+        
+        return userInZSpectator;
+      })
       .map((eventDoc) => {
         const data = eventDoc.data();
         console.log("Evento procesado:", eventDoc.id, "data:", JSON.stringify(data));

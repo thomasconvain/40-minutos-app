@@ -81,6 +81,11 @@ export const addSpectatorToEvent = async (eventId, spectatorData) => {
           nameComplete: nameCompleteValue
         };
         
+        // Asegurar que se establezca createdAt para registros antiguos
+        if (!updatedSpectators[existingIndex].createdAt) {
+          updatedSpectators[existingIndex].createdAt = new Date();
+        }
+        
         // Actualizar el documento con el nuevo array
         await updateDoc(eventRef, { zSpectator: updatedSpectators });
         console.log('Actualizado nameComplete para espectador existente:', {
@@ -105,7 +110,8 @@ export const addSpectatorToEvent = async (eventId, spectatorData) => {
       evaluationId: null,
       hasCheckIn: false,
       hasCheckOut: false,
-      paymentId: null
+      paymentId: null,
+      createdAt: new Date()
     };
 
     // Verificar si el evento ya tiene el campo zSpectator
