@@ -1,6 +1,6 @@
 <template>
   <div class="w-full">
-    <p>Selecciona el monto que quieres aportar <span v-if="spectator?.numberOfPeople > 1">para cada integrante de tu grupo:</span></p>
+    <p>Te invitamos a aportar voluntariamente lo que sientas que valió la experiencia. <span v-if="spectator?.numberOfPeople > 1">para cada integrante de tu grupo:</span></p>
     <div v-if="spectator?.numberOfPeople > 1" class="alert alert-info rounded-none my-6">
       <div class="flex">
         <InformationCircleIcon class="-ml-1 mr-3 h-5 min-w-5" aria-hidden="true" />
@@ -79,12 +79,19 @@
       <p>Tu aporte total: {{ uniquePaymentForGroup && spectator ? formatAmount(localAmount[0] * spectator?.numberOfPeople) : formatAmount(totalAmount) }}</p>
       <button v-if="spectator?.numberOfPeople > 1 && isFirstGreaterThanZero" class="btn btn-link btn-sm text-gray-400" @click="setGroupValuesToZero">Prefiero aportar solamente lo mío</button>
     </div>
+    
+    <div v-if="Number(totalAmount) === 0" class="mt-4">
+      <button class="btn btn-primary w-full text-white" @click="finalizeConcert">Finalizar concierto</button>
+    </div>
   </div>
 </template>
 
 <script setup>
 import { ref, reactive, computed, onMounted, watch } from 'vue';
-import { InformationCircleIcon, ShareIcon } from '@heroicons/vue/24/outline'
+import { InformationCircleIcon, ShareIcon } from '@heroicons/vue/24/outline';
+import { useRouter } from 'vue-router';
+
+const router = useRouter();
 
 const props = defineProps({
   spectator: {
@@ -229,6 +236,20 @@ const generateRandomId = () => {
   }
   
   randomId.value = result;
+};
+
+// Función para finalizar el concierto y redirigir a la página de agradecimiento
+const finalizeConcert = () => {
+  router.push({
+    name: 'ThankYou',
+    query: { 
+      idSpectator: props.spectator?.id || props.spectatorId,
+      idEvent: props.eventId,
+      paymentMethod: 'free',
+      payment_id: 'null',
+      amount: 0
+    }
+  });
 };
 
 // Inicializar

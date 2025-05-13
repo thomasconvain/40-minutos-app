@@ -2,14 +2,14 @@
   <div>
     <div class="flex flex-col items-center gap-6">
       <img src="../assets/logo_horizontal.png" width="150">
-      <div v-if="paymentId === 'null'">
+      <div v-if="paymentId === 'null' && route.query.paymentMethod !== 'free'">
         <p>Hubo un problema con tu pago.<br>Asegurate de completar todo el proceso de pago o que tu medio de pago haya sido ingresado correctamente.</p>
         <button class="btn bg-white my-4 w-full" @click="$router.go(-1)">Volver a pantalla de pago</button>
       </div>
       <p v-else id="thank-you-message" class="text-xl mt-2">¡Gracias por asistir!</p>
-        <p v-if="paymentId !== 'null'" class="text-sm mt-2">
+        <p v-if="paymentId !== 'null' || route.query.paymentMethod === 'free'" class="text-sm mt-2">
           Si quieres llevar este concierto a tu casa, colegio u oficina; o quieres preguntarnos algo; o tal vez solo dejarnos tu feedback sobre tu experiencia (ya sea por mensaje escrito o audio)
-          <a v-if="paymentId !== 'null'" href="https://wa.me/56989612263?text=Hola%2C%20quiero%20dar%20feedback%20sobre%20el%20concierto%20de%2040%20Minutos" class="btn btn-neutral text-white mt-4 w-full">Pincha acá</a>
+          <a href="https://wa.me/56989612263?text=Hola%2C%20quiero%20dar%20feedback%20sobre%20el%20concierto%20de%2040%20Minutos" class="btn btn-neutral text-white mt-4 w-full">Pincha acá</a>
           <button class="btn btn-outline border-black bg-transparent text-black mt-2 w-full" @click="finishConcert">Finalizar concierto</button>
         </p>
     </div>
@@ -152,9 +152,12 @@ const updateZeroPaymentSpectator = async () => {
     const paymentExists = payments.some(payment => payment.paymentId === paymentId);
     
     if (!paymentExists) {
+      // Determinar el método de pago (BankTransfer o Free)
+      const paymentMethod = route.query.paymentMethod === 'free' ? 'Free' : 'BankTransfer';
+      
       // Asegurarnos que no haya valores undefined antes de usar arrayUnion
       const paymentData = {
-        paymentMethod: 'BankTransfer',
+        paymentMethod: paymentMethod,
         numberOfPeople: numberOfPeople ? parseInt(numberOfPeople) : 1,
         paymentId: paymentId || '',
         amount: route.query.amount ? parseFloat(route.query.amount) : 0,
@@ -227,7 +230,7 @@ const fetchEvents = async () => {
 
 // Llamar a la función cuando el componente se monte
 onMounted(async () => {
-  if (paymentId) {
+  if (paymentId && paymentId !== 'null') {
     getPaymentDetails();
   } else {
     // Primero obtenemos los datos del evento
