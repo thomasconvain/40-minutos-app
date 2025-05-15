@@ -19,20 +19,19 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import axios from 'axios';
-import { useRoute, useRouter } from 'vue-router';
+import { useRoute } from 'vue-router';
 import { getFirestore, doc, getDoc, updateDoc, arrayUnion } from 'firebase/firestore'; // Importa lo necesario de Firestore
 import { db } from '@/firebase';
 
 const route = useRoute();
-const router = useRouter();
 
 // Definir variable reactiva para almacenar los detalles del pago
 const paymentDetails = ref(null);
 const event = ref();
 
-// Función para finalizar el concierto y regresar a la página principal
+// Función para finalizar el concierto y redirigir al sitio web de 40 Minutos
 const finishConcert = () => {
-  router.push('/');
+  window.location.href = 'https://www.40minutos.com/';
 };
 
 // Obtener los parámetros de la URL

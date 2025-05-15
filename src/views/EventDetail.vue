@@ -45,6 +45,8 @@
     
     <!-- Contenido de la pestaña "Obras" -->
     <div v-if="activeTab === 'programa'">
+      <p class="text-sm text-gray-700 mb-2">Ordena las 5 obras según tus preferencias, asignando estrellas de 1 a 5</p>
+      <p class="text-xs text-gray-700 mb-4">(Todas las obras deben tener distintas estrellas, excepto las Letanías, que es libre)</p>
       <div v-if="themes.length">
         <ul>
           <li v-for="theme in themes" :key="theme.id" class="mb-4 bg-white rounded-md">
@@ -923,7 +925,7 @@ const fetchChapterData = async (chapterId) => {
       
       chapterData.value = {
         id: chapterId,
-        title: data.title || 'Capítulo del concierto',
+        title: data.title || 'Capítulo Introductorio',
         synopsis: data.synopsis || '',
         description: data.description || '',
         themesId: data.themesId || [] // Añadimos themesId para acceder a los temas
