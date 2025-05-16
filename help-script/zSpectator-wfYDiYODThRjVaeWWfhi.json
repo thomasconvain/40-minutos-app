@@ -1,0 +1,1107 @@
+[
+  {
+    "numberOfCompanions": 0,
+    "nameComplete": "Diego  Jaramillo",
+    "spectatorId": "hUFyUgjDqPfheqnFR1TDv597w6f2",
+    "createdAt": {
+      "_seconds": 1746130815,
+      "_nanoseconds": 913000000
+    }
+  },
+  {
+    "paymentId": "111310515791",
+    "nameComplete": "Thomas Convain",
+    "numberOfCompanions": 0,
+    "createdAt": {
+      "_seconds": 1746130815,
+      "_nanoseconds": 914000000
+    },
+    "evaluationId": "b4wnujkx0LWaXseMTpGe",
+    "spectatorId": "2O15OdUa5Rfos2mOPc00IddK95s2",
+    "hasCheckIn": true,
+    "hasCheckOut": true
+  },
+  {
+    "paymentId": null,
+    "hasCheckIn": true,
+    "spectatorId": "4QwgrFBZqhhH9AhuAQ9dl6yTVZC3",
+    "createdAt": {
+      "_seconds": 1746130815,
+      "_nanoseconds": 914000000
+    },
+    "nameComplete": "Francesca Yanatelli",
+    "numberOfCompanions": 2,
+    "hasCheckOut": true,
+    "evaluationId": "iVZgKH8t5x2LftrD5V1n"
+  },
+  {
+    "nameComplete": "Erika Rondón",
+    "numberOfCompanions": 4,
+    "createdAt": {
+      "_seconds": 1746130815,
+      "_nanoseconds": 914000000
+    },
+    "spectatorId": "bZORI4ruPdfK8JNGqCNuoStKVJf2"
+  },
+  {
+    "paymentId": null,
+    "numberOfCompanions": 1,
+    "hasCheckOut": false,
+    "nameComplete": "Karin  Asenjo",
+    "spectatorId": "oi9HMqUV1YQ6eTyDU1kVZDE829Y2",
+    "hasCheckIn": true,
+    "evaluationId": "VeJcFgQXhFXuqcqobI4y",
+    "createdAt": {
+      "_seconds": 1746130815,
+      "_nanoseconds": 914000000
+    }
+  },
+  {
+    "createdAt": {
+      "_seconds": 1746130815,
+      "_nanoseconds": 914000000
+    },
+    "numberOfCompanions": 3,
+    "spectatorId": "KdPSEkvEM1f2c0Rl74DJhjL5Jv12",
+    "nameComplete": "Cristina Canelas"
+  },
+  {
+    "spectatorId": "0jZ58P1iDxWaAn0vmc5y3zRqq1g1",
+    "nameComplete": "Tamara Vildosola Heap",
+    "createdAt": {
+      "_seconds": 1746130815,
+      "_nanoseconds": 914000000
+    },
+    "numberOfCompanions": 5
+  },
+  {
+    "spectatorId": "6WMckRCtSHYoPUOGd9WLLkSJnt82",
+    "nameComplete": "Julian",
+    "createdAt": {
+      "_seconds": 1746130815,
+      "_nanoseconds": 914000000
+    },
+    "numberOfCompanions": 1
+  },
+  {
+    "createdAt": {
+      "_seconds": 1746130815,
+      "_nanoseconds": 914000000
+    },
+    "spectatorId": "amq7jJ3hzhTMdmLcufSCrK9u6f72",
+    "numberOfCompanions": 0,
+    "nameComplete": "Javier Rodriguez"
+  },
+  {
+    "spectatorId": "L4h5QHX15xhIDdJfDl4I8aESUbo1",
+    "paymentId": null,
+    "createdAt": {
+      "_seconds": 1746130815,
+      "_nanoseconds": 914000000
+    },
+    "hasCheckIn": true,
+    "numberOfCompanions": 1,
+    "hasCheckOut": true,
+    "nameComplete": "Consuelo Lizana",
+    "evaluationId": null
+  },
+  {
+    "spectatorId": "FRHCijJAu3NmRrDo9KTVOHQmst72",
+    "nameComplete": "Andrea  Astudillo",
+    "createdAt": {
+      "_seconds": 1746130815,
+      "_nanoseconds": 914000000
+    },
+    "numberOfCompanions": 1
+  },
+  {
+    "evaluationId": null,
+    "numberOfCompanions": 0,
+    "nameComplete": "Andrea Aguilera",
+    "createdAt": {
+      "_seconds": 1746130815,
+      "_nanoseconds": 914000000
+    },
+    "spectatorId": "tAPsUXbtUAgVtXiC9MWZQBvyXB93",
+    "hasCheckOut": false,
+    "hasCheckIn": true,
+    "paymentId": null
+  },
+  {
+    "paymentId": "t0NvJsMMezZenWZtyRvIjLk0AJ93-owner",
+    "hasCheckIn": true,
+    "nameComplete": "Verónica  Llanos",
+    "createdAt": {
+      "_seconds": 1746130815,
+      "_nanoseconds": 914000000
+    },
+    "hasCheckOut": true,
+    "numberOfCompanions": 1,
+    "evaluationId": "s1YWmn1fZXqsKyPh0rej",
+    "spectatorId": "t0NvJsMMezZenWZtyRvIjLk0AJ93"
+  },
+  {
+    "createdAt": {
+      "_seconds": 1746130815,
+      "_nanoseconds": 914000000
+    },
+    "numberOfCompanions": 0,
+    "spectatorId": "xc89iaR0ehc2DQlhIwoaYCnXgss1",
+    "nameComplete": "Hna. M. Agustina Góngora Venegas"
+  },
+  {
+    "numberOfCompanions": 2,
+    "createdAt": {
+      "_seconds": 1746130815,
+      "_nanoseconds": 914000000
+    },
+    "nameComplete": "Soledad  Nuñez",
+    "spectatorId": "MiAJwVkAGeTy97vFq56d5ATCtfH2"
+  },
+  {
+    "numberOfCompanions": 0,
+    "spectatorId": "eejJ4wynylYTlReVTIwkMvjA6DF2",
+    "nameComplete": "Felipe Espinoza Leyton",
+    "createdAt": {
+      "_seconds": 1746130815,
+      "_nanoseconds": 914000000
+    }
+  },
+  {
+    "createdAt": {
+      "_seconds": 1746130815,
+      "_nanoseconds": 914000000
+    },
+    "nameComplete": "Carmen  Polanco",
+    "numberOfCompanions": 1,
+    "spectatorId": "r7bniPrQn8e9BxacEj1rAX7g0PV2"
+  },
+  {
+    "nameComplete": "Jowita Bielecka",
+    "createdAt": {
+      "_seconds": 1746130815,
+      "_nanoseconds": 914000000
+    },
+    "numberOfCompanions": 0,
+    "spectatorId": "IRKBEpeIIIMAjIWHQbWhbIgQgP82"
+  },
+  {
+    "spectatorId": "mWvd3tur7BVxyAKYe6vTbinNrMd2",
+    "createdAt": {
+      "_seconds": 1746130815,
+      "_nanoseconds": 914000000
+    },
+    "nameComplete": "Isabella  Corey",
+    "numberOfCompanions": 1
+  },
+  {
+    "numberOfCompanions": 2,
+    "createdAt": {
+      "_seconds": 1746130815,
+      "_nanoseconds": 914000000
+    },
+    "nameComplete": "veronica Vergara",
+    "spectatorId": "N8WxVbUYg2SEeMfKRzGKCZvW6YE3"
+  },
+  {
+    "createdAt": {
+      "_seconds": 1746130815,
+      "_nanoseconds": 914000000
+    },
+    "spectatorId": "hQ2IYQtCKpaqIVfYL7zsHZrX1qw1",
+    "nameComplete": "Cristian Miranda Lavarello",
+    "numberOfCompanions": 3
+  },
+  {
+    "spectatorId": "s3nqj4GoGfO7sB6O1cXAcYhPbkD3",
+    "evaluationId": null,
+    "numberOfCompanions": 2,
+    "createdAt": {
+      "_seconds": 1746130815,
+      "_nanoseconds": 914000000
+    },
+    "paymentId": null,
+    "nameComplete": "cristian rodriguez",
+    "hasCheckIn": true,
+    "hasCheckOut": true
+  },
+  {
+    "spectatorId": "5FUpXO0jnrhCpnU8OXyDD9rK9Fj1",
+    "nameComplete": "Nikol Sanchez Gonzalez",
+    "numberOfCompanions": 2,
+    "createdAt": {
+      "_seconds": 1746130815,
+      "_nanoseconds": 914000000
+    }
+  },
+  {
+    "spectatorId": "EoMOlkSZJCcnJfNpSqpi43GzQpb2",
+    "numberOfCompanions": 1,
+    "nameComplete": "Pilar Lagos",
+    "createdAt": {
+      "_seconds": 1746130815,
+      "_nanoseconds": 914000000
+    }
+  },
+  {
+    "numberOfCompanions": 1,
+    "spectatorId": "VwtvJYklB1TIBmiSHKrzoKuoFj82",
+    "createdAt": {
+      "_seconds": 1746130815,
+      "_nanoseconds": 914000000
+    },
+    "nameComplete": "Gloria Trujillo"
+  },
+  {
+    "numberOfCompanions": 0,
+    "spectatorId": "YwlOTJEPlhcNODzDmekL4lArdKZ2",
+    "createdAt": {
+      "_seconds": 1746130815,
+      "_nanoseconds": 914000000
+    },
+    "nameComplete": "Magdalena Kopf Aguirre"
+  },
+  {
+    "nameComplete": "Eduardo Fuentes Caro",
+    "spectatorId": "xpBNUXJqRJSq0WhDL39uI1e7WBg2",
+    "createdAt": {
+      "_seconds": 1746130815,
+      "_nanoseconds": 914000000
+    },
+    "numberOfCompanions": 0
+  },
+  {
+    "spectatorId": "XVXAH0JZVmRmVpZ78LSEwyK2Fjk2",
+    "numberOfCompanions": 0,
+    "createdAt": {
+      "_seconds": 1746130815,
+      "_nanoseconds": 914000000
+    },
+    "nameComplete": "Paulina Aguayo Gómez"
+  },
+  {
+    "numberOfCompanions": 4,
+    "spectatorId": "cfSSryV3wQYd3EYsMCUmhS7t4hp1",
+    "nameComplete": "Andrea Merino Osorio",
+    "createdAt": {
+      "_seconds": 1746130815,
+      "_nanoseconds": 914000000
+    }
+  },
+  {
+    "createdAt": {
+      "_seconds": 1746130815,
+      "_nanoseconds": 914000000
+    },
+    "spectatorId": "DHDEDxaFmjbc9crsc7Jzv0ACNdH2",
+    "nameComplete": "Kelly Augusto",
+    "numberOfCompanions": 1
+  },
+  {
+    "createdAt": {
+      "_seconds": 1746130815,
+      "_nanoseconds": 914000000
+    },
+    "spectatorId": "u60HfxjqYDhphcShKSWEOABQdTA3",
+    "numberOfCompanions": 1,
+    "nameComplete": "Myriam Morgado"
+  },
+  {
+    "hasCheckIn": true,
+    "nameComplete": "Deyvid Bustos",
+    "spectatorId": "ZUWpLMSS2YURLTSmP1r4EDD4qDw1",
+    "evaluationId": "rV7F1WLnL5Fd4QbBYvpu",
+    "numberOfCompanions": 0,
+    "hasCheckOut": true,
+    "paymentId": "RWCOJpTfLZXHbNe8N2JV",
+    "createdAt": {
+      "_seconds": 1746130815,
+      "_nanoseconds": 914000000
+    }
+  },
+  {
+    "numberOfCompanions": 0,
+    "nameComplete": "javiera marambio",
+    "spectatorId": "D8Kmjl7Zykhfketufk9WIfBAAwA3",
+    "createdAt": {
+      "_seconds": 1746130815,
+      "_nanoseconds": 914000000
+    }
+  },
+  {
+    "createdAt": {
+      "_seconds": 1746130815,
+      "_nanoseconds": 914000000
+    },
+    "nameComplete": "Josefina Irarrázaval",
+    "spectatorId": "GOL6vag5IyWomW3lM0w6Wdqlrih1",
+    "numberOfCompanions": 0
+  },
+  {
+    "hasCheckOut": true,
+    "paymentId": "sHfgyVbGASXpBk4LmVau88Wh8Ix1-owner",
+    "spectatorId": "sHfgyVbGASXpBk4LmVau88Wh8Ix1",
+    "hasCheckIn": true,
+    "numberOfCompanions": 0,
+    "nameComplete": "Benjamín Mujica",
+    "createdAt": {
+      "_seconds": 1746483221,
+      "_nanoseconds": 397000000
+    },
+    "evaluationId": "bVyh7AfobQlSA8yhuEL4"
+  },
+  {
+    "spectatorId": "9220mytXJlMLYpNmiWyCan1bygf1",
+    "hasCheckIn": false,
+    "hasCheckOut": false,
+    "evaluationId": null,
+    "paymentId": null,
+    "nameComplete": "Hugo Villena",
+    "createdAt": {
+      "_seconds": 1746536820,
+      "_nanoseconds": 691000000
+    },
+    "numberOfCompanions": 1
+  },
+  {
+    "paymentId": null,
+    "hasCheckIn": false,
+    "createdAt": {
+      "_seconds": 1746537030,
+      "_nanoseconds": 308000000
+    },
+    "spectatorId": "hU7ZBhv2VDVZsMEKf4caiHw4K9J3",
+    "hasCheckOut": false,
+    "evaluationId": null,
+    "numberOfCompanions": 3,
+    "nameComplete": "Gonzalo  Véjar Brañas"
+  },
+  {
+    "numberOfCompanions": 1,
+    "hasCheckOut": false,
+    "evaluationId": null,
+    "spectatorId": "Vxi3AFZzAmcbqkHHDX6EB2ni2Fs2",
+    "hasCheckIn": false,
+    "createdAt": {
+      "_seconds": 1746538356,
+      "_nanoseconds": 895000000
+    },
+    "nameComplete": "verónica regazzoni",
+    "paymentId": null
+  },
+  {
+    "hasCheckIn": false,
+    "spectatorId": "c0LQlp6qpVXvzcQIejh9MJNptDN2",
+    "evaluationId": null,
+    "numberOfCompanions": 1,
+    "nameComplete": "Eduardo Sotomayor",
+    "createdAt": {
+      "_seconds": 1746538454,
+      "_nanoseconds": 961000000
+    },
+    "hasCheckOut": false,
+    "paymentId": null
+  },
+  {
+    "hasCheckOut": false,
+    "numberOfCompanions": 2,
+    "spectatorId": "rcPVlJgUJueZSyr0GzeZ7m7G1Om2",
+    "paymentId": null,
+    "createdAt": {
+      "_seconds": 1746538929,
+      "_nanoseconds": 408000000
+    },
+    "nameComplete": "Sandra Valderrama arancibia",
+    "evaluationId": null,
+    "hasCheckIn": false
+  },
+  {
+    "evaluationId": "p3CLJ9ZxapTw7bmdgop4",
+    "paymentId": null,
+    "hasCheckIn": true,
+    "numberOfCompanions": 5,
+    "spectatorId": "woYgupwzywhFvMX3kC3HBIxbqrv2",
+    "nameComplete": "Antonio Salles",
+    "createdAt": {
+      "_seconds": 1746540001,
+      "_nanoseconds": 419000000
+    },
+    "hasCheckOut": false
+  },
+  {
+    "spectatorId": "1lc2T8ExHweogcKgAnxvr9n05Xp1",
+    "hasCheckIn": false,
+    "hasCheckOut": false,
+    "paymentId": null,
+    "evaluationId": null,
+    "createdAt": {
+      "_seconds": 1746544102,
+      "_nanoseconds": 866000000
+    },
+    "nameComplete": "Ignacia Zañartu",
+    "numberOfCompanions": 1
+  },
+  {
+    "paymentId": null,
+    "nameComplete": "Mónica Ximena Meléndrez Cancino",
+    "numberOfCompanions": 2,
+    "evaluationId": null,
+    "createdAt": {
+      "_seconds": 1746544739,
+      "_nanoseconds": 542000000
+    },
+    "spectatorId": "YSBiYwuTCNfVglEkAHf4deW1xXj2",
+    "hasCheckIn": false,
+    "hasCheckOut": false
+  },
+  {
+    "evaluationId": null,
+    "createdAt": {
+      "_seconds": 1746544548,
+      "_nanoseconds": 483000000
+    },
+    "hasCheckIn": false,
+    "numberOfCompanions": 1,
+    "spectatorId": "0rQ2DmEAUKPKc9P28A3mqCRl3KO2",
+    "paymentId": null,
+    "hasCheckOut": false,
+    "nameComplete": "Valentina Yañez Rebolledo"
+  },
+  {
+    "hasCheckIn": false,
+    "spectatorId": "YUEAKGBtmwg1Ye0R4o5jKI3QvBG3",
+    "paymentId": null,
+    "nameComplete": "igor Arratia Bizama",
+    "evaluationId": null,
+    "hasCheckOut": false,
+    "numberOfCompanions": 4,
+    "createdAt": {
+      "_seconds": 1746549712,
+      "_nanoseconds": 793000000
+    }
+  },
+  {
+    "spectatorId": "MYJOhkehu6gdksspDHicHLTQhDX2",
+    "numberOfCompanions": 1,
+    "evaluationId": null,
+    "hasCheckOut": false,
+    "createdAt": {
+      "_seconds": 1746558964,
+      "_nanoseconds": 535000000
+    },
+    "paymentId": null,
+    "hasCheckIn": false,
+    "nameComplete": "CECILIA LÓPEZ"
+  },
+  {
+    "evaluationId": null,
+    "paymentId": null,
+    "spectatorId": "ld2VF05nUnRs1VRfCvCs5zaUqg02",
+    "hasCheckOut": false,
+    "nameComplete": "VICTORIA OLMOS",
+    "numberOfCompanions": 1,
+    "hasCheckIn": false,
+    "createdAt": {
+      "_seconds": 1746566634,
+      "_nanoseconds": 771000000
+    }
+  },
+  {
+    "nameComplete": "Lesly Urriola",
+    "hasCheckIn": false,
+    "spectatorId": "4H1sg3gSxpRoIAlrVE1Y8f0EeiN2",
+    "evaluationId": null,
+    "numberOfCompanions": 0,
+    "hasCheckOut": false,
+    "paymentId": null,
+    "createdAt": {
+      "_seconds": 1746621655,
+      "_nanoseconds": 920000000
+    }
+  },
+  {
+    "numberOfCompanions": 0,
+    "paymentId": null,
+    "evaluationId": null,
+    "spectatorId": "CvfzawIdBnbhezOpToz8Xi1Jbko1",
+    "hasCheckIn": false,
+    "createdAt": {
+      "_seconds": 1746649257,
+      "_nanoseconds": 609000000
+    },
+    "nameComplete": "sofia rozas figueroa",
+    "hasCheckOut": false
+  },
+  {
+    "numberOfCompanions": 2,
+    "paymentId": null,
+    "hasCheckIn": false,
+    "nameComplete": "Vicente Larrain",
+    "hasCheckOut": false,
+    "evaluationId": null,
+    "createdAt": {
+      "_seconds": 1746714078,
+      "_nanoseconds": 431000000
+    },
+    "spectatorId": "u57Sueh0ZsPD4dKRp8GqqrV92ml1"
+  },
+  {
+    "spectatorId": "w15IIXHrS2OrS8XAMk4kgqwduKT2",
+    "createdAt": {
+      "_seconds": 1746731527,
+      "_nanoseconds": 826000000
+    },
+    "numberOfCompanions": 2,
+    "nameComplete": "Francisca  Dunay",
+    "hasCheckOut": false,
+    "evaluationId": null,
+    "paymentId": null,
+    "hasCheckIn": false
+  },
+  {
+    "evaluationId": null,
+    "paymentId": null,
+    "hasCheckIn": false,
+    "nameComplete": "Litzmer Pires",
+    "numberOfCompanions": 1,
+    "createdAt": {
+      "_seconds": 1746825224,
+      "_nanoseconds": 753000000
+    },
+    "hasCheckOut": false,
+    "spectatorId": "qxVJJ9w7hzeH5dYiCYwPfz2N5SC3"
+  },
+  {
+    "spectatorId": "YWzJGcQUFJZTRDAZOYqi6G8cjg93",
+    "hasCheckOut": true,
+    "nameComplete": "Camila Valenzuela",
+    "numberOfCompanions": 1,
+    "createdAt": {
+      "_seconds": 1747007116,
+      "_nanoseconds": 190000000
+    },
+    "hasCheckIn": true,
+    "paymentId": null,
+    "evaluationId": "4Y3hHUvWalwP9QR2icRz"
+  },
+  {
+    "nameComplete": "Martina Figueroa",
+    "evaluationId": null,
+    "hasCheckOut": false,
+    "numberOfCompanions": 2,
+    "paymentId": null,
+    "spectatorId": "SvFREoQZP7PsjeYLLlAUXyi0uul2",
+    "hasCheckIn": false,
+    "createdAt": {
+      "_seconds": 1747094326,
+      "_nanoseconds": 818000000
+    }
+  },
+  {
+    "hasCheckIn": true,
+    "nameComplete": "Gabriela Cortés Valdés",
+    "hasCheckOut": false,
+    "paymentId": null,
+    "spectatorId": "OZmCjjMLZEeKPRqAgKuPezXZXo43",
+    "numberOfCompanions": 1,
+    "createdAt": {
+      "_seconds": 1747094667,
+      "_nanoseconds": 752000000
+    },
+    "evaluationId": null
+  },
+  {
+    "numberOfCompanions": 2,
+    "hasCheckIn": true,
+    "evaluationId": "8fOlOyabsUqSZucT9kx8",
+    "createdAt": {
+      "_seconds": 1747096899,
+      "_nanoseconds": 637000000
+    },
+    "spectatorId": "GSVuaSSkTnUZWAsxyKOGBaQiqba2",
+    "paymentId": null,
+    "hasCheckOut": true,
+    "nameComplete": "Nicolas Arancibia Román"
+  },
+  {
+    "evaluationId": null,
+    "numberOfCompanions": 2,
+    "hasCheckOut": false,
+    "createdAt": {
+      "_seconds": 1747143884,
+      "_nanoseconds": 467000000
+    },
+    "spectatorId": "50wjg7A0UBfy2j1UyB7LdmRkuZU2",
+    "hasCheckIn": false,
+    "paymentId": null,
+    "nameComplete": "Carolina Garcia"
+  },
+  {
+    "createdAt": {
+      "_seconds": 1747146896,
+      "_nanoseconds": 608000000
+    },
+    "evaluationId": null,
+    "paymentId": null,
+    "hasCheckIn": false,
+    "hasCheckOut": false,
+    "spectatorId": "wk9XITKqkmbNEZTzvYxzBqMYL1h1",
+    "nameComplete": "Sara Brito",
+    "numberOfCompanions": 1
+  },
+  {
+    "spectatorId": "tyiNJagj8EURQ4MtQqm0xDSTB9S2",
+    "hasCheckOut": true,
+    "hasCheckIn": true,
+    "createdAt": {
+      "_seconds": 1747147533,
+      "_nanoseconds": 971000000
+    },
+    "paymentId": "111759665316",
+    "nameComplete": "Javiera  Rencoret",
+    "numberOfCompanions": 1,
+    "evaluationId": null
+  },
+  {
+    "numberOfCompanions": 1,
+    "evaluationId": "ThQ3JhcZmUD0UYeFGexL",
+    "nameComplete": "claudia lopez",
+    "hasCheckOut": true,
+    "hasCheckIn": false,
+    "createdAt": {
+      "_seconds": 1747180141,
+      "_nanoseconds": 148000000
+    },
+    "paymentId": "L7toQ7GK3BeCWxOHLzjMR2kOLDp1-owner",
+    "spectatorId": "L7toQ7GK3BeCWxOHLzjMR2kOLDp1"
+  },
+  {
+    "createdAt": {
+      "_seconds": 1747181100,
+      "_nanoseconds": 770000000
+    },
+    "nameComplete": "Felipe  Rojas",
+    "evaluationId": null,
+    "paymentId": null,
+    "hasCheckOut": false,
+    "spectatorId": "wBQ1fQSwAsOcdnmryC6sZGax65l2",
+    "numberOfCompanions": 1,
+    "hasCheckIn": false
+  },
+  {
+    "createdAt": {
+      "_seconds": 1747181809,
+      "_nanoseconds": 725000000
+    },
+    "hasCheckIn": false,
+    "paymentId": null,
+    "nameComplete": "Maricela  Garrido",
+    "evaluationId": null,
+    "hasCheckOut": false,
+    "numberOfCompanions": 1,
+    "spectatorId": "pcTbIhgRKWgEup04xPt8j4mEWSE2"
+  },
+  {
+    "hasCheckIn": false,
+    "evaluationId": null,
+    "numberOfCompanions": 0,
+    "paymentId": null,
+    "createdAt": {
+      "_seconds": 1747182134,
+      "_nanoseconds": 796000000
+    },
+    "hasCheckOut": false,
+    "spectatorId": "wwlRd4NIuPZ1BETpsvWMj0kThRe2",
+    "nameComplete": "Elisa Pereda Briñez"
+  },
+  {
+    "hasCheckOut": false,
+    "spectatorId": "RS8eGw9K8deC27MwrT8BeG9gOVa2",
+    "nameComplete": "Davor ignacio Sesnich berrios",
+    "hasCheckIn": false,
+    "evaluationId": null,
+    "paymentId": null,
+    "createdAt": {
+      "_seconds": 1747183230,
+      "_nanoseconds": 833000000
+    },
+    "numberOfCompanions": 1
+  },
+  {
+    "spectatorId": "ghrlZ4hLMDSQNcmreYCxK6CIYt83",
+    "evaluationId": null,
+    "paymentId": null,
+    "createdAt": {
+      "_seconds": 1747185634,
+      "_nanoseconds": 857000000
+    },
+    "hasCheckOut": false,
+    "nameComplete": "Carmen  Ortiz",
+    "numberOfCompanions": 1,
+    "hasCheckIn": false
+  },
+  {
+    "hasCheckIn": true,
+    "createdAt": {
+      "_seconds": 1747186650,
+      "_nanoseconds": 107000000
+    },
+    "evaluationId": null,
+    "hasCheckOut": true,
+    "paymentId": null,
+    "numberOfCompanions": 4,
+    "nameComplete": "Pilar  Bravo Manterola",
+    "spectatorId": "xayIgtGPsudT8kNAMnylr5SJ49i1"
+  },
+  {
+    "paymentId": null,
+    "hasCheckIn": false,
+    "hasCheckOut": false,
+    "nameComplete": "Maria Paz herrera",
+    "evaluationId": null,
+    "spectatorId": "sQPIoa5l5hRRbTkCcLQXsnJIHAw2",
+    "numberOfCompanions": 2,
+    "createdAt": {
+      "_seconds": 1747193502,
+      "_nanoseconds": 904000000
+    }
+  },
+  {
+    "createdAt": {
+      "_seconds": 1747196424,
+      "_nanoseconds": 832000000
+    },
+    "evaluationId": "ADZIpOuWU5wqqC3OX4tP",
+    "paymentId": "BGcAkEHiQWRH8wB88iEQ",
+    "hasCheckIn": true,
+    "nameComplete": "Maria Jose Delzon Lizama",
+    "numberOfCompanions": 3,
+    "hasCheckOut": true,
+    "spectatorId": "PoZBG6kfPfSZ7RbaIBELnQ4qmcz1"
+  },
+  {
+    "hasCheckIn": false,
+    "evaluationId": null,
+    "paymentId": null,
+    "createdAt": {
+      "_seconds": 1747219774,
+      "_nanoseconds": 961000000
+    },
+    "spectatorId": "tW0Fp3EWw3YmNTpjo93YUIv3uPQ2",
+    "numberOfCompanions": 1,
+    "nameComplete": "Rosario Fernandez",
+    "hasCheckOut": false
+  },
+  {
+    "spectatorId": "GbyNv84UvYVnmW0UAV6hrezyCGD3",
+    "createdAt": {
+      "_seconds": 1747227703,
+      "_nanoseconds": 813000000
+    },
+    "numberOfCompanions": 1,
+    "paymentId": null,
+    "hasCheckIn": false,
+    "nameComplete": "Pilar  Suárez González",
+    "evaluationId": null,
+    "hasCheckOut": false
+  },
+  {
+    "hasCheckIn": false,
+    "numberOfCompanions": 0,
+    "nameComplete": "Crfhju Yes  tú Ku  y effj",
+    "evaluationId": null,
+    "spectatorId": "FhMcOKendHYsJzHKoqQPaLPDMoE3",
+    "createdAt": {
+      "_seconds": 1747234356,
+      "_nanoseconds": 340000000
+    },
+    "paymentId": null,
+    "hasCheckOut": false
+  },
+  {
+    "paymentId": null,
+    "hasCheckIn": true,
+    "numberOfCompanions": 2,
+    "hasCheckOut": true,
+    "spectatorId": "55ANPZVnjwO9iUhfJFZp3KKQFHJ3",
+    "nameComplete": "Helena Vega",
+    "evaluationId": "WIUpxmooWjbmPE3X7mOZ",
+    "createdAt": {
+      "_seconds": 1747238116,
+      "_nanoseconds": 411000000
+    }
+  },
+  {
+    "numberOfCompanions": 2,
+    "spectatorId": "rcAhunblRxd25F3mc88k1Xly6a62",
+    "paymentId": null,
+    "createdAt": {
+      "_seconds": 1747238274,
+      "_nanoseconds": 840000000
+    },
+    "nameComplete": "Marcelo Lecaros",
+    "evaluationId": null,
+    "hasCheckIn": false,
+    "hasCheckOut": false
+  },
+  {
+    "evaluationId": "Z8RyYYMVcLhZLiGaktMo",
+    "hasCheckOut": true,
+    "paymentId": "111768679442",
+    "numberOfCompanions": 1,
+    "spectatorId": "LbNWCf1kthSHlJZml7H3QpzAU6Y2",
+    "nameComplete": "Paulina  Valenzuela",
+    "hasCheckIn": true,
+    "createdAt": {
+      "_seconds": 1747259700,
+      "_nanoseconds": 258000000
+    }
+  },
+  {
+    "nameComplete": "Claudia  Olivos Moya",
+    "numberOfCompanions": 1,
+    "hasCheckIn": false,
+    "hasCheckOut": false,
+    "createdAt": {
+      "_seconds": 1747261531,
+      "_nanoseconds": 545000000
+    },
+    "evaluationId": null,
+    "paymentId": null,
+    "spectatorId": "d3pN4M7uXGSqN95as4dKvdFwezy1"
+  },
+  {
+    "hasCheckIn": false,
+    "evaluationId": null,
+    "numberOfCompanions": 0,
+    "paymentId": null,
+    "createdAt": {
+      "_seconds": 1747319522,
+      "_nanoseconds": 94000000
+    },
+    "nameComplete": "Felipe Espinoza",
+    "hasCheckOut": false,
+    "spectatorId": "plpeNd1WHxgin2a7h5HTTHAPMSj2"
+  },
+  {
+    "hasCheckOut": true,
+    "paymentId": "e4m2oG51iIU4IXir9gXGdug4icw1-owner",
+    "evaluationId": "7D9NpnzhINuuw3rqQDVS",
+    "spectatorId": "e4m2oG51iIU4IXir9gXGdug4icw1",
+    "nameComplete": "Pilar  Benavides Valdes",
+    "hasCheckIn": true,
+    "numberOfCompanions": 1,
+    "createdAt": {
+      "_seconds": 1747320416,
+      "_nanoseconds": 728000000
+    }
+  },
+  {
+    "paymentId": null,
+    "evaluationId": null,
+    "numberOfCompanions": 3,
+    "createdAt": {
+      "_seconds": 1747320784,
+      "_nanoseconds": 332000000
+    },
+    "nameComplete": "Cristobal Iturrieta Vicuña",
+    "hasCheckOut": false,
+    "spectatorId": "ETa3UdjFaMc9Qj16KhhlGjhmPrp1",
+    "hasCheckIn": false
+  },
+  {
+    "createdAt": {
+      "_seconds": 1747322731,
+      "_nanoseconds": 356000000
+    },
+    "paymentId": null,
+    "hasCheckOut": false,
+    "numberOfCompanions": "",
+    "nameComplete": "Paz Verónica Santibáñez Galleguillos",
+    "evaluationId": "dJF2oy3xC56qEDikCoWL",
+    "spectatorId": "jeSxcxS5BKMXE8xw4Eo1FctNoeJ2",
+    "hasCheckIn": true
+  },
+  {
+    "hasCheckIn": false,
+    "nameComplete": "Fernando Javier Merino Laval",
+    "hasCheckOut": false,
+    "createdAt": {
+      "_seconds": 1747323238,
+      "_nanoseconds": 393000000
+    },
+    "spectatorId": "AbJbYGCI7OdTEt7jclRRgDeauFj1",
+    "numberOfCompanions": 0,
+    "evaluationId": null,
+    "paymentId": null
+  },
+  {
+    "hasCheckOut": false,
+    "createdAt": {
+      "_seconds": 1747323625,
+      "_nanoseconds": 967000000
+    },
+    "nameComplete": "Paola Diaz",
+    "hasCheckIn": false,
+    "spectatorId": "JvPKaWAHdYgVEVlPduJYi38PWTz1",
+    "evaluationId": null,
+    "paymentId": null,
+    "numberOfCompanions": 3
+  },
+  {
+    "numberOfCompanions": 0,
+    "spectatorId": "GvfcivrjzdTQGMV0BluL3SZV9t32",
+    "hasCheckOut": false,
+    "nameComplete": "Pia Hernandez",
+    "hasCheckIn": false,
+    "evaluationId": null,
+    "createdAt": {
+      "_seconds": 1747324724,
+      "_nanoseconds": 13000000
+    },
+    "paymentId": null
+  },
+  {
+    "numberOfCompanions": 3,
+    "evaluationId": null,
+    "createdAt": {
+      "_seconds": 1747327144,
+      "_nanoseconds": 489000000
+    },
+    "hasCheckIn": false,
+    "paymentId": null,
+    "spectatorId": "bIIcZtamDAZ2qVf9q7fhDfAUjF33",
+    "nameComplete": "Giannina Fazzi",
+    "hasCheckOut": false
+  },
+  {
+    "createdAt": {
+      "_seconds": 1747345517,
+      "_nanoseconds": 233000000
+    },
+    "hasCheckOut": true,
+    "evaluationId": null,
+    "numberOfCompanions": 2,
+    "paymentId": "9KcrGlvk3cUepqwfdp08RiO0WkI2-owner",
+    "hasCheckIn": true,
+    "nameComplete": "Cesar  Hidalgo Robledo",
+    "spectatorId": "9KcrGlvk3cUepqwfdp08RiO0WkI2"
+  },
+  {
+    "paymentId": null,
+    "spectatorId": "uE9PfFvOphMngsm3Z9Hk1pegxWj1",
+    "nameComplete": "Isidora Frías Richard",
+    "createdAt": {
+      "_seconds": 1747350906,
+      "_nanoseconds": 229000000
+    },
+    "evaluationId": "ys1C294aUHPV1SmRGKjl",
+    "hasCheckIn": true,
+    "hasCheckOut": false,
+    "numberOfCompanions": 0
+  },
+  {
+    "evaluationId": null,
+    "paymentId": null,
+    "createdAt": {
+      "_seconds": 1747351364,
+      "_nanoseconds": 220000000
+    },
+    "spectatorId": "DlVupzn16JTG56ZbLLk4GOMmk7I3",
+    "hasCheckIn": false,
+    "nameComplete": "Javier Rodriguez",
+    "hasCheckOut": false,
+    "numberOfCompanions": 0
+  },
+  {
+    "evaluationId": "1BVX9lfbT5LdP5bxSJfr",
+    "numberOfCompanions": 0,
+    "spectatorId": "NydENq7fmiPMmfuzJgohsp6vqqF2",
+    "nameComplete": "Stefano  Perretta",
+    "hasCheckOut": true,
+    "createdAt": {
+      "_seconds": 1747352055,
+      "_nanoseconds": 772000000
+    },
+    "hasCheckIn": true,
+    "paymentId": "NydENq7fmiPMmfuzJgohsp6vqqF2-owner"
+  },
+  {
+    "hasCheckOut": true,
+    "spectatorId": "Tk4lnTP7DMX4PhYY9CE7ZS2TPCf1",
+    "createdAt": {
+      "_seconds": 1747353156,
+      "_nanoseconds": 666000000
+    },
+    "paymentId": null,
+    "numberOfCompanions": 1,
+    "evaluationId": "GyaUn2APxv7d6lJbNrcc",
+    "hasCheckIn": true,
+    "nameComplete": "Jorge Herrera Kemp"
+  },
+  {
+    "numberOfCompanions": 0,
+    "hasCheckIn": true,
+    "createdAt": {
+      "_seconds": 1747353257,
+      "_nanoseconds": 433000000
+    },
+    "hasCheckOut": false,
+    "spectatorId": "1DTKAWJSQGaZjdgaBMZWUCwIxID3",
+    "paymentId": null,
+    "nameComplete": "Paulina Quijada jara",
+    "evaluationId": "60GOaWE7rf0UoL85vQC5"
+  },
+  {
+    "paymentId": null,
+    "hasCheckOut": true,
+    "spectatorId": "LKsH71Nho9Vd20xcZJuZrekzGvf2",
+    "nameComplete": "Hna Trinidad  Espinosa",
+    "numberOfCompanions": 1,
+    "evaluationId": "M0FLBj7GuaNKiwV3j7ER",
+    "hasCheckIn": true,
+    "createdAt": {
+      "_seconds": 1747354256,
+      "_nanoseconds": 176000000
+    }
+  },
+  {
+    "spectatorId": "JyCVsr0QNeQAfvepevHHyvpfdLp1",
+    "evaluationId": null,
+    "paymentId": null,
+    "hasCheckIn": true,
+    "numberOfCompanions": 0,
+    "hasCheckOut": false,
+    "createdAt": {
+      "_seconds": 1747354380,
+      "_nanoseconds": 381000000
+    },
+    "nameComplete": "Isabel De la Jara"
+  },
+  {
+    "spectatorId": "WXvQ6JBbGcgr80bHRbHvzVtxHE52",
+    "createdAt": {
+      "_seconds": 1747354386,
+      "_nanoseconds": 765000000
+    },
+    "hasCheckIn": true,
+    "paymentId": null,
+    "nameComplete": "Jimena  Alliende",
+    "evaluationId": null,
+    "numberOfCompanions": 0,
+    "hasCheckOut": false
+  },
+  {
+    "paymentId": null,
+    "createdAt": {
+      "_seconds": 1747355923,
+      "_nanoseconds": 170000000
+    },
+    "evaluationId": "DsWCdDZe7KNRLKI5uLwF",
+    "spectatorId": "y3w8OAgy9Kf70jxpnYz3jxdJF8Y2",
+    "numberOfCompanions": 1,
+    "hasCheckIn": true,
+    "hasCheckOut": true,
+    "nameComplete": "Maria Cabrera"
+  }
+]
