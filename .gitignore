@@ -3,7 +3,8 @@ node_modules
 /dist
 
 # Secrets
-credentials.json*
+**/credentials.json
+
 
 # local env files
 .env.local
