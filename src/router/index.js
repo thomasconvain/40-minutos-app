@@ -69,13 +69,13 @@ const routes = [
     path: '/checkout/:idSpectator/:idEvent/:nameEvent?',
     name: 'Checkout',
     component: Checkout,
-    meta: { requiresAuth: true }
+    meta: { requiresAuth: false }
   },
   {
     path: '/thankyou',
     name: 'ThankYou',
     component: ThankYouPage,
-    meta: { requiresAuth: true }
+    meta: { requiresAuth: false }
   },
   {
     path: '/admin',
