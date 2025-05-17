@@ -69,7 +69,6 @@ import {
   where, 
   orderBy,
   doc,
-  updateDoc,
   getDoc
 } from 'firebase/firestore';
 import { auth, db } from '@/firebase';
@@ -212,85 +211,36 @@ const fetchEventSpectators = async (event) => {
       event.spectatorCount = event.zSpectator.length;
       
       // Contar directamente desde el arreglo zSpectator 
-      let wasCheckedInCount = 0;  // Definir las variables
-      let wasCheckedOutCount = 0; // Definir las variables
+      let checkedInCount = 0;
+      let checkedOutCount = 0;
       
       // Procesar cada espectador en el evento usando los nuevos campos
       event.zSpectator.forEach(spectator => {
         // Contar estados usando los campos correctos hasCheckIn y hasCheckOut
         if (spectator.hasCheckIn) {
-          wasCheckedInCount++; // Contador de check-ins
+          checkedInCount++;
         }
         if (spectator.hasCheckOut) {
-          wasCheckedOutCount++; // Contador de check-outs
+          checkedOutCount++;
         }
       });
       
-      // Obtener datos actualizados de los espectadores
-      const spectatorsRef = collection(db, 'spectators');
-      const q = query(spectatorsRef, where('subscribedEventsId', 'array-contains', event.id));
-      const querySnapshot = await getDocs(q);
+      // Asignar los contadores directamente a las propiedades del evento
+      event.checkinCount = checkedInCount;
+      event.checkoutCount = checkedOutCount;
       
-      const eventRef = doc(db, 'events', event.id);
-      let needsUpdate = false;
-      
-      // Crear una copia para actualizar
-      const updatedSpectators = [...event.eventSpectators];
-      
-      // Actualizar cada espectador con datos de Firestore
-      querySnapshot.forEach(docSnapshot => {
-        const data = docSnapshot.data();
-        
-        // Buscar el espectador en el array
-        const spectatorIndex = updatedSpectators.findIndex(s => s.id === docSnapshot.id);
-        
-        if (spectatorIndex >= 0) {
-          const currentSpectator = updatedSpectators[spectatorIndex];
-          
-          // Ya no usamos el campo global isChecked/isCheckedOut para modificar el wasCheckedIn/wasCheckedOut del evento
-          // Solo actualizamos el isChecked/isCheckedOut específico del evento para mantener sincronía
-          
-          // Actualizar datos si hay cambios en el estado actual (no histórico)
-          const hasChanges = 
-            (data.isChecked !== currentSpectator.isChecked) || 
-            (data.isCheckedOut !== currentSpectator.isCheckedOut);
-            
-          if (hasChanges) {
-            updatedSpectators[spectatorIndex] = {
-              ...currentSpectator,
-              isChecked: data.isChecked || false,
-              isCheckedOut: data.isCheckedOut || false,
-              // Mantenemos los valores históricos tal como están
-              // wasCheckedIn y wasCheckedOut se actualizan directamente durante el check-in/check-out
-            };
-            
-            needsUpdate = true;
-          }
-        }
-      });
-      
-      // Actualizar Firestore si es necesario
-      if (needsUpdate) {
-        try {
-          await updateDoc(eventRef, {
-            eventSpectators: updatedSpectators
-          });
-          console.log('Estado de check-in/out actualizado para el evento:', event.id);
-          
-          // Actualizar los contadores después de guardar
-          wasCheckedInCount = updatedSpectators.filter(s => s.wasCheckedIn).length;
-          wasCheckedOutCount = updatedSpectators.filter(s => s.wasCheckedOut).length;
-        } catch (error) {
-          console.error('Error al actualizar los datos de check-in/out:', error);
-        }
-      }
-      
-      // Actualizar los contadores en el objeto del evento para visualización
-      event.checkinCount = wasCheckedInCount;  // Usar el contador de wasCheckedInCount
-      event.checkoutCount = wasCheckedOutCount;  // Usar el contador de wasCheckedOutCount
+      console.log(`Event ${event.id}: ${checkedInCount} check-ins, ${checkedOutCount} check-outs`);
+    } else {
+      // Si no hay zSpectator, inicializar los contadores a cero
+      event.checkinCount = 0;
+      event.checkoutCount = 0;
+      console.log(`Event ${event.id}: No zSpectator array found`);
     }
   } catch (error) {
     console.error(`Error fetching spectators for event ${event.id}:`, error);
+    // En caso de error, asegurar que los contadores existan
+    event.checkinCount = 0;
+    event.checkoutCount = 0;
   }
 };
 
