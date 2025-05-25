@@ -12,10 +12,31 @@
         </button>
       </div>
     </div>
-        
-    <!-- Events Cards -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-      <div v-for="event in activeEvents" :key="event.id" class="card bg-base-100 bg-opacity-70 shadow-xl">
+    
+    <!-- Tabs para Eventos Activos/Cerrado/Test -->
+    <div class="mx-auto max-w-screen-xl mb-4">
+      <div class="tabs-boxed w-full">
+        <div role="tablist" class="tabs tabs-lifted tab-container w-full">
+          <a role="tab" class="tab tab-responsive flex-1" :class="{ 'tab-active bg-gray-200': activeTab === 'activos' }" @click="activeTab = 'activos'">
+            <span class="text-black">Activos ({{ filteredActiveEvents.length }})</span>
+          </a>
+          <a role="tab" class="tab tab-responsive flex-1" :class="{ 'tab-active bg-gray-200': activeTab === 'inactivos' }" @click="activeTab = 'inactivos'">
+            <span class="text-black">Cerrado ({{ inactiveEvents.length }})</span>
+          </a>
+          <a role="tab" class="tab tab-responsive flex-1" :class="{ 'tab-active bg-gray-200': activeTab === 'test' }" @click="activeTab = 'test'">
+            <span class="text-black">Test ({{ testEvents.length }})</span>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Contenido de Eventos Activos -->
+    <div v-if="activeTab === 'activos'">
+      <div v-if="filteredActiveEvents.length === 0" class="text-center py-8">
+        <p class="text-lg text-gray-500">No hay eventos disponibles</p>
+      </div>
+      <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div v-for="event in filteredActiveEvents" :key="event.id" class="card bg-base-100 bg-opacity-70 shadow-xl">
         <div class="card-body">
           <h2 class="card-title">{{ venueName(event) || assemblyName(event) || hostName(event) }}</h2>
           
@@ -60,18 +81,126 @@
           
         </div>
       </div>
+      </div>
+    </div>
+    
+    <!-- Contenido de Eventos Cerrado -->
+    <div v-if="activeTab === 'inactivos'">
+      <div v-if="inactiveEvents.length === 0" class="text-center py-8">
+        <p class="text-lg text-gray-500">No hay eventos disponibles</p>
+      </div>
+      <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div v-for="event in inactiveEvents" :key="event.id" class="card bg-base-100 bg-opacity-70 shadow-xl">
+        <div class="card-body">
+          <h2 class="card-title">{{ venueName(event) || assemblyName(event) || hostName(event) }}</h2>
+          
+          <div class="flex mt-1 mb-1 text-sm text-gray-500">
+            {{ formatDate(event.date) }}
+          </div>
+          
+          <div class="divider my-0"></div>
+          
+          <div class="flex flex-col gap-1 mt-1">
+            <!-- Primera fila: Inscritos y Reservas -->
+            <div class="grid grid-cols-2 gap-2">
+              <div class="text-center p-1 bg-primary/10 rounded-md">
+                <div class="stat-title text-black">Inscritos</div>
+                <div class="stat-value text-xl text-black">{{ calculateTotalReservations(event) }}</div>
+              </div>
+              
+              <div class="text-center">
+                <div class="stat-title">Reservas</div>
+                <div class="stat-value text-xl">{{ event.zSpectator?.length || 0 }}</div>
+              </div>
+            </div>
+            
+            <!-- Segunda fila: Check-in, Check-out y Pagos -->
+            <div class="grid grid-cols-3 gap-2 mt-1">
+              <div class="text-center text-gray-600">
+                <div class="stat-title text-sm">Check-in</div>
+                <div class="stat-value text-lg">{{ event.checkinCount || 0 }}</div>
+              </div>
+              
+              <div class="text-center text-gray-600">
+                <div class="stat-title text-sm">Check-out</div>
+                <div class="stat-value text-lg">{{ event.checkoutCount || 0 }}</div>
+              </div>
+              
+              <div class="text-center text-gray-600">
+                <div class="stat-title text-sm">Pagos</div>
+                <div class="stat-value text-lg">{{ event.paymentCount || 0 }}</div>
+              </div>
+            </div>
+          </div>
+          
+        </div>
+      </div>
+      </div>
+    </div>
+    
+    <!-- Contenido de Eventos Test -->
+    <div v-if="activeTab === 'test'">
+      <div v-if="testEvents.length === 0" class="text-center py-8">
+        <p class="text-lg text-gray-500">No hay eventos disponibles</p>
+      </div>
+      <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div v-for="event in testEvents" :key="event.id" class="card bg-base-100 bg-opacity-70 shadow-xl">
+        <div class="card-body">
+          <h2 class="card-title">{{ venueName(event) || assemblyName(event) || hostName(event) }}</h2>
+          
+          <div class="flex mt-1 mb-1 text-sm text-gray-500">
+            {{ formatDate(event.date) }}
+          </div>
+          
+          <div class="divider my-0"></div>
+          
+          <div class="flex flex-col gap-1 mt-1">
+            <!-- Primera fila: Inscritos y Reservas -->
+            <div class="grid grid-cols-2 gap-2">
+              <div class="text-center p-1 bg-primary/10 rounded-md">
+                <div class="stat-title text-black">Inscritos</div>
+                <div class="stat-value text-xl text-black">{{ calculateTotalReservations(event) }}</div>
+              </div>
+              
+              <div class="text-center">
+                <div class="stat-title">Reservas</div>
+                <div class="stat-value text-xl">{{ event.zSpectator?.length || 0 }}</div>
+              </div>
+            </div>
+            
+            <!-- Segunda fila: Check-in, Check-out y Pagos -->
+            <div class="grid grid-cols-3 gap-2 mt-1">
+              <div class="text-center text-gray-600">
+                <div class="stat-title text-sm">Check-in</div>
+                <div class="stat-value text-lg">{{ event.checkinCount || 0 }}</div>
+              </div>
+              
+              <div class="text-center text-gray-600">
+                <div class="stat-title text-sm">Check-out</div>
+                <div class="stat-value text-lg">{{ event.checkoutCount || 0 }}</div>
+              </div>
+              
+              <div class="text-center text-gray-600">
+                <div class="stat-title text-sm">Pagos</div>
+                <div class="stat-value text-lg">{{ event.paymentCount || 0 }}</div>
+              </div>
+            </div>
+          </div>
+          
+        </div>
+      </div>
+      </div>
     </div>
     
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted, defineComponent } from 'vue';
+import { ref, onMounted, defineComponent, computed } from 'vue';
 import { 
   collection, 
   getDocs, 
   query, 
-  where, 
   orderBy,
   doc,
   getDoc
@@ -89,7 +218,9 @@ defineComponent({
 
 const router = useRouter();
 const activeEvents = ref([]);
+const allEvents = ref([]);
 const isLoading = ref(true);
+const activeTab = ref('activos');
 // Definir venueNames, hostNames y assemblyNames antes de usarlos
 const venueNames = ref({});
 const hostNames = ref({});
@@ -105,7 +236,7 @@ const formatDate = (timestamp) => {
   });
 };
 
-// Fetch active events based on user authentication status
+// Fetch all events based on user authentication status
 const fetchActiveEvents = async () => {
   try {
     isLoading.value = true;
@@ -116,24 +247,18 @@ const fetchActiveEvents = async () => {
     // Create query based on authentication status
     let q;
     if (currentUser) {
-      // If logged in, show all active events
+      // If logged in, show all events (no filters)
       q = query(
         collection(db, "events"),
-        where("settings.isActive", "==", true),
-        orderBy("date", "asc")
+        orderBy("date", "desc")
       );
     } else {
-      // If not logged in, only show public events (settings.isPrivate == false)
-      q = query(
-        collection(db, "events"),
-        where("settings.isActive", "==", true),
-        where("settings.isPrivate", "==", false),
-        orderBy("date", "asc")
-      );
+      // If not logged in, get all events and filter in memory to avoid index requirements
+      q = collection(db, "events");
     }
 
     const querySnapshot = await getDocs(q);
-    activeEvents.value = querySnapshot.docs.map((doc) => ({
+    allEvents.value = querySnapshot.docs.map((doc) => ({
       id: doc.id,
       ...doc.data(),
       spectatorCount: 0,
@@ -141,12 +266,30 @@ const fetchActiveEvents = async () => {
       spectators: []
     }));
     
+    // Si no está autenticado, filtrar solo eventos públicos en memoria
+    if (!currentUser) {
+      allEvents.value = allEvents.value.filter(event => event.settings?.isPrivate === false);
+    }
+    
+    // Ordenar por fecha en memoria para ambos casos
+    allEvents.value.sort((a, b) => {
+      if (!a.date || !b.date) return 0;
+      try {
+        return b.date.toDate() - a.date.toDate();
+      } catch {
+        return 0;
+      }
+    });
+    
+    // También mantener activeEvents para compatibilidad
+    activeEvents.value = allEvents.value.filter(event => event.settings?.isActive && !event.settings?.isTest);
+    
     // Recopilar IDs únicos de venues, hosts y assemblies
     const venueIds = new Set();
     const hostIds = new Set();
     const assemblyIds = new Set();
     
-    activeEvents.value.forEach(event => {
+    allEvents.value.forEach(event => {
       if (event._venueId) venueIds.add(event._venueId);
       if (event.hostId) hostIds.add(event.hostId);
       if (event.assemblyId) assemblyIds.add(event.assemblyId);
@@ -198,7 +341,7 @@ const fetchActiveEvents = async () => {
     }
 
     // Fetch spectator counts for each event
-    for (const event of activeEvents.value) {
+    for (const event of allEvents.value) {
       await fetchEventSpectators(event);
     }
   } catch (error) {
@@ -307,6 +450,40 @@ const logout = async () => {
 // Variable para controlar si se necesita mostrar el botón de login/logout
 const isUserLoggedIn = ref(false);
 const authMessage = ref('');
+
+// Computed properties para filtrar eventos
+const filteredActiveEvents = computed(() => {
+  const baseFilter = allEvents.value.filter(event => event.settings?.isActive && !event.settings?.isTest);
+  
+  // Si no está autenticado, solo mostrar eventos públicos
+  if (!isUserLoggedIn.value) {
+    return baseFilter.filter(event => event.settings?.isPrivate === false);
+  }
+  
+  return baseFilter;
+});
+
+const inactiveEvents = computed(() => {
+  const baseFilter = allEvents.value.filter(event => !event.settings?.isActive && !event.settings?.isTest);
+  
+  // Si no está autenticado, solo mostrar eventos públicos
+  if (!isUserLoggedIn.value) {
+    return baseFilter.filter(event => event.settings?.isPrivate === false);
+  }
+  
+  return baseFilter;
+});
+
+const testEvents = computed(() => {
+  const baseFilter = allEvents.value.filter(event => event.settings?.isTest);
+  
+  // Si no está autenticado, solo mostrar eventos públicos
+  if (!isUserLoggedIn.value) {
+    return baseFilter.filter(event => event.settings?.isPrivate === false);
+  }
+  
+  return baseFilter;
+});
 
 // Actualizar UI cuando cambia el estado de autenticación
 onMounted(() => {
