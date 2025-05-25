@@ -8,21 +8,43 @@
     
     <h1 class="justify-self-start text-2xl text-black font-bold mb-6">Resultados</h1>
 
-    <div v-if="isLoading" class="text-center py-8">
+    <!-- Verificando autorización -->
+    <div v-if="isCheckingAuth" class="text-center py-8">
+      <span class="loading loading-spinner loading-lg"></span>
+      <p class="mt-2 text-black">Verificando acceso...</p>
+    </div>
+
+    <!-- Usuario no autorizado -->
+    <div v-else-if="!isAuthorized" class="text-center py-8">
+      <div class="mx-auto w-full max-w-screen-xl rounded-2xl bg-white p-6 md:p-8 shadow-xl">
+        <h2 class="text-xl font-bold text-black mb-4">Acceso Restringido</h2>
+        <p class="text-black mb-4">No tienes permisos para acceder a esta página.</p>
+        <button class="btn bg-black text-white hover:bg-gray-800" @click="logout">
+          Cerrar Sesión
+        </button>
+      </div>
+    </div>
+
+    <!-- Cargando datos -->
+    <div v-else-if="isLoading" class="text-center py-8">
       <span class="loading loading-spinner loading-lg"></span>
       <p class="mt-2 text-black">Cargando datos financieros...</p>
     </div>
 
+    <!-- Contenido autorizado -->
     <div v-else>
-      <!-- Tabs para Eventos Activos/Inactivos -->
+      <!-- Tabs para Eventos Activos/Inactivos/Test -->
       <div class="mx-auto max-w-screen-xl mb-4">
         <div class="tabs-boxed w-full">
           <div role="tablist" class="tabs tabs-lifted tab-container w-full">
-            <a role="tab" class="tab tab-responsive flex-2" :class="{ 'tab-active bg-gray-200': activeTab === 'activos' }" @click="activeTab = 'activos'">
+            <a role="tab" class="tab tab-responsive flex-1" :class="{ 'tab-active bg-gray-200': activeTab === 'activos' }" @click="activeTab = 'activos'">
               <span class="text-black">Activos ({{ activeEvents.length }})</span>
             </a>
-            <a role="tab" class="tab tab-responsive flex-3" :class="{ 'tab-active bg-gray-200': activeTab === 'inactivos' }" @click="activeTab = 'inactivos'">
-              <span class="text-black">Inactivos ({{ inactiveEvents.length }})</span>
+            <a role="tab" class="tab tab-responsive flex-1" :class="{ 'tab-active bg-gray-200': activeTab === 'inactivos' }" @click="activeTab = 'inactivos'">
+              <span class="text-black">Cerrado ({{ inactiveEvents.length }})</span>
+            </a>
+            <a role="tab" class="tab tab-responsive flex-1" :class="{ 'tab-active bg-gray-200': activeTab === 'test' }" @click="activeTab = 'test'">
+              <span class="text-black">Test ({{ testEvents.length }})</span>
             </a>
           </div>
         </div>
@@ -291,15 +313,118 @@
           </div>
         </section>
       </div>
+      
+      <!-- Contenido de Eventos Test -->
+      <div v-if="activeTab === 'test'">
+        <section class="pt-6 pb-4">
+          <div class="mx-auto max-w-screen-xl">
+            <div v-if="testEvents.length === 0" class="text-center py-8">
+              <p class="text-lg text-black">No hay eventos de test</p>
+            </div>
+            
+            <div v-else class="relative w-full overflow-hidden">
+              <div class="carousel carousel-center w-full rounded-box gap-4" id="testCarousel">
+                <div v-for="event in testEvents" :key="event.id" class="carousel-item w-full mx-auto">
+                  <div class="bg-white text-black shadow-xl rounded-xl w-full p-6">
+                    <div class="mb-4">
+                      <h2 class="text-xl font-bold text-black mb-2">{{ getEventName(event) }}</h2>
+                      <div class="text-sm text-black mb-2">{{ formatDate(event.date) }}</div>
+                      <div class="flex gap-2">
+                        <div class="badge badge-warning">Test</div>
+                        <div class="badge badge-info">{{ event.zSpectator?.length || 0 }} reservas</div>
+                      </div>
+                      <div class="mt-4 p-3 bg-gray-100 rounded-lg">
+                        <div class="text-sm text-black">Ganancia Neta</div>
+                        <div class="text-2xl font-bold text-black">${{ formatCurrency(getEventNetProfit(event)) }}</div>
+                      </div>
+                    </div>
+                    <div class="divider"></div>
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-4">
+                      <div>
+                        <h3 class="text-lg font-semibold mb-3 text-black">💰 Ingresos</h3>
+                        <div class="overflow-x-auto">
+                          <table class="table table-sm">
+                            <thead>
+                              <tr>
+                                <th class="text-black">Método</th>
+                                <th class="text-right text-black">Cant.</th>
+                                <th class="text-right text-black">Monto</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <tr>
+                                <td class="text-black">Mercado Pago</td>
+                                <td class="text-right text-black">{{ event.revenue?.mercadoPago?.count || 0 }}</td>
+                                <td class="text-right font-semibold text-black">${{ formatCurrency(event.revenue?.mercadoPago?.amount || 0) }}</td>
+                              </tr>
+                              <tr>
+                                <td class="text-black">Transferencia</td>
+                                <td class="text-right text-black">{{ event.revenue?.bankTransfer?.count || 0 }}</td>
+                                <td class="text-right font-semibold text-black">${{ formatCurrency(event.revenue?.bankTransfer?.amount || 0) }}</td>
+                              </tr>
+                              <tr>
+                                <td class="text-black">Efectivo</td>
+                                <td class="text-right text-black">{{ event.revenue?.cash?.count || 0 }}</td>
+                                <td class="text-right font-semibold text-black">${{ formatCurrency(event.revenue?.cash?.amount || 0) }}</td>
+                              </tr>
+                              <tr class="border-t-2">
+                                <td class="font-bold text-black">Total</td>
+                                <td class="text-right font-bold text-black">{{ getTotalPayments(event) }}</td>
+                                <td class="text-right font-bold text-black">${{ formatCurrency(getTotalRevenue(event)) }}</td>
+                              </tr>
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+                      <div>
+                        <h3 class="text-lg font-semibold mb-3 text-black">💸 Costos</h3>
+                        <div class="overflow-x-auto">
+                          <table class="table table-sm">
+                            <thead>
+                              <tr>
+                                <th class="text-black">Concepto</th>
+                                <th class="text-right text-black">Monto</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <template v-if="event.expenditures && event.expenditures.length > 0">
+                                <tr v-for="expenditure in event.expenditures" :key="expenditure.id">
+                                  <td class="text-black">{{ expenditure.description || 'Sin descripción' }}</td>
+                                  <td class="text-right font-semibold text-black">${{ formatCurrency(expenditure.amount || 0) }}</td>
+                                </tr>
+                                <tr class="border-t-2">
+                                  <td class="font-bold text-black">Total</td>
+                                  <td class="text-right font-bold text-black">${{ formatCurrency(getTotalCosts(event)) }}</td>
+                                </tr>
+                              </template>
+                              <tr v-else>
+                                <td colspan="2" class="text-center text-black">No hay costos registrados</td>
+                              </tr>
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div v-if="testEvents.length > 1" class="flex justify-center mt-4 gap-3">
+                <button class="btn btn-circle btn-sm" :class="{'btn-primary': testCarouselPosition > 0, 'opacity-50': testCarouselPosition === 0}" :disabled="testCarouselPosition === 0" @click="scrollCarousel('testCarousel', 'prev', 'test')">❮</button>
+                <button class="btn btn-circle btn-sm" :class="{'btn-primary': testCarouselPosition < testEvents.length - 1, 'opacity-50': testCarouselPosition >= testEvents.length - 1}" :disabled="testCarouselPosition >= testEvents.length - 1" @click="scrollCarousel('testCarousel', 'next', 'test')">❯</button>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
     </div>
   </div>
 </template>
 
 <script setup>
 import { ref, onMounted, onBeforeUnmount, computed } from 'vue';
-import { collection, getDocs, query, doc, getDoc } from 'firebase/firestore';
+import { collection, getDocs, query, where, doc, getDoc } from 'firebase/firestore';
 import { db, auth } from '@/firebase';
-import { signOut } from 'firebase/auth';
+import { signOut, onAuthStateChanged } from 'firebase/auth';
 import { useRouter } from 'vue-router';
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
@@ -312,7 +437,12 @@ const hostNames = ref({});
 const assemblyNames = ref({});
 const activeCarouselPosition = ref(0);
 const inactiveCarouselPosition = ref(0);
+const testCarouselPosition = ref(0);
 const activeTab = ref('activos');
+const isAuthorized = ref(false);
+const isCheckingAuth = ref(true);
+
+const AUTHORIZED_EMAIL = 'javier@alzares.cl';
 
 const logout = async () => {
   try {
@@ -377,11 +507,15 @@ const getEventNetProfit = (event) => {
 };
 
 const activeEvents = computed(() => {
-  return events.value.filter(event => event.settings?.isActive);
+  return events.value.filter(event => event.settings?.isActive && (event.settings?.isTest !== true));
 });
 
 const inactiveEvents = computed(() => {
-  return events.value.filter(event => !event.settings?.isActive);
+  return events.value.filter(event => !event.settings?.isActive && !event.settings?.isTest);
+});
+
+const testEvents = computed(() => {
+  return events.value.filter(event => event.settings?.isTest);
 });
 
 const fetchEvents = async () => {
@@ -481,33 +615,44 @@ const fetchAssemblyNames = async () => {
 
 const fetchEventRevenue = async (event) => {
   try {
-    if (!event.zSpectator || !Array.isArray(event.zSpectator)) return;
+    // Consultar pagos por eventId para cada método
+    const methods = ['mercadoPago', 'bankTransfer', 'cash'];
     
-    const paymentIds = event.zSpectator
-      .map(s => s.paymentId)
-      .filter(Boolean);
-    
-    for (const paymentId of paymentIds) {
+    for (const method of methods) {
       try {
-        const paymentDoc = await getDoc(doc(db, 'payments', paymentId));
-        if (paymentDoc.exists()) {
-          const payment = paymentDoc.data();
-          const method = payment.method;
-          const amount = payment.amount || 0;
-          
-          if (method === 'mercadoPago') {
-            event.revenue.mercadoPago.amount += amount;
-            event.revenue.mercadoPago.count += 1;
-          } else if (method === 'bankTransfer') {
-            event.revenue.bankTransfer.amount += amount;
-            event.revenue.bankTransfer.count += 1;
-          } else if (method === 'cash') {
-            event.revenue.cash.amount += amount;
-            event.revenue.cash.count += 1;
-          }
+        const q = query(
+          collection(db, 'payments'),
+          where('eventId', '==', event.id),
+          where('method', '==', method)
+        );
+        
+        const querySnapshot = await getDocs(q);
+        
+        let totalAmount = 0;
+        let count = 0;
+        
+        querySnapshot.forEach(doc => {
+          const payment = doc.data();
+          totalAmount += payment.amount || 0;
+          count++;
+        });
+        
+        // Asignar los valores calculados
+        if (method === 'mercadoPago') {
+          event.revenue.mercadoPago.amount = totalAmount;
+          event.revenue.mercadoPago.count = count;
+        } else if (method === 'bankTransfer') {
+          event.revenue.bankTransfer.amount = totalAmount;
+          event.revenue.bankTransfer.count = count;
+        } else if (method === 'cash') {
+          event.revenue.cash.amount = totalAmount;
+          event.revenue.cash.count = count;
         }
-      } catch (paymentError) {
-        console.error(`Error fetching payment ${paymentId}:`, paymentError);
+        
+        console.log(`Event ${event.id} - ${method}: ${count} payments, $${totalAmount}`);
+        
+      } catch (methodError) {
+        console.error(`Error fetching ${method} payments for event ${event.id}:`, methodError);
       }
     }
   } catch (error) {
@@ -553,6 +698,12 @@ const scrollCarousel = (carouselId, direction, type) => {
     } else {
       inactiveCarouselPosition.value--;
     }
+  } else if (type === 'test') {
+    if (direction === 'next') {
+      testCarouselPosition.value++;
+    } else {
+      testCarouselPosition.value--;
+    }
   }
 };
 
@@ -571,21 +722,50 @@ const handleCarouselScroll = (carouselId, type) => {
     activeCarouselPosition.value = newPosition;
   } else if (type === 'inactive' && newPosition !== inactiveCarouselPosition.value) {
     inactiveCarouselPosition.value = newPosition;
+  } else if (type === 'test' && newPosition !== testCarouselPosition.value) {
+    testCarouselPosition.value = newPosition;
+  }
+};
+
+const checkUserAuthorization = (user) => {
+  if (!user) {
+    isAuthorized.value = false;
+    isCheckingAuth.value = false;
+    router.push('/login');
+    return;
+  }
+
+  if (user.email === AUTHORIZED_EMAIL) {
+    isAuthorized.value = true;
+    isCheckingAuth.value = false;
+    // Solo cargar datos si el usuario está autorizado
+    fetchEvents().then(() => {
+      // Añadir event listeners para scroll de todos los carruseles
+      const activeCarousel = document.getElementById('activeCarousel');
+      const inactiveCarousel = document.getElementById('inactiveCarousel');
+      const testCarousel = document.getElementById('testCarousel');
+      
+      if (activeCarousel) {
+        activeCarousel.addEventListener('scroll', () => handleCarouselScroll('activeCarousel', 'active'));
+      }
+      if (inactiveCarousel) {
+        inactiveCarousel.addEventListener('scroll', () => handleCarouselScroll('inactiveCarousel', 'inactive'));
+      }
+      if (testCarousel) {
+        testCarousel.addEventListener('scroll', () => handleCarouselScroll('testCarousel', 'test'));
+      }
+    });
+  } else {
+    isAuthorized.value = false;
+    isCheckingAuth.value = false;
+    console.log(`Usuario ${user.email} no autorizado para acceder al panel de administración`);
   }
 };
 
 onMounted(() => {
-  fetchEvents().then(() => {
-    // Añadir event listeners para scroll de ambos carruseles
-    const activeCarousel = document.getElementById('activeCarousel');
-    const inactiveCarousel = document.getElementById('inactiveCarousel');
-    
-    if (activeCarousel) {
-      activeCarousel.addEventListener('scroll', () => handleCarouselScroll('activeCarousel', 'active'));
-    }
-    if (inactiveCarousel) {
-      inactiveCarousel.addEventListener('scroll', () => handleCarouselScroll('inactiveCarousel', 'inactive'));
-    }
+  // Escuchar cambios en la autenticación
+  onAuthStateChanged(auth, (user) => {
+    checkUserAuthorization(user);
   });
 });
 
@@ -593,12 +773,16 @@ onMounted(() => {
 onBeforeUnmount(() => {
   const activeCarousel = document.getElementById('activeCarousel');
   const inactiveCarousel = document.getElementById('inactiveCarousel');
+  const testCarousel = document.getElementById('testCarousel');
   
   if (activeCarousel) {
     activeCarousel.removeEventListener('scroll', () => handleCarouselScroll('activeCarousel', 'active'));
   }
   if (inactiveCarousel) {
     inactiveCarousel.removeEventListener('scroll', () => handleCarouselScroll('inactiveCarousel', 'inactive'));
+  }
+  if (testCarousel) {
+    testCarousel.removeEventListener('scroll', () => handleCarouselScroll('testCarousel', 'test'));
   }
 });
 </script>
