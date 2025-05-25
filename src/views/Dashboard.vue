@@ -39,8 +39,8 @@
               </div>
             </div>
             
-            <!-- Segunda fila: Check-in y Check-out -->
-            <div class="grid grid-cols-2 gap-2 mt-1">
+            <!-- Segunda fila: Check-in, Check-out y Pagos -->
+            <div class="grid grid-cols-3 gap-2 mt-1">
               <div class="text-center text-gray-600">
                 <div class="stat-title text-sm">Check-in</div>
                 <div class="stat-value text-lg">{{ event.checkinCount || 0 }}</div>
@@ -49,6 +49,11 @@
               <div class="text-center text-gray-600">
                 <div class="stat-title text-sm">Check-out</div>
                 <div class="stat-value text-lg">{{ event.checkoutCount || 0 }}</div>
+              </div>
+              
+              <div class="text-center text-gray-600">
+                <div class="stat-title text-sm">Pagos</div>
+                <div class="stat-value text-lg">{{ event.paymentCount || 0 }}</div>
               </div>
             </div>
           </div>
@@ -213,6 +218,7 @@ const fetchEventSpectators = async (event) => {
       // Contar directamente desde el arreglo zSpectator 
       let checkedInCount = 0;
       let checkedOutCount = 0;
+      let paymentCount = 0;
       
       // Procesar cada espectador en el evento usando los nuevos campos
       event.zSpectator.forEach(spectator => {
@@ -223,17 +229,23 @@ const fetchEventSpectators = async (event) => {
         if (spectator.hasCheckOut) {
           checkedOutCount++;
         }
+        // Contar espectadores que tienen paymentId
+        if (spectator.paymentId) {
+          paymentCount++;
+        }
       });
       
       // Asignar los contadores directamente a las propiedades del evento
       event.checkinCount = checkedInCount;
       event.checkoutCount = checkedOutCount;
+      event.paymentCount = paymentCount;
       
-      console.log(`Event ${event.id}: ${checkedInCount} check-ins, ${checkedOutCount} check-outs`);
+      console.log(`Event ${event.id}: ${checkedInCount} check-ins, ${checkedOutCount} check-outs, ${paymentCount} payments`);
     } else {
       // Si no hay zSpectator, inicializar los contadores a cero
       event.checkinCount = 0;
       event.checkoutCount = 0;
+      event.paymentCount = 0;
       console.log(`Event ${event.id}: No zSpectator array found`);
     }
   } catch (error) {
@@ -241,6 +253,7 @@ const fetchEventSpectators = async (event) => {
     // En caso de error, asegurar que los contadores existan
     event.checkinCount = 0;
     event.checkoutCount = 0;
+    event.paymentCount = 0;
   }
 };
 
