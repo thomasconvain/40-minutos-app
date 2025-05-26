@@ -197,8 +197,7 @@ import {
   getDoc
 } from 'firebase/firestore';
 import { auth, db } from '@/firebase';
-import { signOut, onAuthStateChanged } from 'firebase/auth';
-import { useRouter } from 'vue-router';
+import { onAuthStateChanged } from 'firebase/auth';
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
 import NavbarMenu from '@/components/NavbarMenu.vue';
@@ -208,7 +207,6 @@ defineComponent({
   name: 'EventsDashboard'
 });
 
-const router = useRouter();
 const activeEvents = ref([]);
 const allEvents = ref([]);
 const isLoading = ref(true);
@@ -429,15 +427,6 @@ const calculateTotalReservations = (event) => {
   return total;
 };
 
-// Log out function
-const logout = async () => {
-  try {
-    await signOut(auth);
-    router.push('/login');
-  } catch (error) {
-    console.error("Error logging out:", error);
-  }
-};
 
 // Variable para controlar si se necesita mostrar el botón de login/logout
 const isUserLoggedIn = ref(false);

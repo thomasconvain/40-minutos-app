@@ -122,7 +122,7 @@ import {
   arrayUnion 
 } from "firebase/firestore";
 import { auth } from '@/firebase';
-import { onAuthStateChanged, signOut, sendPasswordResetEmail } from 'firebase/auth';
+import { onAuthStateChanged, sendPasswordResetEmail } from 'firebase/auth';
 import { CheckCircleIcon, LockClosedIcon } from "@heroicons/vue/24/outline";
 import { fetchSpectators } from '@/utils';
 import { getFunctions, httpsCallable } from 'firebase/functions';
@@ -371,14 +371,6 @@ const goToEvent = (event) => {
   });
 };
 
-const logout = async () => {
-  try {
-    await signOut(auth);
-    router.push('/');
-  } catch (error) {
-    console.error("Error al cerrar sesión:", error);
-  }
-};
 
 const handleReset = async () => {
   if (!spectator.value || !spectator.value.email) {
