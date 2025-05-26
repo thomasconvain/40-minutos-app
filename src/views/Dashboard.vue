@@ -1,17 +1,8 @@
 <template>
   <div>
-    <div class="flex justify-between items-center mb-2">
-      <div>
-        <h1 class="text-2xl font-bold">Dashboard de Eventos</h1>
-        <div class="flex mt-1 text-sm text-gray-500">
-        </div>
-      </div>
-      <div>
-        <button v-if="isUserLoggedIn" class="btn bg-white border-none" @click="logout">
-          Cerrar sesión
-        </button>
-      </div>
-    </div>
+    <NavbarMenu />
+    
+    <h1 class="text-2xl font-bold mb-2">Dashboard de Eventos</h1>
     
     <!-- Tabs para Eventos Activos/Cerrado/Test -->
     <div class="mx-auto max-w-screen-xl mb-4">
@@ -210,6 +201,7 @@ import { signOut, onAuthStateChanged } from 'firebase/auth';
 import { useRouter } from 'vue-router';
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
+import NavbarMenu from '@/components/NavbarMenu.vue';
 
 // Para evitar error vue/multi-word-component-names
 defineComponent({

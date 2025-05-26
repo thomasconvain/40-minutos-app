@@ -1,6 +1,8 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import { auth } from '@/firebase';
 import { onAuthStateChanged } from 'firebase/auth';
+import { useAuth } from '@/composables/useAuth';
+import { Permission } from '@/types.js';
 
 import Home from '@/views/Home.vue';
 import SignIn from '@/views/SignIn.vue';
@@ -81,7 +83,10 @@ const routes = [
     path: '/admin',
     name: 'Admin',
     component: AdminPage,
-    meta: { requiresAuth: true }
+    meta: { 
+      requiresAuth: true,
+      requiredPermissions: [Permission.VIEW_REPORTS]
+    }
   },
   {
     path: '/dashboard',
@@ -111,6 +116,11 @@ function getCurrentUser() {
 }
 
 router.beforeEach(async (to, from, next) => {
+  const { initAuth, isAuthenticated, canAccess } = useAuth();
+  
+  // Inicializar autenticación si no está cargada
+  await initAuth();
+  
   // Si se intenta acceder a la raíz '/'
   if (to.path === '/') {
     const user = await getCurrentUser();
@@ -122,12 +132,22 @@ router.beforeEach(async (to, from, next) => {
     }
   } else if (to.matched.some(record => record.meta.requiresAuth)) {
     // Para rutas que requieren autenticación
-    const user = await getCurrentUser();
-    if (user) {
-      next();
-    } else {
+    if (!isAuthenticated.value) {
       next('/');
+      return;
     }
+    
+    // Verificar permisos específicos si existen
+    const route = to.matched.find(record => record.meta.requiredPermissions);
+    if (route && route.meta.requiredPermissions) {
+      const hasAccess = canAccess(route.meta.requiredPermissions, route.meta.requiredRoles || []);
+      if (!hasAccess) {
+        next('/'); // Redirigir si no tiene permisos
+        return;
+      }
+    }
+    
+    next();
   } else {
     next();
   }

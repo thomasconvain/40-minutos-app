@@ -1,8 +1,7 @@
 <template>
   <div>
-    <button class="btn bg-white border-none mb-4" @click="logout">
-      Salir
-    </button>
+    <NavbarMenu />
+    
     <h1 class="text-2xl font-bold mb-6">Hola {{ spectator?.name }}👋</h1>
     <p v-if="events.length">Acá podrás ver todos los eventos en los que estás inscrito.</p>
     
@@ -113,6 +112,7 @@
 <script setup>
 import { ref, onMounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
+import NavbarMenu from '@/components/NavbarMenu.vue';
 import { 
   getFirestore, 
   doc, 

@@ -1,10 +1,6 @@
 <template>
   <div>
-    <!-- Header similar al Home -->
-    <div class="flex flex-row items-center justify-between mb-10">
-      <img src="../assets/logo_horizontal.png" width="150" />
-      <button class="btn bg-white border-none" @click="logout">Cerrar sesión</button>
-    </div>
+    <NavbarMenu class="mb-10" />
     
     <h1 class="justify-self-start text-2xl text-black font-bold mb-6">Resultados</h1>
 
@@ -424,8 +420,10 @@
 import { ref, onMounted, onBeforeUnmount, computed } from 'vue';
 import { collection, getDocs, query, where, doc, getDoc } from 'firebase/firestore';
 import { db, auth } from '@/firebase';
-import { signOut, onAuthStateChanged } from 'firebase/auth';
+import { signOut } from 'firebase/auth';
 import { useRouter } from 'vue-router';
+import { useAuth } from '@/composables/useAuth';
+import NavbarMenu from '@/components/NavbarMenu.vue';
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
 
@@ -439,10 +437,10 @@ const activeCarouselPosition = ref(0);
 const inactiveCarouselPosition = ref(0);
 const testCarouselPosition = ref(0);
 const activeTab = ref('activos');
-const isAuthorized = ref(false);
-const isCheckingAuth = ref(true);
 
-const AUTHORIZED_EMAIL = 'javier@alzares.cl';
+const { canAccessReports, isLoading: authLoading, initAuth } = useAuth();
+const isAuthorized = computed(() => canAccessReports());
+const isCheckingAuth = computed(() => authLoading.value);
 
 const logout = async () => {
   try {
@@ -727,46 +725,32 @@ const handleCarouselScroll = (carouselId, type) => {
   }
 };
 
-const checkUserAuthorization = (user) => {
-  if (!user) {
-    isAuthorized.value = false;
-    isCheckingAuth.value = false;
-    router.push('/login');
-    return;
+const initializeCarousels = () => {
+  // Añadir event listeners para scroll de todos los carruseles
+  const activeCarousel = document.getElementById('activeCarousel');
+  const inactiveCarousel = document.getElementById('inactiveCarousel');
+  const testCarousel = document.getElementById('testCarousel');
+  
+  if (activeCarousel) {
+    activeCarousel.addEventListener('scroll', () => handleCarouselScroll('activeCarousel', 'active'));
   }
-
-  if (user.email === AUTHORIZED_EMAIL) {
-    isAuthorized.value = true;
-    isCheckingAuth.value = false;
-    // Solo cargar datos si el usuario está autorizado
-    fetchEvents().then(() => {
-      // Añadir event listeners para scroll de todos los carruseles
-      const activeCarousel = document.getElementById('activeCarousel');
-      const inactiveCarousel = document.getElementById('inactiveCarousel');
-      const testCarousel = document.getElementById('testCarousel');
-      
-      if (activeCarousel) {
-        activeCarousel.addEventListener('scroll', () => handleCarouselScroll('activeCarousel', 'active'));
-      }
-      if (inactiveCarousel) {
-        inactiveCarousel.addEventListener('scroll', () => handleCarouselScroll('inactiveCarousel', 'inactive'));
-      }
-      if (testCarousel) {
-        testCarousel.addEventListener('scroll', () => handleCarouselScroll('testCarousel', 'test'));
-      }
-    });
-  } else {
-    isAuthorized.value = false;
-    isCheckingAuth.value = false;
-    console.log(`Usuario ${user.email} no autorizado para acceder al panel de administración`);
+  if (inactiveCarousel) {
+    inactiveCarousel.addEventListener('scroll', () => handleCarouselScroll('inactiveCarousel', 'inactive'));
+  }
+  if (testCarousel) {
+    testCarousel.addEventListener('scroll', () => handleCarouselScroll('testCarousel', 'test'));
   }
 };
 
-onMounted(() => {
-  // Escuchar cambios en la autenticación
-  onAuthStateChanged(auth, (user) => {
-    checkUserAuthorization(user);
-  });
+onMounted(async () => {
+  await initAuth();
+  
+  if (isAuthorized.value) {
+    await fetchEvents();
+    initializeCarousels();
+  } else {
+    router.push('/login');
+  }
 });
 
 // Limpiar event listeners cuando el componente se destruya
