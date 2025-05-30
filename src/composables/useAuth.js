@@ -208,6 +208,14 @@ export function useAuth() {
     }
   }
 
+  const canCreateEvents = () => {
+    return hasPermission(Permission.CREATE_EVENTS)
+  }
+
+  const canUpdateEvents = () => {
+    return hasPermission(Permission.UPDATE_EVENTS)
+  }
+
   return {
     currentUser: computed(() => currentUser.value),
     userRole: computed(() => userRole.value),
@@ -232,6 +240,8 @@ export function useAuth() {
     requireAuth,
     requirePermission,
     requireRole,
+    canCreateEvents,
+    canUpdateEvents,
     rolePermissions
   }
 }

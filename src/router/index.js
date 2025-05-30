@@ -18,6 +18,8 @@ import AdminLogin from '@/views/AdminLogin.vue';
 import OnlineBooking from '@/views/OnlineBooking.vue';
 import PasswordConfig from '@/views/PasswordConfig.vue';
 import Dashboard from '@/views/Dashboard.vue';
+import EventEditor from '@/views/EventEditor.vue';
+import EventList from '@/views/EventList.vue';
 
 const routes = [
   {
@@ -97,6 +99,33 @@ const routes = [
     path: '/login',
     name: 'Login',
     component: AdminLogin,
+  },
+  {
+    path: '/events',
+    name: 'EventList',
+    component: EventList,
+    meta: { 
+      requiresAuth: true,
+      requiredPermissions: [Permission.CREATE_EVENTS, Permission.UPDATE_EVENTS]
+    }
+  },
+  {
+    path: '/events/create',
+    name: 'CreateEvent',
+    component: EventEditor,
+    meta: { 
+      requiresAuth: true,
+      requiredPermissions: [Permission.CREATE_EVENTS]
+    }
+  },
+  {
+    path: '/events/edit/:id',
+    name: 'EditEvent',
+    component: EventEditor,
+    meta: { 
+      requiresAuth: true,
+      requiredPermissions: [Permission.UPDATE_EVENTS]
+    }
   }
 ];
 
