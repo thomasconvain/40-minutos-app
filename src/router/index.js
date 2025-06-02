@@ -20,6 +20,7 @@ import PasswordConfig from '@/views/PasswordConfig.vue';
 import Dashboard from '@/views/Dashboard.vue';
 import EventEditor from '@/views/EventEditor.vue';
 import EventList from '@/views/EventList.vue';
+import ReserveConfirmation from '@/views/ReserveConfirmation.vue';
 
 const routes = [
   {
@@ -56,6 +57,12 @@ const routes = [
     path: '/profile/:idSpectator',
     name: 'Profile',
     component: SpectatorProfile,
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/reserve/:idSpectator',
+    name: 'Reserve',
+    component: ReserveConfirmation,
     meta: { requiresAuth: true }
   },
   {
@@ -144,7 +151,7 @@ function getCurrentUser() {
   });
 }
 
-router.beforeEach(async (to, from, next) => {
+router.beforeEach(async (to, _from, next) => {
   const { initAuth, isAuthenticated, canAccess } = useAuth();
   
   // Inicializar autenticación si no está cargada

@@ -131,17 +131,24 @@ const login = async () => {
         }
       }
       
-      // Redirigir al perfil con parámetros adicionales
-      router.push({ 
-        name: 'Profile', 
-        params: { idSpectator: docData.id }, 
-        query: { 
-          idEvent: eventId, 
-          from: from.value,
-          // Pasar el número de personas si existe en la consulta
-          ...(route.query.numberOfPeople && { numberOfPeople: route.query.numberOfPeople })
-        } 
-      });
+      // Si hay un eventId, redirigir a confirmación de reserva, sino al perfil
+      if (eventId) {
+        router.push({ 
+          name: 'Reserve', 
+          params: { idSpectator: docData.id }, 
+          query: { 
+            idEvent: eventId
+          } 
+        });
+      } else {
+        router.push({ 
+          name: 'Profile', 
+          params: { idSpectator: docData.id }, 
+          query: { 
+            from: from.value
+          } 
+        });
+      }
     } else {
       errorMessage.value = 'Usuario no encontrado en el sistema.';
     }

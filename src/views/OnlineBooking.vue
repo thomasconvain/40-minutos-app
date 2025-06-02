@@ -259,13 +259,12 @@ const submitForm = async () => {
       await addSpectatorToEvent(eventId, spectatorForEvent);
     }
     
-    // Redirigir al perfil (indicando que viene de OnlineBooking)
+    // Redirigir a la página de reserva confirmada
     router.push({ 
-      name: 'Profile', 
+      name: 'Reserve', 
       params: { idSpectator: user.uid }, 
       query: { 
-        idEvent: route.params.idEvent,
-        from: 'booking' // Añadir indicador de origen
+        idEvent: route.params.idEvent
       } 
     });
   } catch (error) {
