@@ -33,40 +33,6 @@
       </div>
     </div>
     </div>
-
-    <!-- Segundo mensaje sobre la contraseña temporal - estilo gris transparente sin bordes con icono de candado -->
-    <div 
-      v-if="spectator && !spectator.passwordChanged" 
-      class="relative my-6 p-[1px] rounded-xl bg-gradient-to-br from-orange-400/80 to-transparent"
-    >
-      <div class="bg-orange-50 rounded-xl p-4">
-        <div class="flex items-start gap-3">
-          <div class="flex-shrink-0">
-        <LockClosedIcon class="h-6 w-6 text-orange-500" aria-hidden="true" />
-          </div>
-          <div class="flex-1 text-gray-700">
-            <h3 class="font-bold text-md text-gray-700">Cambia tu contraseña</h3>
-            <div class="text-sm mt-1 text-gray-600">
-              <p>Por tu seguridad, te creamos una constraseña temporal.</p>
-              <p class="mt-2">Para volver a entrar a este lugar, debes cambiarla y hace login.</p>
-              <p v-if="message !== ''" class="mt-2 text-sm text-green-700 font-medium">
-                {{ message }}
-              </p>
-            </div>
-          </div>
-        </div>
-        
-        <div v-if="message === ''" class="mt-4 text-center">
-          <button 
-        class="btn btn-md bg-white hover:bg-transparent text-black border-none" 
-            @click="handleReset"
-          >
-            Cambiar contraseña
-          </button>
-        </div>
-      </div>
-    </div>
-
   </div>
 </template>
 
@@ -78,15 +44,11 @@ import {
   getFirestore, 
   doc, 
   getDoc, 
-  updateDoc
 } from "firebase/firestore";
-import { auth } from '@/firebase';
-import { sendPasswordResetEmail } from 'firebase/auth';
-import { CheckCircleIcon, LockClosedIcon } from "@heroicons/vue/24/outline";
+import { CheckCircleIcon } from "@heroicons/vue/24/outline";
 
 // Estado de la aplicación
 const spectator = ref(null);
-const message = ref('');
 const infoReserveDismissed = ref(false);
 
 // Router y parámetros
@@ -114,32 +76,12 @@ const fetchSpectator = async () => {
     console.error("Error al obtener los datos del espectador:", error);
   }
 };
-
-const handleReset = async () => {
-  if (!spectator.value || !spectator.value.email) {
-    message.value = "Error: datos de usuario no disponibles";
-    return;
-  }
   
-  try {
-    await sendPasswordResetEmail(auth, spectator.value.email);
-    
-    // Actualizar el campo passwordChanged en Firestore
-    const db = getFirestore();
-    const spectatorDocRef = doc(db, "spectators", idSpectator);
-    await updateDoc(spectatorDocRef, {
-      passwordChanged: true
-    });
-    
-    message.value = "✉️ Te enviamos un correo, revísalo!";
-  } catch (error) {
-    message.value = "Error al enviar el correo: " + error.message;
-  }
-};
 
-// Función para ocultar el mensaje informativo de reserva
+// Función para ocultar el mensaje informativo de reserva y redirigir a URL externa
 const dismissReserveInfo = () => {
   infoReserveDismissed.value = true;
+  window.location.href = 'https://www.40minutos.com/';
 };
 
 </script>
