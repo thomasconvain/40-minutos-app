@@ -1,69 +1,77 @@
 <template>
-  <div>
-    <NavbarMenu class="mb-10" />
+  <NavbarMenu class="mb-6 sm:mb-10" />
+  <div class="min-h-screen bg-gray-50 rounded-xl pt-6">
     
-    <div class="mx-auto max-w-6xl px-4">
-      <div class="mb-6 flex justify-between items-center">
-        <div>
-          <h1 class="text-2xl font-bold text-black">Gestión de Eventos</h1>
-          <p class="text-gray-600 mt-2">Administra todos los eventos del sistema</p>
-        </div>
-        <button 
-          v-if="canCreateEvents()"
-          @click="createEvent" 
-          class="btn btn-primary"
-        >
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-          </svg>
-          Crear Evento
-        </button>
-      </div>
-
-      <!-- Verificando autorización -->
-      <div v-if="isCheckingAuth" class="text-center py-8">
-        <span class="loading loading-spinner loading-lg"></span>
-        <p class="mt-2 text-black">Verificando acceso...</p>
-      </div>
-
-      <!-- Usuario no autorizado -->
-      <div v-else-if="!isAuthorized" class="text-center py-8">
-        <div class="mx-auto w-full max-w-screen-xl rounded-2xl bg-white p-6 md:p-8 shadow-xl">
-          <h2 class="text-xl font-bold text-black mb-4">Acceso Restringido</h2>
-          <p class="text-black mb-4">No tienes permisos para gestionar eventos.</p>
-          <button class="btn bg-black text-white hover:bg-gray-800" @click="logout">
-            Cerrar Sesión
+    <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 pb-8">
+      <div class="mb-6 sm:mb-8">
+        <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
+          <div>
+            <h1 class="text-xl sm:text-2xl lg:text-3xl font-bold text-black">Gestión de Eventos</h1>
+            <p class="text-gray-600 mt-2 text-sm sm:text-base">Administra todos los eventos del sistema</p>
+          </div>
+          <button 
+            v-if="canCreateEvents()"
+            @click="createEvent" 
+            class="btn bg-black text-white hover:bg-gray-800 flex-shrink-0 w-full sm:w-auto whitespace-nowrap"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+            </svg>
+            Crear Evento
           </button>
         </div>
       </div>
 
+      <!-- Verificando autorización -->
+      <div v-if="isCheckingAuth" class="bg-white rounded-xl shadow-xl p-4 sm:p-6 lg:p-8">
+        <div class="flex flex-col items-center justify-center py-12 sm:py-16">
+          <span class="loading loading-spinner loading-lg"></span>
+          <p class="mt-4 text-black text-sm sm:text-base">Verificando acceso...</p>
+        </div>
+      </div>
+
+      <!-- Usuario no autorizado -->
+      <div v-else-if="!isAuthorized" class="bg-white rounded-xl shadow-xl p-4 sm:p-6 lg:p-8">
+        <div class="flex justify-center py-8 sm:py-12">
+          <div class="w-full max-w-md text-center">
+            <h2 class="text-lg sm:text-xl font-bold text-black mb-4">Acceso Restringido</h2>
+            <p class="text-black mb-6 text-sm sm:text-base">No tienes permisos para gestionar eventos.</p>
+            <button class="btn bg-black text-white hover:bg-gray-800 w-full" @click="logout">
+              Cerrar Sesión
+            </button>
+          </div>
+        </div>
+      </div>
+
       <!-- Loading -->
-      <div v-else-if="isLoading" class="text-center py-8">
-        <span class="loading loading-spinner loading-lg"></span>
-        <p class="mt-2 text-black">Cargando eventos...</p>
+      <div v-else-if="isLoading" class="bg-white rounded-xl shadow-xl p-4 sm:p-6 lg:p-8">
+        <div class="flex flex-col items-center justify-center py-12 sm:py-16">
+          <span class="loading loading-spinner loading-lg"></span>
+          <p class="mt-4 text-black text-sm sm:text-base">Cargando eventos...</p>
+        </div>
       </div>
 
       <!-- Lista de eventos -->
       <div v-else>
         <!-- Tabs para filtrar eventos -->
-        <div class="tabs tabs-boxed w-full mb-6">
+        <div class="tabs tabs-boxed w-full mb-6 sm:mb-8 bg-white rounded-xl shadow-xl p-4 sm:p-6">
           <a 
-            class="tab flex-1" 
-            :class="{ 'tab-active': activeTab === 'activos' }" 
+            class="tab flex-1 text-xs sm:text-sm" 
+            :class="{ 'tab-active bg-gray-700 text-white': activeTab === 'activos' }" 
             @click="activeTab = 'activos'"
           >
-            Activos ({{ activeEvents.length }})
+            <span class="hidden sm:inline">Activos </span><span class="sm:hidden">Act. </span>({{ activeEvents.length }})
           </a>
           <a 
-            class="tab flex-1" 
-            :class="{ 'tab-active': activeTab === 'inactivos' }" 
+            class="tab flex-1 text-xs sm:text-sm" 
+            :class="{ 'tab-active bg-gray-700 text-white': activeTab === 'inactivos' }" 
             @click="activeTab = 'inactivos'"
           >
-            Inactivos ({{ inactiveEvents.length }})
+            <span class="hidden sm:inline">Inactivos </span><span class="sm:hidden">Inact. </span>({{ inactiveEvents.length }})
           </a>
           <a 
-            class="tab flex-1" 
-            :class="{ 'tab-active': activeTab === 'test' }" 
+            class="tab flex-1 text-xs sm:text-sm" 
+            :class="{ 'tab-active bg-gray-700 text-white': activeTab === 'test' }" 
             @click="activeTab = 'test'"
           >
             Test ({{ testEvents.length }})
@@ -72,10 +80,10 @@
 
         <!-- Eventos Activos -->
         <div v-if="activeTab === 'activos'">
-          <div v-if="activeEvents.length === 0" class="text-center py-8">
-            <p class="text-lg text-gray-500">No hay eventos activos</p>
+          <div v-if="activeEvents.length === 0" class="text-center py-8 sm:py-12">
+            <p class="text-base sm:text-lg text-gray-500">No hay eventos activos</p>
           </div>
-          <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div v-else class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
             <SimpleEventCard 
               v-for="event in activeEvents" 
               :key="event.id" 
@@ -90,10 +98,10 @@
 
         <!-- Eventos Inactivos -->
         <div v-if="activeTab === 'inactivos'">
-          <div v-if="inactiveEvents.length === 0" class="text-center py-8">
-            <p class="text-lg text-gray-500">No hay eventos inactivos</p>
+          <div v-if="inactiveEvents.length === 0" class="text-center py-8 sm:py-12">
+            <p class="text-base sm:text-lg text-gray-500">No hay eventos inactivos</p>
           </div>
-          <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div v-else class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
             <SimpleEventCard 
               v-for="event in inactiveEvents" 
               :key="event.id" 
@@ -108,10 +116,10 @@
 
         <!-- Eventos Test -->
         <div v-if="activeTab === 'test'">
-          <div v-if="testEvents.length === 0" class="text-center py-8">
-            <p class="text-lg text-gray-500">No hay eventos de test</p>
+          <div v-if="testEvents.length === 0" class="text-center py-8 sm:py-12">
+            <p class="text-base sm:text-lg text-gray-500">No hay eventos de test</p>
           </div>
-          <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div v-else class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
             <SimpleEventCard 
               v-for="event in testEvents" 
               :key="event.id" 

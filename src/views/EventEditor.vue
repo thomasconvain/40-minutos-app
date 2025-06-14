@@ -1,6 +1,6 @@
 <template>
-  <div class="min-h-screen bg-gray-50">
-    <NavbarMenu class="mb-6 sm:mb-10" />
+  <NavbarMenu class="mb-6 sm:mb-10" />
+  <div class="min-h-screen bg-gray-50 rounded-xl pt-6">
     
     <div class="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 pb-8">
       <div class="mb-6 sm:mb-8">
