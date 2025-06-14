@@ -123,7 +123,7 @@
 <script setup>
 import { ref, onMounted, computed } from 'vue';
 import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
-import { doc, setDoc } from 'firebase/firestore';
+import { doc, setDoc, getDoc } from 'firebase/firestore';
 import { db } from '@/firebase';
 import { useRouter, useRoute } from 'vue-router';
 import { addSpectatorToEvent } from '@/utils';
@@ -214,6 +214,20 @@ const goToLogin = () => {
   });
 };
 
+// Función para verificar si isCheckInOpen está activo en el evento
+const checkEventStatus = async (eventId) => {
+  try {
+    const eventDoc = await getDoc(doc(db, 'events', eventId));
+    if (eventDoc.exists()) {
+      return eventDoc.data().status?.isCheckInOpen || false;
+    }
+    return false;
+  } catch (error) {
+    console.error('Error al verificar el estado del evento:', error);
+    return false;
+  }
+};
+
 const submitForm = async () => {
   try {
     isLoading.value = true;
@@ -259,14 +273,26 @@ const submitForm = async () => {
       await addSpectatorToEvent(eventId, spectatorForEvent);
     }
     
-    // Redirigir a la página de reserva confirmada
-    router.push({ 
-      name: 'Reserve', 
-      params: { idSpectator: user.uid }, 
-      query: { 
-        idEvent: route.params.idEvent
-      } 
-    });
+    // Verificar si el check-in está abierto para determinar la redirección
+    const eventId = route.params.idEvent.split(',')[0].trim(); // Usar el primer evento
+    const isCheckInOpen = await checkEventStatus(eventId);
+    
+    if (isCheckInOpen) {
+      // Si el check-in está abierto, redirigir directamente al perfil
+      router.push({ 
+        name: 'Profile', 
+        params: { idSpectator: user.uid }
+      });
+    } else {
+      // Si el check-in no está abierto, ir a la página de confirmación
+      router.push({ 
+        name: 'Reserve', 
+        params: { idSpectator: user.uid }, 
+        query: { 
+          idEvent: route.params.idEvent
+        } 
+      });
+    }
   } catch (error) {
     if (error.code === 'auth/email-already-in-use') {
       emailError.value = 'Ya tienes cuentas, debes reservar con la opción de "usar datos guardados"';

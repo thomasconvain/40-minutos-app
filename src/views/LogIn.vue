@@ -54,7 +54,7 @@
 <script setup>
 import { ref } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
-import { getFirestore, collection, query, where, getDocs, updateDoc, doc, arrayUnion } from 'firebase/firestore';
+import { getFirestore, collection, query, where, getDocs, updateDoc, doc, arrayUnion, getDoc } from 'firebase/firestore';
 import { auth } from '@/firebase';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import PasswordField from '@/components/PasswordField.vue';
@@ -73,6 +73,21 @@ const route = useRoute();
 
 const eventId = route.params.idEvent;
 const from = ref('login');
+
+// Función para verificar si isCheckInOpen está activo en el evento
+const checkEventStatus = async (eventId) => {
+  try {
+    const db = getFirestore();
+    const eventDoc = await getDoc(doc(db, 'events', eventId));
+    if (eventDoc.exists()) {
+      return eventDoc.data().status?.isCheckInOpen || false;
+    }
+    return false;
+  } catch (error) {
+    console.error('Error al verificar el estado del evento:', error);
+    return false;
+  }
+};
 
 const login = async () => {
   // Evitar múltiples envíos
@@ -131,15 +146,27 @@ const login = async () => {
         }
       }
       
-      // Si hay un eventId, redirigir a confirmación de reserva, sino al perfil
+      // Si hay un eventId, verificar el estado del evento para determinar la redirección
       if (eventId) {
-        router.push({ 
-          name: 'Reserve', 
-          params: { idSpectator: docData.id }, 
-          query: { 
-            idEvent: eventId
-          } 
-        });
+        const currentEventId = eventId.split(',')[0].trim(); // Usar el primer evento
+        const isCheckInOpen = await checkEventStatus(currentEventId);
+        
+        if (isCheckInOpen) {
+          // Si el check-in está abierto, redirigir directamente al perfil
+          router.push({ 
+            name: 'Profile', 
+            params: { idSpectator: docData.id }
+          });
+        } else {
+          // Si el check-in no está abierto, ir a la página de confirmación
+          router.push({ 
+            name: 'Reserve', 
+            params: { idSpectator: docData.id }, 
+            query: { 
+              idEvent: eventId
+            } 
+          });
+        }
       } else {
         router.push({ 
           name: 'Profile', 
