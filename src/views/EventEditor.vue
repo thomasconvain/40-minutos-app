@@ -232,7 +232,7 @@
                     v-model="form.paymentMethodIds" 
                     class="checkbox border-gray-700 [--chkbg:theme(colors.gray.700)] [--chkfg:white]" 
                   />
-                  <span class="label-text font-medium">{{ method.name }}</span>
+                  <span class="label-text font-medium">{{ method.paymentType || method.name }}</span>
                 </label>
               </div>
             </div>

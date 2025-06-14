@@ -82,9 +82,9 @@ const fetchPaymentMethods = async () => {
       event.value = eventDoc.data();
       
       // Verificar si el evento tiene métodos de pago configurados
-      if (event.value.settings?.paymentMethodIds && event.value.settings.paymentMethodIds.length > 0) {
+      if (event.value.paymentMethodIds && event.value.paymentMethodIds.length > 0) {
         // Cargar los detalles de cada método de pago
-        const methodPromises = event.value.settings.paymentMethodIds.map(methodId => 
+        const methodPromises = event.value.paymentMethodIds.map(methodId => 
           getDoc(doc(db, 'payment-methods', methodId))
         );
         

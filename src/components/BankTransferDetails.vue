@@ -79,13 +79,13 @@ const fetchBankAccount = async () => {
       const eventData = eventDocSnap.data();
       
       // Verificar si existen métodos de pago en el evento
-      if (eventData?.settings?.paymentMethodIds && eventData.settings.paymentMethodIds.length > 0) {
-        console.log('Métodos de pago encontrados:', eventData.settings.paymentMethodIds);
+      if (eventData?.paymentMethodIds && eventData.paymentMethodIds.length > 0) {
+        console.log('Métodos de pago encontrados:', eventData.paymentMethodIds);
         
         // Buscar un método de pago con paymentType "Transferencia electrónica"
         let transferMethod = null;
         
-        for (const methodId of eventData.settings.paymentMethodIds) {
+        for (const methodId of eventData.paymentMethodIds) {
           const paymentMethodRef = doc(db, 'payment-methods', methodId);
           const paymentMethodSnap = await getDoc(paymentMethodRef);
           
