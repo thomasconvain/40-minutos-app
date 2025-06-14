@@ -1,61 +1,67 @@
 <template>
-  <div>
-    <NavbarMenu class="mb-10" />
+  <div class="min-h-screen bg-gray-50">
+    <NavbarMenu class="mb-6 sm:mb-10" />
     
-    <div class="mx-auto max-w-4xl px-4">
-      <div class="mb-6">
-        <h1 class="text-2xl font-bold text-black">
+    <div class="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 pb-8">
+      <div class="mb-6 sm:mb-8">
+        <h1 class="text-xl sm:text-2xl lg:text-3xl font-bold text-black">
           {{ isEditing ? 'Editar Evento' : 'Crear Nuevo Evento' }}
         </h1>
-        <p class="text-gray-600 mt-2">
+        <p class="text-gray-600 mt-2 text-sm sm:text-base">
           {{ isEditing ? 'Modifica los datos del evento' : 'Completa la información para crear un nuevo evento' }}
         </p>
       </div>
 
       <!-- Verificando autorización -->
-      <div v-if="isCheckingAuth" class="text-center py-8">
-        <span class="loading loading-spinner loading-lg"></span>
-        <p class="mt-2 text-black">Verificando acceso...</p>
+      <div v-if="isCheckingAuth" class="bg-white rounded-xl shadow-xl p-4 sm:p-6 lg:p-8">
+        <div class="flex flex-col items-center justify-center py-12 sm:py-16">
+          <span class="loading loading-spinner loading-lg"></span>
+          <p class="mt-4 text-black text-sm sm:text-base">Verificando acceso...</p>
+        </div>
       </div>
 
       <!-- Usuario no autorizado -->
-      <div v-else-if="!isAuthorized" class="text-center py-8">
-        <div class="mx-auto w-full max-w-screen-xl rounded-2xl bg-white p-6 md:p-8 shadow-xl">
-          <h2 class="text-xl font-bold text-black mb-4">Acceso Restringido</h2>
-          <p class="text-black mb-4">No tienes permisos para crear o editar eventos.</p>
-          <button class="btn bg-black text-white hover:bg-gray-800" @click="logout">
-            Cerrar Sesión
-          </button>
+      <div v-else-if="!isAuthorized" class="bg-white rounded-xl shadow-xl p-4 sm:p-6 lg:p-8">
+        <div class="flex justify-center py-8 sm:py-12">
+          <div class="w-full max-w-md text-center">
+            <h2 class="text-lg sm:text-xl font-bold text-black mb-4">Acceso Restringido</h2>
+            <p class="text-black mb-6 text-sm sm:text-base">No tienes permisos para crear o editar eventos.</p>
+            <button class="btn bg-black text-white hover:bg-gray-800 w-full" @click="logout">
+              Cerrar Sesión
+            </button>
+          </div>
         </div>
       </div>
 
       <!-- Formulario autorizado -->
-      <div v-else>
-        <form @submit.prevent="handleSubmit" class="bg-white rounded-lg shadow-xl p-6">
+      <div v-else class="bg-white rounded-xl shadow-xl p-4 sm:p-6 lg:p-8">
+        <form @submit.prevent="handleSubmit">
           <!-- Información Básica -->
-          <div class="mb-8">
-            <h2 class="text-lg font-semibold text-black mb-4">Información Básica</h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div class="mb-6 sm:mb-8">
+            <h2 class="text-base sm:text-lg font-semibold text-black mb-3 sm:mb-4 border-b border-gray-200 pb-2">
+              📅 Información Básica
+            </h2>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
               
               <!-- Fecha y Hora -->
-              <div class="md:col-span-2">
-                <label class="label">
-                  <span class="label-text font-medium">Fecha y Hora</span>
+              <div class="lg:col-span-2">
+                <label class="block text-sm font-medium text-gray-700 mb-2">
+                  Fecha y Hora *
                 </label>
                 <input 
                   type="datetime-local" 
                   v-model="form.date" 
-                  class="input input-bordered w-full"
+                  class="input input-bordered w-full focus:ring-2 focus:ring-gray-500 focus:border-gray-500"
                   required
                 />
               </div>
 
               <!-- Assembly -->
               <div>
-                <label class="label">
-                  <span class="label-text font-medium">Ensamble</span>
+                <label class="block text-sm font-medium text-gray-700 mb-2">
+                  🎵 Ensamble *
                 </label>
-                <select v-model="form.assemblyId" class="select select-bordered w-full" required>
+                <select v-model="form.assemblyId" class="select select-bordered w-full focus:ring-2 focus:ring-gray-500 focus:border-gray-500" required>
                   <option value="">Seleccionar Ensamble</option>
                   <option v-for="assembly in assemblies" :key="assembly.id" :value="assembly.id">
                     {{ assembly.name }}
@@ -65,10 +71,10 @@
 
               <!-- Host -->
               <div>
-                <label class="label">
-                  <span class="label-text font-medium">Anfitrión</span>
+                <label class="block text-sm font-medium text-gray-700 mb-2">
+                  👤 Anfitrión *
                 </label>
-                <select v-model="form.hostId" class="select select-bordered w-full" required>
+                <select v-model="form.hostId" class="select select-bordered w-full focus:ring-2 focus:ring-gray-500 focus:border-gray-500" required>
                   <option value="">Seleccionar Anfitrión</option>
                   <option v-for="host in hosts" :key="host.id" :value="host.id">
                     {{ host.name }}
@@ -78,10 +84,10 @@
 
               <!-- Venue -->
               <div>
-                <label class="label">
-                  <span class="label-text font-medium">Lugar</span>
+                <label class="block text-sm font-medium text-gray-700 mb-2">
+                  📍 Lugar *
                 </label>
-                <select v-model="form.venueId" class="select select-bordered w-full" required>
+                <select v-model="form.venueId" class="select select-bordered w-full focus:ring-2 focus:ring-gray-500 focus:border-gray-500" required>
                   <option value="">Seleccionar Lugar</option>
                   <option v-for="venue in venues" :key="venue.id" :value="venue.id">
                     {{ venue.name }}
@@ -91,10 +97,10 @@
 
               <!-- Content Reference -->
               <div>
-                <label class="label">
-                  <span class="label-text font-medium">Contenido</span>
+                <label class="block text-sm font-medium text-gray-700 mb-2">
+                  📝 Contenido
                 </label>
-                <select v-model="form.contentReferenceId" class="select select-bordered w-full">
+                <select v-model="form.contentReferenceId" class="select select-bordered w-full focus:ring-2 focus:ring-gray-500 focus:border-gray-500">
                   <option value="">Seleccionar Contenido</option>
                   <option v-for="content in contents" :key="content.id" :value="content.id">
                     {{ content.name }}
@@ -105,121 +111,150 @@
           </div>
 
           <!-- Configuraciones -->
-          <div class="mb-8">
-            <h2 class="text-lg font-semibold text-black mb-4">Configuraciones</h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div class="mb-6 sm:mb-8">
+            <h2 class="text-base sm:text-lg font-semibold text-black mb-3 sm:mb-4 border-b border-gray-200 pb-2">
+              ⚙️ Configuraciones
+            </h2>
+            <div class="space-y-4 sm:space-y-6">
               
               <!-- Código de Invitación -->
-              <div class="md:col-span-2">
-                <label class="label">
-                  <span class="label-text font-medium">Código de Invitación</span>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">
+                  🔑 Código de Invitación
                 </label>
                 <input 
                   type="text" 
                   v-model="form.settings.invitationCode" 
-                  class="input input-bordered w-full"
+                  class="input input-bordered w-full focus:ring-2 focus:ring-gray-500 focus:border-gray-500"
                   placeholder="Código único para el evento"
                 />
               </div>
 
-              <!-- Switches -->
-              <div class="space-y-4">
-                <div class="form-control">
-                  <label class="label cursor-pointer justify-start">
-                    <input type="checkbox" v-model="form.settings.isActive" class="checkbox checkbox-primary mr-3" />
-                    <span class="label-text">Evento Activo</span>
-                  </label>
+              <!-- Switches en grid responsivo -->
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
+                <div class="space-y-4">
+                  <div class="form-control">
+                    <label class="label cursor-pointer justify-start gap-3 p-3 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors">
+                      <input type="checkbox" v-model="form.settings.isActive" class="checkbox border-gray-700 [--chkbg:theme(colors.gray.700)] [--chkfg:white]" />
+                      <div>
+                        <span class="label-text font-medium">Evento Activo</span>
+                        <p class="text-xs text-gray-500 mt-1">El evento aparecerá en listados públicos</p>
+                      </div>
+                    </label>
+                  </div>
+
+                  <div class="form-control">
+                    <label class="label cursor-pointer justify-start gap-3 p-3 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors">
+                      <input type="checkbox" v-model="form.settings.isPrivate" class="checkbox border-gray-700 [--chkbg:theme(colors.gray.700)] [--chkfg:white]" />
+                      <div>
+                        <span class="label-text font-medium">Evento Privado</span>
+                        <p class="text-xs text-gray-500 mt-1">Solo accesible con código de invitación</p>
+                      </div>
+                    </label>
+                  </div>
                 </div>
 
-                <div class="form-control">
-                  <label class="label cursor-pointer justify-start">
-                    <input type="checkbox" v-model="form.settings.isPrivate" class="checkbox checkbox-primary mr-3" />
-                    <span class="label-text">Evento Privado</span>
-                  </label>
-                </div>
-              </div>
+                <div class="space-y-4">
+                  <div class="form-control">
+                    <label class="label cursor-pointer justify-start gap-3 p-3 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors">
+                      <input type="checkbox" v-model="form.settings.isTipAccepted" class="checkbox border-gray-700 [--chkbg:theme(colors.gray.700)] [--chkfg:white]" />
+                      <div>
+                        <span class="label-text font-medium">Acepta Propinas</span>
+                        <p class="text-xs text-gray-500 mt-1">Los espectadores pueden hacer aportes</p>
+                      </div>
+                    </label>
+                  </div>
 
-              <div class="space-y-4">
-                <div class="form-control">
-                  <label class="label cursor-pointer justify-start">
-                    <input type="checkbox" v-model="form.settings.isTipAccepted" class="checkbox checkbox-primary mr-3" />
-                    <span class="label-text">Acepta Propinas</span>
-                  </label>
-                </div>
-
-                <div class="form-control">
-                  <label class="label cursor-pointer justify-start">
-                    <input type="checkbox" v-model="form.settings.isTest" class="checkbox checkbox-primary mr-3" />
-                    <span class="label-text">Evento de Prueba</span>
-                  </label>
+                  <div class="form-control">
+                    <label class="label cursor-pointer justify-start gap-3 p-3 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors">
+                      <input type="checkbox" v-model="form.settings.isTest" class="checkbox border-gray-700 [--chkbg:theme(colors.gray.700)] [--chkfg:white]" />
+                      <div>
+                        <span class="label-text font-medium">Evento de Prueba</span>
+                        <p class="text-xs text-gray-500 mt-1">Marcado como evento de testing</p>
+                      </div>
+                    </label>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
 
           <!-- Estado del Evento -->
-          <div class="mb-8">
-            <h2 class="text-lg font-semibold text-black mb-4">Estado del Evento</h2>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div class="mb-6 sm:mb-8">
+            <h2 class="text-base sm:text-lg font-semibold text-black mb-3 sm:mb-4 border-b border-gray-200 pb-2">
+              📊 Estado del Evento
+            </h2>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               
               <div class="form-control">
-                <label class="label cursor-pointer justify-start">
-                  <input type="checkbox" v-model="form.status.isReservationOpen" class="checkbox checkbox-primary mr-3" />
-                  <span class="label-text">Reservas Abiertas</span>
+                <label class="label cursor-pointer justify-start gap-3 p-3 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors">
+                  <input type="checkbox" v-model="form.status.isReservationOpen" class="checkbox border-gray-700 [--chkbg:theme(colors.gray.700)] [--chkfg:white]" />
+                  <div>
+                    <span class="label-text font-medium">Reservas Abiertas</span>
+                    <p class="text-xs text-gray-500 mt-1">Los usuarios pueden registrarse</p>
+                  </div>
                 </label>
               </div>
 
               <div class="form-control">
-                <label class="label cursor-pointer justify-start">
-                  <input type="checkbox" v-model="form.status.isCheckInOpen" class="checkbox checkbox-primary mr-3" />
-                  <span class="label-text">Check-in Abierto</span>
+                <label class="label cursor-pointer justify-start gap-3 p-3 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors">
+                  <input type="checkbox" v-model="form.status.isCheckInOpen" class="checkbox border-gray-700 [--chkbg:theme(colors.gray.700)] [--chkfg:white]" />
+                  <div>
+                    <span class="label-text font-medium">Check-in Abierto</span>
+                    <p class="text-xs text-gray-500 mt-1">Espectadores pueden hacer check-in</p>
+                  </div>
                 </label>
               </div>
 
-              <div class="form-control">
-                <label class="label cursor-pointer justify-start">
-                  <input type="checkbox" v-model="form.status.isFinished" class="checkbox checkbox-primary mr-3" />
-                  <span class="label-text">Evento Finalizado</span>
+              <div class="form-control sm:col-span-2 lg:col-span-1">
+                <label class="label cursor-pointer justify-start gap-3 p-3 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors">
+                  <input type="checkbox" v-model="form.status.isFinished" class="checkbox border-gray-700 [--chkbg:theme(colors.gray.700)] [--chkfg:white]" />
+                  <div>
+                    <span class="label-text font-medium">Evento Finalizado</span>
+                    <p class="text-xs text-gray-500 mt-1">El evento ha terminado</p>
+                  </div>
                 </label>
               </div>
             </div>
           </div>
 
           <!-- Métodos de Pago -->
-          <div class="mb-8">
-            <h2 class="text-lg font-semibold text-black mb-4">Métodos de Pago</h2>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div class="mb-6 sm:mb-8">
+            <h2 class="text-base sm:text-lg font-semibold text-black mb-3 sm:mb-4 border-b border-gray-200 pb-2">
+              💳 Métodos de Pago
+            </h2>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               <div v-for="method in paymentMethods" :key="method.id" class="form-control">
-                <label class="label cursor-pointer justify-start">
+                <label class="label cursor-pointer justify-start gap-3 p-3 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors">
                   <input 
                     type="checkbox" 
                     :value="method.id"
                     v-model="form.paymentMethodIds" 
-                    class="checkbox checkbox-primary mr-3" 
+                    class="checkbox border-gray-700 [--chkbg:theme(colors.gray.700)] [--chkfg:white]" 
                   />
-                  <span class="label-text">{{ method.name }}</span>
+                  <span class="label-text font-medium">{{ method.name }}</span>
                 </label>
               </div>
             </div>
           </div>
 
           <!-- Botones de Acción -->
-          <div class="flex justify-end gap-4 pt-6 border-t">
+          <div class="flex flex-col sm:flex-row justify-end gap-3 sm:gap-4 pt-6 border-t border-gray-200">
             <button 
               type="button" 
               @click="cancel" 
-              class="btn btn-ghost"
+              class="btn btn-ghost order-2 sm:order-1 flex-1 sm:flex-none"
               :disabled="isSubmitting"
             >
               Cancelar
             </button>
             <button 
               type="submit" 
-              class="btn btn-primary"
+              class="btn bg-black text-white hover:bg-gray-800 order-1 sm:order-2 flex-1 sm:flex-none whitespace-nowrap"
               :disabled="isSubmitting"
             >
               <span v-if="isSubmitting" class="loading loading-spinner loading-sm mr-2"></span>
-              {{ isEditing ? 'Actualizar Evento' : 'Crear Evento' }}
+              <span class="truncate">{{ isEditing ? 'Actualizar Evento' : 'Crear Evento' }}</span>
             </button>
           </div>
         </form>

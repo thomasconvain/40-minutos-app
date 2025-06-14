@@ -1,16 +1,16 @@
 <template>
-  <div class="card bg-white shadow-xl">
-    <div class="card-body">
+  <div class="card bg-white shadow-xl hover:shadow-2xl transition-shadow duration-200">
+    <div class="card-body p-4 sm:p-6">
       <!-- Header con estado y acciones -->
-      <div class="flex justify-between items-start mb-3">
-        <div class="flex gap-2">
-          <div class="badge" :class="getBadgeClass()">
+      <div class="flex justify-between items-start mb-4">
+        <div class="flex flex-wrap gap-2">
+          <div class="badge badge-sm" :class="getBadgeClass()">
             {{ getStatusText() }}
           </div>
-          <div v-if="isTest" class="badge badge-warning">Test</div>
-          <div v-if="isPrivate" class="badge badge-info">Privado</div>
+          <div v-if="isTest" class="badge badge-sm badge-warning">Test</div>
+          <div v-if="isPrivate" class="badge badge-sm bg-blue-600 text-white">Privado</div>
         </div>
-        <button @click="handleEdit" class="btn btn-ghost btn-xs" title="Editar evento">
+        <button @click="handleEdit" class="btn btn-ghost btn-sm hover:bg-gray-100" title="Editar evento">
           <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
           </svg>
@@ -18,56 +18,48 @@
       </div>
 
       <!-- Título del evento -->
-      <div class="mb-2">
-        <h2 class="card-title text-lg font-bold text-black">{{ eventTitle }}</h2>
+      <div class="mb-4">
+        <h2 class="card-title text-lg sm:text-xl font-bold text-black mb-1">{{ eventTitle }}</h2>
         <p class="text-sm text-gray-600">{{ assemblyName || 'Sin ensamble' }}</p>
       </div>
 
       <!-- Fecha -->
-      <div class="mb-3">
-        <div class="flex items-center gap-2 text-sm text-gray-600">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <div class="mb-4">
+        <div class="flex items-center gap-2 text-sm text-gray-600 bg-gray-50 rounded-lg p-2">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
           </svg>
-          {{ eventDate }}
+          <span class="font-medium">{{ eventDate }}</span>
         </div>
       </div>
 
-      <!-- Estadísticas del evento -->
-      <div class="grid grid-cols-2 gap-2 mb-3">
-        <div class="stat bg-gray-50 rounded p-2">
-          <div class="stat-title text-xs">Reservas</div>
-          <div class="stat-value text-lg">{{ reservations }}</div>
-        </div>
-        <div class="stat bg-gray-50 rounded p-2">
-          <div class="stat-title text-xs">Total Personas</div>
-          <div class="stat-value text-lg">{{ totalPeople }}</div>
-        </div>
-      </div>
 
       <!-- Estado de operaciones -->
-      <div class="flex flex-wrap gap-1 mb-3">
-        <div class="badge badge-xs" :class="reservationsOpen ? 'badge-success' : 'badge-neutral'">
+      <div class="flex flex-wrap gap-2 mb-4">
+        <div class="badge badge-sm" :class="reservationsOpen ? 'bg-gray-700 text-white' : 'badge-neutral'">
           {{ reservationsOpen ? 'Reservas: Abiertas' : 'Reservas: Cerradas' }}
         </div>
-        <div class="badge badge-xs" :class="checkinOpen ? 'badge-success' : 'badge-neutral'">
+        <div class="badge badge-sm" :class="checkinOpen ? 'bg-gray-700 text-white' : 'badge-neutral'">
           {{ checkinOpen ? 'Check-in: Abierto' : 'Check-in: Cerrado' }}
         </div>
-        <div class="badge badge-xs" :class="finished ? 'badge-error' : 'badge-neutral'">
+        <div class="badge badge-sm" :class="finished ? 'badge-error' : 'badge-neutral'">
           {{ finished ? 'Finalizado' : 'En curso' }}
         </div>
       </div>
 
       <!-- Información adicional -->
-      <div class="text-xs text-gray-500">
-        <div v-if="invitationCode" class="mb-1">
-          Código: {{ invitationCode }}
+      <div class="space-y-2 text-sm">
+        <div v-if="invitationCode" class="flex items-center gap-2 text-gray-600">
+          <span class="font-medium text-gray-700">Código:</span>
+          <span class="font-mono bg-gray-100 px-2 py-1 rounded text-xs">{{ invitationCode }}</span>
         </div>
-        <div v-if="hostName" class="mb-1">
-          Anfitrión: {{ hostName }}
+        <div v-if="hostName" class="flex items-center gap-2 text-gray-600">
+          <span class="font-medium text-gray-700">Anfitrión:</span>
+          <span>{{ hostName }}</span>
         </div>
-        <div v-if="paymentMethods > 0" class="mb-1">
-          Métodos de pago: {{ paymentMethods }}
+        <div v-if="paymentMethods > 0" class="flex items-center gap-2 text-gray-600">
+          <span class="font-medium text-gray-700">Métodos de pago:</span>
+          <span class="bg-gray-700 text-white px-2 py-1 rounded-full text-xs">{{ paymentMethods }}</span>
         </div>
       </div>
     </div>
@@ -116,24 +108,6 @@ const eventDate = computed(() => {
   return "Fecha no disponible";
 });
 
-const reservations = computed(() => {
-  try {
-    return props.event?.zSpectator?.length || 0;
-  } catch {
-    return 0;
-  }
-});
-
-const totalPeople = computed(() => {
-  try {
-    if (!props.event?.zSpectator || !Array.isArray(props.event.zSpectator)) return 0;
-    return props.event.zSpectator.reduce((total, spectator) => {
-      return total + 1 + (spectator?.numberOfCompanions || 0);
-    }, 0);
-  } catch {
-    return 0;
-  }
-});
 
 const isTest = computed(() => Boolean(props.event?.settings?.isTest));
 const isPrivate = computed(() => Boolean(props.event?.settings?.isPrivate));
@@ -155,7 +129,7 @@ const getStatusText = () => {
 
 const getBadgeClass = () => {
   if (isTest.value) return 'badge-warning';
-  if (isActive.value) return 'badge-success';
+  if (isActive.value) return 'bg-gray-700 text-white';
   return 'badge-neutral';
 };
 
