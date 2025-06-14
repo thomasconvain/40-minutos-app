@@ -171,7 +171,7 @@
 
               <div class="form-control">
                 <label class="label cursor-pointer justify-start">
-                  <input type="checkbox" v-model="form.status.isCheckinOpen" class="checkbox checkbox-primary mr-3" />
+                  <input type="checkbox" v-model="form.status.isCheckInOpen" class="checkbox checkbox-primary mr-3" />
                   <span class="label-text">Check-in Abierto</span>
                 </label>
               </div>
@@ -263,7 +263,7 @@ const form = ref({
   },
   status: {
     isReservationOpen: true,
-    isCheckinOpen: false,
+    isCheckInOpen: false,
     isFinished: false
   },
   paymentMethodIds: []
@@ -342,7 +342,7 @@ const loadEventData = async () => {
         },
         status: {
           isReservationOpen: eventData.status?.isReservationOpen ?? true,
-          isCheckinOpen: eventData.status?.isCheckinOpen ?? false,
+          isCheckInOpen: eventData.status?.isCheckInOpen ?? false,
           isFinished: eventData.status?.isFinished ?? false
         },
         paymentMethodIds: eventData.paymentMethodIds || []

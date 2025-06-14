@@ -35,6 +35,14 @@ service cloud.firestore {
       // Permitir crear o actualizar solo `passwordChanged` sin estar autenticado
       allow create, update: if request.resource.data.keys().hasOnly(['passwordChanged']);
 
+      // Permitir actualizar datos de check-in sin autenticación
+      allow update: if request.resource.data.keys().hasAny([
+        'email',
+        'phone',
+        'numberOfPeople',
+        'uniquePaymentForGroup'
+      ]);
+
       // Permitir crear, actualizar o eliminar cualquier otro campo si está autenticado
       allow create, update, delete: if request.auth != null &&
         request.resource.data.keys().hasAny([

@@ -69,7 +69,13 @@ const routes = [
     path: '/checkin/:idSpectator/:idEvent/:nameEvent?',
     name: 'CheckIn',
     component: CheckIn,
-    meta: { requiresAuth: true }
+    meta: { requiresAuth: false }
+  },
+  {
+    path: '/email-checkin/:idEvent/:nameEvent?',
+    name: 'EmailCheckIn',
+    component: CheckIn,
+    meta: { requiresAuth: false }
   },
   {
     path: '/event/:idSpectator/:idEvent/:nameEvent?',

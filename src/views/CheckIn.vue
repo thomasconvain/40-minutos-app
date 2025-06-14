@@ -11,7 +11,16 @@
     <div class="content my-8">
       <div v-if="activeStep === 1">
         <div class="card bg-base-100 border border-base-600 mt-6">
-          <div v-if="spectator" class="card-body">
+          <div v-if="isEmailCheckIn && !spectator" class="card-body">
+            <h2 class="card-title">Ingresa tu email</h2>
+            <p class="">Ingresa el email con el que te registraste al concierto:</p>
+            <label class="text-sm" for="email"><strong>Email</strong></label>
+            <input v-model="emailInput" type="email" placeholder="correo" class="input input-bordered w-full" />
+            <p v-if="emailError" class="text-red-500 text-sm mt-1">{{ emailError }}</p>
+            <button class="btn btn-primary mt-4" @click="findSpectatorByEmail">Buscar</button>
+            <p v-if="spectatorNotFound" class="text-red-500 text-sm mt-2">No se encontró un registro con este email para este evento.</p>
+          </div>
+          <div v-else-if="spectator" class="card-body">
             <h2 class="card-title">Tus datos</h2>
             <p class="">Puedes modificar tus datos si no están correctos:</p>
             <label class="text-sm" for="email"><strong>Email</strong></label>
@@ -62,7 +71,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, computed } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { getFirestore, doc, getDoc, updateDoc } from 'firebase/firestore';
 import { ShareIcon } from '@heroicons/vue/24/outline'
@@ -78,13 +87,84 @@ const phoneError = ref('');
 const randomId = ref('');
 const spectatorParams = ref('');
 const eventParams = ref('');
+const emailInput = ref('');
+const spectatorNotFound = ref(false);
 
 const route = useRoute();
 const router = useRouter(); // Instancia de Vue Router
 const id = route.params.idSpectator;
 
+const isEmailCheckIn = computed(() => route.name === 'EmailCheckIn');
+
+
+const findSpectatorByEmail = async () => {
+  if (!emailInput.value) {
+    emailError.value = 'Por favor ingresa tu email';
+    return;
+  }
+
+  const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailPattern.test(emailInput.value)) {
+    emailError.value = 'Por favor ingresa un correo válido';
+    return;
+  }
+
+  const db = getFirestore();
+  spectatorNotFound.value = false;
+  emailError.value = '';
+
+  try {
+    // Buscar el evento actual para obtener los espectadores registrados
+    const eventRef = doc(db, 'events', route.params.idEvent);
+    const eventSnap = await getDoc(eventRef);
+    
+    if (!eventSnap.exists()) {
+      spectatorNotFound.value = true;
+      return;
+    }
+
+    const eventData = eventSnap.data();
+    const zSpectator = eventData.zSpectator || [];
+    
+    // Buscar todos los espectadores registrados para este evento
+    let foundSpectatorId = null;
+    
+    for (const spec of zSpectator) {
+      // Obtener los datos del espectador desde la colección spectators
+      const spectatorRef = doc(db, 'spectators', spec.spectatorId);
+      const spectatorSnap = await getDoc(spectatorRef);
+      
+      if (spectatorSnap.exists()) {
+        const spectatorData = spectatorSnap.data();
+        if (spectatorData.email && spectatorData.email.toLowerCase() === emailInput.value.toLowerCase()) {
+          foundSpectatorId = spec.spectatorId;
+          spectator.value = spectatorData;
+          numberOfCompanions.value = spec.numberOfCompanions || 0;
+          break;
+        }
+      }
+    }
+
+    if (!foundSpectatorId) {
+      spectatorNotFound.value = true;
+      return;
+    }
+
+    // Actualizar los parámetros para usar el espectador encontrado
+    spectatorParams.value = foundSpectatorId;
+    
+  } catch (error) {
+    console.error('Error al buscar el espectador:', error);
+    spectatorNotFound.value = true;
+  }
+};
 
 const fetchSpectator = async () => {
+  // Si es email check-in, no intentar cargar el espectador por ID hasta que se busque por email
+  if (isEmailCheckIn.value) {
+    return;
+  }
+
   const db = getFirestore();
   
   try {
@@ -184,8 +264,10 @@ const fetchEvents = async () => {
 
 const validateCheckin = async () => {
   const db = getFirestore();
-  const spectatorRef = doc(db, 'spectators', id); // Usa el id del espectador de los params
-  const eventRef = doc(db, 'events', route.params.idEvent); // Referencia al evento actual
+  // Usar el ID del espectador encontrado por email o el de los parámetros
+  const spectatorId = isEmailCheckIn.value ? spectatorParams.value : id;
+  const spectatorRef = doc(db, 'spectators', spectatorId);
+  const eventRef = doc(db, 'events', route.params.idEvent);
   
   try {
     // Actualizar solo los datos básicos del espectador sin cambiar el estado global de check-in
@@ -204,13 +286,13 @@ const validateCheckin = async () => {
       const zSpectator = eventData.zSpectator || [];
       
       // Buscar el índice del espectador actual en el array de zSpectator
-      const spectatorIndex = zSpectator.findIndex(s => s.spectatorId === id);
+      const spectatorIndex = zSpectator.findIndex(s => s.spectatorId === spectatorId);
       
       if (spectatorIndex !== -1) {
         // Actualizar solo el registro del espectador para este evento específico
         // usando los nuevos campos de la estructura
         zSpectator[spectatorIndex] = {
-          spectatorId: id,
+          spectatorId: spectatorId,
           hasCheckIn: true,
           numberOfCompanions: numberOfCompanions.value,
           // Asegurarnos de mantener nameComplete o crearlo si no existe
@@ -233,7 +315,7 @@ const validateCheckin = async () => {
     console.log('Datos del espectador y check-in actualizados correctamente');
     router.push({
       name: 'EventDetail',
-      params: { idSpectator: route.params.idSpectator, idEvent: route.params.idEvent, nameEvent: route.params.nameEvent },
+      params: { idSpectator: spectatorId, idEvent: route.params.idEvent, nameEvent: route.params.nameEvent },
     });
   } catch (error) {
     console.error('Error al actualizar los datos del check-in:', error);
@@ -260,6 +342,11 @@ const validatePhone = () => {
 };
 
 const validateFormat = () => {
+  if (isEmailCheckIn.value && !spectator.value) {
+    // Si es email check-in y no se ha encontrado un espectador aún, no permitir avanzar
+    return;
+  }
+  
   validateEmail();
   validatePhone();
   if (emailError.value === '' && phoneError.value === '') {

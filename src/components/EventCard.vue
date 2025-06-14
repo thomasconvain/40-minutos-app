@@ -56,7 +56,9 @@
               'text-sm text-gray': customMessageClass
             }">
             <template v-if="customMessageClass && event.status?.isCheckInOpen">
-              Checkin abierto, debes <router-link to="/login" class="underline font-medium">entrar</router-link> con tu usuario y contraseña
+              <strong>Check-in abierto</strong><br>
+              ¿Ya tienes reserva? Entra con tu email <router-link :to="`/email-checkin/${event.id}/${event.name}`" class="underline font-medium text-blue-600">aquí</router-link><br>
+              ¿Acabas de llegar? pincha en "quiero asistir
             </template>
             <template v-else-if="customMessageClass && !event.status?.isCheckInOpen">
               {{ chapterSynopsis }} 

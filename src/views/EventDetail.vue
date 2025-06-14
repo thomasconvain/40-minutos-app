@@ -15,7 +15,6 @@
         </a>
       </div>
     </div>
-    <h1 class="text-2xl font-bold mb-6">{{ nameEvent }}</h1>
     <p class="mb-4">{{ eventDescription }}</p>
     
     <div class="flex w-full bg-gray-200/70 rounded-lg p-2 mb-3">
