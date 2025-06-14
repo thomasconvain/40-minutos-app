@@ -38,7 +38,7 @@
 
 <script setup>
 import { ref, onMounted } from "vue";
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import NavbarMenu from '@/components/NavbarMenu.vue';
 import { 
   getFirestore, 
@@ -53,6 +53,7 @@ const infoReserveDismissed = ref(false);
 
 // Router y parámetros
 const route = useRoute();
+const router = useRouter();
 const idSpectator = route.params.idSpectator;
 
 // Inicialización principal
@@ -78,10 +79,10 @@ const fetchSpectator = async () => {
 };
   
 
-// Función para ocultar el mensaje informativo de reserva y redirigir a URL externa
+// Función para ocultar el mensaje informativo de reserva y navegar al perfil del espectador
 const dismissReserveInfo = () => {
   infoReserveDismissed.value = true;
-  window.location.href = 'https://www.40minutos.com/';
+  router.push({ name: 'Profile', params: { idSpectator } });
 };
 
 </script>
