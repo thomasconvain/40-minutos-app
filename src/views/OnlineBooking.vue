@@ -111,8 +111,8 @@
 
 <script setup>
 import { ref, onMounted, computed } from 'vue';
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
-import { doc, setDoc, getDoc } from 'firebase/firestore';
+import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
+import { doc, setDoc, getDoc, collection, query, where, getDocs } from 'firebase/firestore';
 import { db } from '@/firebase';
 import { useRouter, useRoute } from 'vue-router';
 import { addSpectatorToEvent } from '@/utils';
@@ -206,19 +206,41 @@ const checkEventStatus = async (eventId) => {
   }
 };
 
-// Función para verificar si un usuario ya está inscrito en un evento
+// Función para verificar si un usuario ya está inscrito en un evento (revisando zSpectator del evento)
 const checkUserSubscription = async (userId, eventId) => {
   try {
-    const spectatorDoc = await getDoc(doc(db, 'spectators', userId));
-    if (spectatorDoc.exists()) {
-      const spectatorData = spectatorDoc.data();
-      const subscribedEvents = spectatorData.subscribedEventsId || [];
-      return subscribedEvents.includes(eventId);
+    const eventDoc = await getDoc(doc(db, 'events', eventId));
+    if (eventDoc.exists()) {
+      const eventData = eventDoc.data();
+      const zSpectator = eventData.zSpectator || [];
+      
+      // Buscar si el userId está en el array zSpectator
+      return zSpectator.some(spec => 
+        spec.spectatorId === userId || spec.id === userId
+      );
     }
     return false;
   } catch (error) {
-    console.error('Error al verificar la suscripción del usuario:', error);
+    console.error('Error al verificar la inscripción en el evento:', error);
     return false;
+  }
+};
+
+// Función para buscar usuario existente por email en la colección spectators
+const findExistingSpectatorByEmail = async (email) => {
+  try {
+    const spectatorsRef = collection(db, 'spectators');
+    const q = query(spectatorsRef, where('email', '==', email));
+    const querySnapshot = await getDocs(q);
+    
+    if (!querySnapshot.empty) {
+      const doc = querySnapshot.docs[0];
+      return { id: doc.id, ...doc.data() };
+    }
+    return null;
+  } catch (error) {
+    console.error('Error al buscar espectador por email:', error);
+    return null;
   }
 };
 
@@ -231,37 +253,45 @@ const submitForm = async () => {
     }
     
     let user;
+    let spectatorData;
     let isNewUser = false;
     
-    try {
-      // Intentar crear usuario nuevo
-      const userCredential = await createUserWithEmailAndPassword(auth, email.value, password.value);
-      user = userCredential.user;
-      isNewUser = true;
-    } catch (error) {
-      if (error.code === 'auth/email-already-in-use') {
-        // Si el email ya existe, iniciar sesión y verificar si ya está inscrito en el evento
-        const userCredential = await signInWithEmailAndPassword(auth, email.value, password.value);
+    // Primero verificar si existe un espectador con este email
+    const existingSpectator = await findExistingSpectatorByEmail(email.value);
+    
+    if (existingSpectator) {
+      // Usuario existe en la colección spectators
+      const eventId = route.params.idEvent.split(',')[0].trim();
+      const isAlreadySubscribed = await checkUserSubscription(existingSpectator.uId, eventId);
+      
+      if (isAlreadySubscribed) {
+        errorMessage.value = 'Ya tienes una reserva activa para este evento.';
+        return;
+      }
+      
+      // Usuario existe pero no está inscrito en este evento - permitir inscripción
+      user = { uid: existingSpectator.uId };
+      spectatorData = existingSpectator;
+      isNewUser = false;
+    } else {
+      // Usuario no existe en spectators, intentar crear en Authentication
+      try {
+        const userCredential = await createUserWithEmailAndPassword(auth, email.value, password.value);
         user = userCredential.user;
-        
-        // Verificar si ya está inscrito en este evento
-        const eventId = route.params.idEvent.split(',')[0].trim();
-        const isAlreadySubscribed = await checkUserSubscription(user.uid, eventId);
-        
-        if (isAlreadySubscribed) {
-          errorMessage.value = 'Ya tienes una reserva activa para este evento.';
+        isNewUser = true;
+      } catch (error) {
+        if (error.code === 'auth/email-already-in-use') {
+          // Email existe en Authentication pero no en spectators
+          // Esto podría pasar si el documento de spectator fue eliminado
+          errorMessage.value = 'Este email ya está registrado. Si tienes problemas para acceder, contacta soporte.';
           return;
+        } else {
+          throw error;
         }
-        
-        isNewUser = false;
-      } else {
-        throw error; // Re-lanzar si es otro tipo de error
       }
     }
     
-    // Preparar datos para Firestore
-    let spectatorData;
-    
+    // Preparar y actualizar datos para Firestore
     if (isNewUser) {
       // Si es un usuario nuevo, crear el documento completo
       spectatorData = {
@@ -282,26 +312,22 @@ const submitForm = async () => {
       await setDoc(doc(db, 'spectators', user.uid), spectatorData);
     } else {
       // Si es un usuario existente, actualizar solo los eventos suscritos
-      const spectatorDoc = await getDoc(doc(db, 'spectators', user.uid));
-      if (spectatorDoc.exists()) {
-        const existingData = spectatorDoc.data();
-        const currentEvents = existingData.subscribedEventsId || [];
-        const newEvents = route.params.idEvent.split(',').map(id => id.trim());
-        
-        // Combinar eventos existentes con nuevos eventos (sin duplicados)
-        const updatedEvents = [...new Set([...currentEvents, ...newEvents])];
-        
-        // Actualizar el documento
-        await setDoc(doc(db, 'spectators', user.uid), {
-          ...existingData,
-          subscribedEventsId: updatedEvents,
-          // Actualizar datos del formulario por si han cambiado
-          numberOfPeople: numberOfPeople.value,
-          numberOfCompanions: numberOfCompanions.value,
-        }, { merge: true });
-        
-        spectatorData = { ...existingData, subscribedEventsId: updatedEvents };
-      }
+      const currentEvents = spectatorData.subscribedEventsId || [];
+      const newEvents = route.params.idEvent.split(',').map(id => id.trim());
+      
+      // Combinar eventos existentes con nuevos eventos (sin duplicados)
+      const updatedEvents = [...new Set([...currentEvents, ...newEvents])];
+      
+      // Actualizar el documento
+      await setDoc(doc(db, 'spectators', user.uid), {
+        ...spectatorData,
+        subscribedEventsId: updatedEvents,
+        // Actualizar datos del formulario por si han cambiado
+        numberOfPeople: numberOfPeople.value,
+        numberOfCompanions: numberOfCompanions.value,
+      }, { merge: true });
+      
+      spectatorData = { ...spectatorData, subscribedEventsId: updatedEvents };
     }
     
     // Para cada evento al que se suscribe, añadir el espectador al evento
@@ -321,18 +347,24 @@ const submitForm = async () => {
       await addSpectatorToEvent(eventId, spectatorForEvent);
     }
     
+    console.log('✅ Proceso completado, redirigiendo a confirmación con user.uid:', user.uid);
+    
     // Verificar si el check-in está abierto para determinar la redirección
-    const eventId = route.params.idEvent.split(',')[0].trim(); // Usar el primer evento
-    const isCheckInOpen = await checkEventStatus(eventId);
+    const firstEventId = route.params.idEvent.split(',')[0].trim(); // Usar el primer evento
+    const isCheckInOpen = await checkEventStatus(firstEventId);
+    
+    console.log('🔍 Check-in abierto:', isCheckInOpen);
     
     if (isCheckInOpen) {
       // Si el check-in está abierto, redirigir directamente al perfil
+      console.log('📍 Redirigiendo a Profile');
       router.push({ 
         name: 'Profile', 
         params: { idSpectator: user.uid }
       });
     } else {
       // Si el check-in no está abierto, ir a la página de confirmación
+      console.log('📍 Redirigiendo a Reserve');
       router.push({ 
         name: 'Reserve', 
         params: { idSpectator: user.uid }, 

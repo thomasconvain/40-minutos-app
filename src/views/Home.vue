@@ -3,7 +3,9 @@
   <div>
     <div class="flex flex-row items-center justify-between mb-10">
       <img src="../assets/logo_horizontal.png" width="150" />
-      <router-link to="/login" class="btn bg-white border-none">Login</router-link>
+      <router-link to="/login" class="btn bg-white border-none" title="Iniciar sesión">
+        <ArrowRightOnRectangleIcon class="h-5 w-5" />
+      </router-link>
     </div>
     <h1 class="justify-self-start text-2xl text-gray-900 font-bold">Inscríbete a nuestro próximos eventos</h1>
     <ActiveEvents />
@@ -12,6 +14,7 @@
 
 <script setup>
 import ActiveEvents from "@/components/ActiveEvents.vue";
+import { ArrowRightOnRectangleIcon } from '@heroicons/vue/24/outline';
 </script>
 
 <style scoped>

@@ -63,7 +63,7 @@ const routes = [
     path: '/reserve/:idSpectator',
     name: 'Reserve',
     component: ReserveConfirmation,
-    meta: { requiresAuth: true }
+    meta: { requiresAuth: false }
   },
   {
     path: '/checkin/:idSpectator/:idEvent/:nameEvent?',

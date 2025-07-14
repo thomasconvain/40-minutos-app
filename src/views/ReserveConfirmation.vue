@@ -17,8 +17,12 @@
         <div class="flex-1 text-black">
           <h3 class="font-bold text-md">Reserva exitosa</h3>
           <div class="text-sm mt-1">
-              <p>Hemos enviado una confirmación a tu correo.</p>
-              <p class="mt-2"> El ingreso es por <strong>orden de llegada</strong> y solo debes hacer check-in digital cuando llegues a tu asiento.</p>
+              <p class="mb-3">Por favor considera lo siguiente:</p>
+              <div class="space-y-2">
+                <p><strong>1.</strong> Recibirás un correo <strong>el mismo día del evento</strong> con tu código de ingreso. En caso de cualquier problema, ese código será equivalente a tu ticket.</p>
+                <p><strong>2.</strong> El ingreso es por <strong>orden de llegada</strong> y debes hacer check-in digital cuando llegues a tu asiento.</p>
+                <p><strong>3.</strong> No se paga entrada, pero se deja un <strong>aporte voluntario al final</strong> (equivalente a la entrada).</p>
+              </div>
           </div>
         </div>
       </div>

@@ -62,7 +62,7 @@ const handleLogout = async () => {
   try {
     await signOut(auth)
     console.log('Sesión cerrada con éxito')
-    router.push('/login')
+    router.push('/')
   } catch (error) {
     console.error('Error al cerrar sesión:', error.message)
   }
