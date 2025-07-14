@@ -58,10 +58,10 @@
             <template v-if="customMessageClass && event.status?.isCheckInOpen">
               <strong>Check-in abierto</strong><br>
               ¿Ya tienes reserva? Entra con tu email <router-link :to="`/email-checkin/${event.id}/${event.name}`" class="underline font-medium text-blue-600">aquí</router-link><br>
-              ¿Acabas de llegar? pincha en "quiero asistir"
+              ¿Acabas de llegar? pincha en "reservar"
             </template>
             <template v-else-if="customMessageClass && !event.status?.isCheckInOpen">
-              {{ chapterSynopsis }} 
+              <span v-html="chapterSynopsis"></span>
             </template>
             <template v-else>
               {{ checkinMessageText }}
@@ -72,7 +72,7 @@
       
       <!-- Cuarta sección: Botones (separados del resto) -->
       <div class="card-actions justify-start mt-2 pt-2">
-        <!-- Botón quiero asistir / hacer checkin - ocultarlo si hay mensaje de advertencia -->
+        <!-- Botón reservar / hacer checkin - ocultarlo si hay mensaje de advertencia -->
         <button
           v-if="showActionButton && !(event.settings?.isActive && !event.status?.isReservationOpen && contentManagerData.warningMessage)"
           :class="[
@@ -150,7 +150,7 @@ const props = defineProps({
   },
   actionButtonText: {
     type: String,
-    default: "Quiero asistir"
+    default: "Reservar"
   },
   buttonStyle: {
     type: String,

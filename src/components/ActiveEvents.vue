@@ -306,7 +306,7 @@ const getButtonText = (event) => {
   } else if (!event.status?.isFinished && !event.settings?.isPrivate && currentUser.value && !props.isSpectatorSubscribed(event.id) && !event.isUserInEvent) {
     return "Consigue tu ticket en un click";
   } else {
-    return "Quiero asistir";
+    return "Reservar";
   }
 };
 
