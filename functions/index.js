@@ -1,7 +1,7 @@
 const functions = require("firebase-functions");
 const cors = require("cors")({origin: true});
 const {MercadoPagoConfig, Preference, Payment} = require("mercadopago");
-const axios = require("axios");
+// const axios = require("axios"); // COMMENTED OUT - ONLY USED FOR BREVO EMAILS
 const admin = require("firebase-admin");
 
 // Inicializa Firebase Admin si no está ya inicializado
@@ -68,61 +68,61 @@ exports.getPaymentDetails = functions.https.onRequest(async (req, res) => {
   });
 });
 
-// === 3. ENVIAR CORREO CON BREVO ===
-const apiKey = functions.config().brevo.api_key;
-const headers = {
-  "api-key": apiKey,
-  "Content-Type": "application/json",
-};
-
-exports.sendEmailWithBrevo = functions.https.onCall(async (data, context) => {
-  const {to, params, templateId, newEventId} = data;
-
-  try {
-    let currentSubscribedEvents = [];
-
-    try {
-      const contactRes = await axios.get(`https://api.brevo.com/v3/contacts/${to}`, {headers});
-      if (contactRes.data?.attributes?.SUBSCRIBED_EVENTS) {
-        currentSubscribedEvents = contactRes.data.attributes
-            .SUBSCRIBED_EVENTS.split(",")
-            .map((e) => e.trim());
-      }
-    } catch (err) {
-      if (err.response?.data?.code !== "document_not_found") throw err;
-    }
-
-    if (!currentSubscribedEvents.includes(newEventId)) {
-      currentSubscribedEvents.push(newEventId);
-    }
-
-    await axios.post("https://api.brevo.com/v3/contacts", {
-      email: to,
-      attributes: {
-        NOMBRE: params.name || "",
-        APELLIDOS: params.surname || "",
-        SMS: params.phone || "",
-        WHATSAPP: params.phone || "",
-        FIREBASE_ID: params.firebaseId || "",
-        SUBSCRIBED_EVENTS: currentSubscribedEvents.join(","),
-      },
-      listIds: [2],
-      updateEnabled: true,
-    }, {headers});
-
-    await axios.post("https://api.brevo.com/v3/smtp/email", {
-      to: [{email: to}],
-      templateId,
-      params,
-      headers: {"X-Mailin-custom": "Firebase Function"},
-    }, {headers});
-
-    return {success: true};
-  } catch (error) {
-    console.error("Error:", error.response?.data || error.message);
-    throw new functions.https.HttpsError("internal", error.message);
-  }
-});
+// === 3. ENVIAR CORREO CON BREVO === - COMMENTED OUT TO DISABLE BREVO EMAILS
+// const apiKey = functions.config().brevo.api_key;
+// const headers = {
+//   "api-key": apiKey,
+//   "Content-Type": "application/json",
+// };
+// 
+// exports.sendEmailWithBrevo = functions.https.onCall(async (data, context) => {
+//   const {to, params, templateId, newEventId} = data;
+// 
+//   try {
+//     let currentSubscribedEvents = [];
+// 
+//     try {
+//       const contactRes = await axios.get(`https://api.brevo.com/v3/contacts/${to}`, {headers});
+//       if (contactRes.data?.attributes?.SUBSCRIBED_EVENTS) {
+//         currentSubscribedEvents = contactRes.data.attributes
+//             .SUBSCRIBED_EVENTS.split(",")
+//             .map((e) => e.trim());
+//       }
+//     } catch (err) {
+//       if (err.response?.data?.code !== "document_not_found") throw err;
+//     }
+// 
+//     if (!currentSubscribedEvents.includes(newEventId)) {
+//       currentSubscribedEvents.push(newEventId);
+//     }
+// 
+//     await axios.post("https://api.brevo.com/v3/contacts", {
+//       email: to,
+//       attributes: {
+//         NOMBRE: params.name || "",
+//         APELLIDOS: params.surname || "",
+//         SMS: params.phone || "",
+//         WHATSAPP: params.phone || "",
+//         FIREBASE_ID: params.firebaseId || "",
+//         SUBSCRIBED_EVENTS: currentSubscribedEvents.join(","),
+//       },
+//       listIds: [2],
+//       updateEnabled: true,
+//     }, {headers});
+// 
+//     await axios.post("https://api.brevo.com/v3/smtp/email", {
+//       to: [{email: to}],
+//       templateId,
+//       params,
+//       headers: {"X-Mailin-custom": "Firebase Function"},
+//     }, {headers});
+// 
+//     return {success: true};
+//   } catch (error) {
+//     console.error("Error:", error.response?.data || error.message);
+//     throw new functions.https.HttpsError("internal", error.message);
+//   }
+// });
 
 // === 4. LIMPIAR EVENT SPECTATORS AL BORRAR USUARIO ===
 exports.cleanUpEventSpectators = functions.auth.user().onDelete(

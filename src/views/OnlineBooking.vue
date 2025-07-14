@@ -39,17 +39,6 @@
           <span>Continuar</span>
         </button>
       </div>
-      <!-- Opción para usuarios existentes -->
-      <div class="option-group">
-        <button
-          @click="goToLogin"
-          type="button"
-          class="btn-md btn btn-outline text-primary w-full border-primary hover:bg-primary hover:text-white"
-          :disabled="isLoading"
-        >
-          <span>Reservar con mis datos guardados</span>
-        </button>
-      </div>
       
     </div>
     
@@ -122,7 +111,7 @@
 
 <script setup>
 import { ref, onMounted, computed } from 'vue';
-import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
 import { doc, setDoc, getDoc } from 'firebase/firestore';
 import { db } from '@/firebase';
 import { useRouter, useRoute } from 'vue-router';
@@ -202,17 +191,6 @@ const validateForm = () => {
   return isEmailValid && isPhoneValid && isPasswordValid;
 };
 
-// Acciones
-const goToLogin = () => {
-  router.push({
-    name: 'LogIn', 
-    params: { idEvent: route.params.idEvent },
-    query: { 
-      ...route.query,
-      numberOfPeople: numberOfPeople.value 
-    }
-  });
-};
 
 // Función para verificar si isCheckInOpen está activo en el evento
 const checkEventStatus = async (eventId) => {
@@ -228,6 +206,22 @@ const checkEventStatus = async (eventId) => {
   }
 };
 
+// Función para verificar si un usuario ya está inscrito en un evento
+const checkUserSubscription = async (userId, eventId) => {
+  try {
+    const spectatorDoc = await getDoc(doc(db, 'spectators', userId));
+    if (spectatorDoc.exists()) {
+      const spectatorData = spectatorDoc.data();
+      const subscribedEvents = spectatorData.subscribedEventsId || [];
+      return subscribedEvents.includes(eventId);
+    }
+    return false;
+  } catch (error) {
+    console.error('Error al verificar la suscripción del usuario:', error);
+    return false;
+  }
+};
+
 const submitForm = async () => {
   try {
     isLoading.value = true;
@@ -236,27 +230,79 @@ const submitForm = async () => {
       return;
     }
     
-    // Crear usuario en Authentication
-    const userCredential = await createUserWithEmailAndPassword(auth, email.value, password.value);
-    const user = userCredential.user;
+    let user;
+    let isNewUser = false;
+    
+    try {
+      // Intentar crear usuario nuevo
+      const userCredential = await createUserWithEmailAndPassword(auth, email.value, password.value);
+      user = userCredential.user;
+      isNewUser = true;
+    } catch (error) {
+      if (error.code === 'auth/email-already-in-use') {
+        // Si el email ya existe, iniciar sesión y verificar si ya está inscrito en el evento
+        const userCredential = await signInWithEmailAndPassword(auth, email.value, password.value);
+        user = userCredential.user;
+        
+        // Verificar si ya está inscrito en este evento
+        const eventId = route.params.idEvent.split(',')[0].trim();
+        const isAlreadySubscribed = await checkUserSubscription(user.uid, eventId);
+        
+        if (isAlreadySubscribed) {
+          errorMessage.value = 'Ya tienes una reserva activa para este evento.';
+          return;
+        }
+        
+        isNewUser = false;
+      } else {
+        throw error; // Re-lanzar si es otro tipo de error
+      }
+    }
     
     // Preparar datos para Firestore
-    const spectatorData = {
-      email: email.value,
-      uId: user.uid,
-      hostId: route.query.hostId ? route.query.hostId : 'none',
-      name: name.value,
-      lastName: lastName.value,
-      phone: phone.value,
-      numberOfPeople: numberOfPeople.value,
-      numberOfCompanions: numberOfCompanions.value,
-      isChecked: isChecked.value,
-      uniquePaymentForGroup: uniquePaymentForGroup.value,
-      subscribedEventsId: route.params.idEvent.split(',').map(id => id.trim()),
-    };
+    let spectatorData;
     
-    // Guardar en Firestore
-    await setDoc(doc(db, 'spectators', user.uid), spectatorData);
+    if (isNewUser) {
+      // Si es un usuario nuevo, crear el documento completo
+      spectatorData = {
+        email: email.value,
+        uId: user.uid,
+        hostId: route.query.hostId ? route.query.hostId : 'none',
+        name: name.value,
+        lastName: lastName.value,
+        phone: phone.value,
+        numberOfPeople: numberOfPeople.value,
+        numberOfCompanions: numberOfCompanions.value,
+        isChecked: isChecked.value,
+        uniquePaymentForGroup: uniquePaymentForGroup.value,
+        subscribedEventsId: route.params.idEvent.split(',').map(id => id.trim()),
+      };
+      
+      // Guardar en Firestore
+      await setDoc(doc(db, 'spectators', user.uid), spectatorData);
+    } else {
+      // Si es un usuario existente, actualizar solo los eventos suscritos
+      const spectatorDoc = await getDoc(doc(db, 'spectators', user.uid));
+      if (spectatorDoc.exists()) {
+        const existingData = spectatorDoc.data();
+        const currentEvents = existingData.subscribedEventsId || [];
+        const newEvents = route.params.idEvent.split(',').map(id => id.trim());
+        
+        // Combinar eventos existentes con nuevos eventos (sin duplicados)
+        const updatedEvents = [...new Set([...currentEvents, ...newEvents])];
+        
+        // Actualizar el documento
+        await setDoc(doc(db, 'spectators', user.uid), {
+          ...existingData,
+          subscribedEventsId: updatedEvents,
+          // Actualizar datos del formulario por si han cambiado
+          numberOfPeople: numberOfPeople.value,
+          numberOfCompanions: numberOfCompanions.value,
+        }, { merge: true });
+        
+        spectatorData = { ...existingData, subscribedEventsId: updatedEvents };
+      }
+    }
     
     // Para cada evento al que se suscribe, añadir el espectador al evento
     const eventIds = route.params.idEvent.split(',').map(id => id.trim());
@@ -266,7 +312,9 @@ const submitForm = async () => {
       const spectatorForEvent = {
         id: user.uid,
         numberOfCompanions: numberOfCompanions.value,
-        nameComplete: `${name.value} ${lastName.value}`.trim() // Nuevo campo nameComplete solo para zSpectator
+        nameComplete: isNewUser ? 
+          `${name.value} ${lastName.value}`.trim() : 
+          `${spectatorData.name} ${spectatorData.lastName}`.trim()
       };
       
       // Añadir espectador al evento (ahora solo actualiza zSpectator)
@@ -294,11 +342,8 @@ const submitForm = async () => {
       });
     }
   } catch (error) {
-    if (error.code === 'auth/email-already-in-use') {
-      emailError.value = 'Ya tienes cuentas, debes reservar con la opción de "usar datos guardados"';
-    } else {
-      errorMessage.value = 'Error al crear usuario: ' + error.message;
-    }
+    console.error('Error en el proceso de reserva:', error);
+    errorMessage.value = 'Error al procesar la reserva: ' + error.message;
   } finally {
     isLoading.value = false;
   }

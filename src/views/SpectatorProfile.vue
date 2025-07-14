@@ -63,13 +63,13 @@ import {
 import { auth } from '@/firebase';
 import { onAuthStateChanged } from 'firebase/auth';
 import { fetchSpectators } from '@/utils';
-import { getFunctions, httpsCallable } from 'firebase/functions';
+// import { getFunctions, httpsCallable } from 'firebase/functions'; // COMMENTED OUT - BREVO EMAILS DISABLED
 // Imports de date-fns ya no son necesarios aquí
 import EventCard from '@/components/EventCard.vue';
 
-//functions sendEmail
-const functions = getFunctions()
-const sendEmail = httpsCallable(functions, 'sendEmailWithBrevo')
+//functions sendEmail - COMMENTED OUT TO DISABLE BREVO EMAILS
+// const functions = getFunctions()
+// const sendEmail = httpsCallable(functions, 'sendEmailWithBrevo')
 
 // Estado de la aplicación
 const eventAttendees = ref({}); 
@@ -245,17 +245,18 @@ const addSubscribedEventId = async (spectatorId, eventId, numberOfPeople) => {
     });
     console.log("Evento agregado correctamente.");
     await fetchSpectator();
-    await sendEmail({
-      to: spectator.value.email,
-      templateId: 1,
-      newEventId: eventId,
-      params: {
-        name: spectator.value.name,
-        surname: spectator.value.lastName,
-        phone: spectator.value.phone,
-        firebaseId: spectator.value.uId,
-      }
-    })
+    // COMMENTED OUT TO DISABLE BREVO EMAILS
+    // await sendEmail({
+    //   to: spectator.value.email,
+    //   templateId: 1,
+    //   newEventId: eventId,
+    //   params: {
+    //     name: spectator.value.name,
+    //     surname: spectator.value.lastName,
+    //     phone: spectator.value.phone,
+    //     firebaseId: spectator.value.uId,
+    //   }
+    // })
   } catch (error) {
     console.error("Error al agregar el evento:", error);
   }
