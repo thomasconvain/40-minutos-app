@@ -358,9 +358,17 @@ const loadEventData = async () => {
     if (eventDoc.exists()) {
       const eventData = eventDoc.data();
       
-      // Convert Firestore Timestamp to datetime-local format
+      // Convert Firestore Timestamp to datetime-local format preserving local timezone
       const date = eventData.date?.toDate ? eventData.date.toDate() : new Date(eventData.date);
-      const formattedDate = date.toISOString().slice(0, 16);
+      
+      // Format date for datetime-local input (YYYY-MM-DDTHH:MM) in local timezone
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const day = String(date.getDate()).padStart(2, '0');
+      const hours = String(date.getHours()).padStart(2, '0');
+      const minutes = String(date.getMinutes()).padStart(2, '0');
+      
+      const formattedDate = `${year}-${month}-${day}T${hours}:${minutes}`;
       
       form.value = {
         date: formattedDate,
@@ -403,9 +411,13 @@ const handleSubmit = async () => {
       date: Timestamp.fromDate(new Date(form.value.date)),
       settings: form.value.settings,
       status: form.value.status,
-      paymentMethodIds: form.value.paymentMethodIds,
-      zSpectator: []
+      paymentMethodIds: form.value.paymentMethodIds
     };
+
+    // Solo agregar zSpectator vacío para eventos nuevos, no para ediciones
+    if (!isEditing.value) {
+      eventData.zSpectator = [];
+    }
 
     if (isEditing.value) {
       await updateDoc(doc(db, 'events', eventId.value), eventData);
