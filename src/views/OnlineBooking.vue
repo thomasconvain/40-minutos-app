@@ -329,7 +329,7 @@ const submitForm = async () => {
         numberOfCompanions: numberOfCompanions.value,
         isChecked: isChecked.value,
         uniquePaymentForGroup: uniquePaymentForGroup.value,
-        subscribedEventsId: route.params.idEvent.split(',').map(id => id.trim()),
+        subscribedEventsId: route.params.idEvent?.split(',').map(id => id.trim()) || [],
       };
       
       // Guardar en Firestore
@@ -337,7 +337,7 @@ const submitForm = async () => {
     } else {
       // Si es un usuario existente, actualizar solo los eventos suscritos
       const currentEvents = spectatorData.subscribedEventsId || [];
-      const newEvents = route.params.idEvent.split(',').map(id => id.trim());
+      const newEvents = route.params.idEvent?.split(',').map(id => id.trim()) || [];
       
       // Combinar eventos existentes con nuevos eventos (sin duplicados)
       const updatedEvents = [...new Set([...currentEvents, ...newEvents])];
@@ -355,7 +355,7 @@ const submitForm = async () => {
     }
     
     // Para cada evento al que se suscribe, añadir el espectador al evento
-    const eventIds = route.params.idEvent.split(',').map(id => id.trim());
+    const eventIds = route.params.idEvent?.split(',').map(id => id.trim()) || [];
     for (const eventId of eventIds) {
       // Solo guardar en zSpectator los datos mínimos requeridos según el nuevo modelo
       // Incluir nameComplete solo en zSpectator, no en el documento de espectadores
@@ -374,7 +374,7 @@ const submitForm = async () => {
     console.log('✅ Proceso completado, redirigiendo a confirmación con user.uid:', user.uid);
     
     // Verificar si el check-in está abierto para determinar la redirección
-    const firstEventId = route.params.idEvent.split(',')[0].trim(); // Usar el primer evento
+    const firstEventId = route.params.idEvent?.split(',')[0].trim(); // Usar el primer evento
     const isCheckInOpen = await checkEventStatus(firstEventId);
     
     console.log('🔍 Check-in abierto:', isCheckInOpen);
@@ -393,7 +393,7 @@ const submitForm = async () => {
         name: 'Reserve', 
         params: { idSpectator: user.uid }, 
         query: { 
-          idEvent: route.params.idEvent
+          idEvent: route.params.idEvent || ''
         } 
       });
     }
