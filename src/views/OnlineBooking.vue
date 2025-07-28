@@ -206,22 +206,38 @@ const checkEventStatus = async (eventId) => {
   }
 };
 
-// Función para verificar si un usuario ya está inscrito en un evento (revisando zSpectator del evento)
-const checkUserSubscription = async (userId, eventId) => {
+// Función para verificar si un email ya está inscrito en un evento (revisando spectators de zSpectator)
+const checkEmailInEventSpectators = async (email, eventId) => {
   try {
     const eventDoc = await getDoc(doc(db, 'events', eventId));
     if (eventDoc.exists()) {
       const eventData = eventDoc.data();
       const zSpectator = eventData.zSpectator || [];
       
-      // Buscar si el userId está en el array zSpectator
-      return zSpectator.some(spec => 
-        spec.spectatorId === userId || spec.id === userId
-      );
+      // Obtener todos los spectatorIds de zSpectator
+      const spectatorIds = zSpectator.map(spec => spec.spectatorId || spec.id).filter(id => id);
+      
+      if (spectatorIds.length === 0) {
+        return false;
+      }
+      
+      // Filtrar esos IDs en la colección spectators y verificar emails
+      const spectatorsRef = collection(db, 'spectators');
+      const spectatorPromises = spectatorIds.map(id => getDoc(doc(spectatorsRef, id)));
+      const spectatorDocs = await Promise.all(spectatorPromises);
+      
+      // Revisar si existe ese email en alguno de los spectators inscritos
+      return spectatorDocs.some(doc => {
+        if (doc.exists()) {
+          const spectatorData = doc.data();
+          return spectatorData.email === email;
+        }
+        return false;
+      });
     }
     return false;
   } catch (error) {
-    console.error('Error al verificar la inscripción en el evento:', error);
+    console.error('Error al verificar el email en el evento:', error);
     return false;
   }
 };
@@ -256,20 +272,20 @@ const submitForm = async () => {
     let spectatorData;
     let isNewUser = false;
     
-    // Primero verificar si existe un espectador con este email
+    // Verificar si el email ya está inscrito en este evento
+    const eventId = route.params.idEvent.split(',')[0].trim();
+    const emailAlreadyInEvent = await checkEmailInEventSpectators(email.value, eventId);
+    
+    if (emailAlreadyInEvent) {
+      errorMessage.value = 'Ya tienes una reserva activa para este evento.';
+      return;
+    }
+    
+    // Verificar si existe un espectador con este email
     const existingSpectator = await findExistingSpectatorByEmail(email.value);
     
     if (existingSpectator) {
-      // Usuario existe en la colección spectators
-      const eventId = route.params.idEvent.split(',')[0].trim();
-      const isAlreadySubscribed = await checkUserSubscription(existingSpectator.uId, eventId);
-      
-      if (isAlreadySubscribed) {
-        errorMessage.value = 'Ya tienes una reserva activa para este evento.';
-        return;
-      }
-      
-      // Usuario existe pero no está inscrito en este evento - permitir inscripción
+      // Usuario existe en la colección spectators pero no está inscrito en este evento
       user = { uid: existingSpectator.uId };
       spectatorData = existingSpectator;
       isNewUser = false;
