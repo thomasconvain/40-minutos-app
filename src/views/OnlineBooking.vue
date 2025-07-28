@@ -215,7 +215,9 @@ const checkEmailInEventSpectators = async (email, eventId) => {
       const zSpectator = eventData.zSpectator || [];
       
       // Obtener todos los spectatorIds de zSpectator
-      const spectatorIds = zSpectator.map(spec => spec.spectatorId || spec.id).filter(id => id);
+      const spectatorIds = zSpectator
+        .map(spec => spec?.spectatorId || spec?.id)
+        .filter(id => id && typeof id === 'string');
       
       if (spectatorIds.length === 0) {
         return false;
@@ -273,7 +275,13 @@ const submitForm = async () => {
     let isNewUser = false;
     
     // Verificar si el email ya está inscrito en este evento
-    const eventId = route.params.idEvent.split(',')[0].trim();
+    const eventId = route.params.idEvent?.split(',')[0].trim();
+    
+    if (!eventId) {
+      errorMessage.value = 'ID de evento no válido.';
+      return;
+    }
+    
     const emailAlreadyInEvent = await checkEmailInEventSpectators(email.value, eventId);
     
     if (emailAlreadyInEvent) {
