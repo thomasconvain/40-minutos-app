@@ -17,7 +17,10 @@
             <label class="text-sm" for="email"><strong>Email</strong></label>
             <input v-model="emailInput" type="email" placeholder="correo" class="input input-bordered w-full" />
             <p v-if="emailError" class="text-red-500 text-sm mt-1">{{ emailError }}</p>
-            <button class="btn btn-primary mt-4" @click="findSpectatorByEmail">Buscar</button>
+            <button class="btn btn-primary mt-4" @click="findSpectatorByEmail" :disabled="isSearching">
+              <span v-if="isSearching" class="loading loading-spinner loading-sm"></span>
+              {{ isSearching ? 'Buscando...' : 'Buscar' }}
+            </button>
             <p v-if="spectatorNotFound" class="text-red-500 text-sm mt-2">No se encontró un registro con este email para este evento.</p>
           </div>
           <div v-else-if="spectator" class="card-body">
@@ -73,7 +76,7 @@
 <script setup>
 import { ref, onMounted, computed } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import { getFirestore, doc, getDoc, updateDoc } from 'firebase/firestore';
+import { getFirestore, doc, getDoc, updateDoc, collection, query, where, getDocs } from 'firebase/firestore';
 import { ShareIcon } from '@heroicons/vue/24/outline'
 
 
@@ -89,6 +92,7 @@ const spectatorParams = ref('');
 const eventParams = ref('');
 const emailInput = ref('');
 const spectatorNotFound = ref(false);
+const isSearching = ref(false);
 
 const route = useRoute();
 const router = useRouter(); // Instancia de Vue Router
@@ -112,9 +116,20 @@ const findSpectatorByEmail = async () => {
   const db = getFirestore();
   spectatorNotFound.value = false;
   emailError.value = '';
+  isSearching.value = true;
 
   try {
-    // Buscar el evento actual para obtener los espectadores registrados
+    // Buscar directamente en la colección spectators usando una consulta por email
+    const spectatorsRef = collection(db, 'spectators');
+    const emailQuery = query(spectatorsRef, where('email', '==', emailInput.value.toLowerCase()));
+    const querySnapshot = await getDocs(emailQuery);
+    
+    if (querySnapshot.empty) {
+      spectatorNotFound.value = true;
+      return;
+    }
+
+    // Obtener el evento para verificar si el espectador está registrado
     const eventRef = doc(db, 'events', route.params.idEvent);
     const eventSnap = await getDoc(eventRef);
     
@@ -126,36 +141,37 @@ const findSpectatorByEmail = async () => {
     const eventData = eventSnap.data();
     const zSpectator = eventData.zSpectator || [];
     
-    // Buscar todos los espectadores registrados para este evento
-    let foundSpectatorId = null;
+    // Buscar si alguno de los espectadores encontrados está registrado en este evento
+    let foundSpectator = null;
+    let foundSpectatorData = null;
     
-    for (const spec of zSpectator) {
-      // Obtener los datos del espectador desde la colección spectators
-      const spectatorRef = doc(db, 'spectators', spec.spectatorId);
-      const spectatorSnap = await getDoc(spectatorRef);
+    querySnapshot.forEach((spectatorDoc) => {
+      const spectatorId = spectatorDoc.id;
+      const spectatorData = spectatorDoc.data();
       
-      if (spectatorSnap.exists()) {
-        const spectatorData = spectatorSnap.data();
-        if (spectatorData.email && spectatorData.email.toLowerCase() === emailInput.value.toLowerCase()) {
-          foundSpectatorId = spec.spectatorId;
-          spectator.value = spectatorData;
-          numberOfCompanions.value = spec.numberOfCompanions || 0;
-          break;
-        }
+      // Verificar si este espectador está registrado en el evento actual
+      const eventRegistration = zSpectator.find(s => s.spectatorId === spectatorId);
+      if (eventRegistration && !foundSpectator) {
+        foundSpectator = eventRegistration;
+        foundSpectatorData = spectatorData;
       }
-    }
+    });
 
-    if (!foundSpectatorId) {
+    if (!foundSpectator) {
       spectatorNotFound.value = true;
       return;
     }
 
-    // Actualizar los parámetros para usar el espectador encontrado
-    spectatorParams.value = foundSpectatorId;
+    // Asignar los datos encontrados
+    spectator.value = foundSpectatorData;
+    numberOfCompanions.value = foundSpectator.numberOfCompanions || 0;
+    spectatorParams.value = foundSpectator.spectatorId;
     
   } catch (error) {
     console.error('Error al buscar el espectador:', error);
     spectatorNotFound.value = true;
+  } finally {
+    isSearching.value = false;
   }
 };
 
