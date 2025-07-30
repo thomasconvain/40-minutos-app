@@ -163,7 +163,7 @@
                 <StarIcon v-for="star in 5" :key="star" @click="rateChapter(star)" class="cursor-pointer h-5 w-5" :class="star <= chapterRating ? 'text-yellow-500' : 'text-gray-300'"/>
                 <p class="text-xs text-gray-400 ml-2"><span v-if="chapterRating !== 0"> Tu nota: {{ chapterRating }}</span></p>
               </div>
-              <p class="text-sm text-gray-600 mt-2">{{ chapterData.synopsis }}</p>
+              <p class="text-sm text-gray-600 mt-2" v-html="chapterData.synopsis"></p>
             </div>
             <div class="flex items-center" v-if="chapterData.description">
               <button class="btn btn-active btn-link" @click="chapterDescriptionOpen = !chapterDescriptionOpen">
