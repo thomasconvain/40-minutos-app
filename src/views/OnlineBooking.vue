@@ -209,29 +209,44 @@ const checkEventStatus = async (eventId) => {
 // Función para verificar si un email ya está inscrito en un evento (revisando spectators de zSpectator)
 const checkEmailInEventSpectators = async (email, eventId) => {
   try {
+    console.log('🔍 checkEmailInEventSpectators - email:', email, 'eventId:', eventId);
     const eventDoc = await getDoc(doc(db, 'events', eventId));
     if (eventDoc.exists()) {
       const eventData = eventDoc.data();
       const zSpectator = eventData.zSpectator || [];
+      console.log('🔍 zSpectator:', zSpectator);
       
       // Obtener todos los spectatorIds de zSpectator
       const spectatorIds = zSpectator
-        .map(spec => spec?.spectatorId || spec?.id)
-        .filter(id => id && typeof id === 'string');
+        .map(spec => {
+          console.log('🔍 spec:', spec);
+          return spec?.spectatorId || spec?.id;
+        })
+        .filter(id => {
+          console.log('🔍 filtering id:', id, typeof id);
+          return id && typeof id === 'string';
+        });
+      
+      console.log('🔍 spectatorIds después del filtro:', spectatorIds);
       
       if (spectatorIds.length === 0) {
+        console.log('🔍 No hay spectatorIds, retornando false');
         return false;
       }
       
       // Filtrar esos IDs en la colección spectators y verificar emails
       const spectatorsRef = collection(db, 'spectators');
-      const spectatorPromises = spectatorIds.map(id => getDoc(doc(spectatorsRef, id)));
+      const spectatorPromises = spectatorIds.map(id => {
+        console.log('🔍 Buscando spectator con id:', id);
+        return getDoc(doc(spectatorsRef, id));
+      });
       const spectatorDocs = await Promise.all(spectatorPromises);
       
       // Revisar si existe ese email en alguno de los spectators inscritos
       return spectatorDocs.some(doc => {
         if (doc.exists()) {
           const spectatorData = doc.data();
+          console.log('🔍 Comparando email:', spectatorData.email, 'con:', email);
           return spectatorData.email === email;
         }
         return false;
@@ -239,7 +254,7 @@ const checkEmailInEventSpectators = async (email, eventId) => {
     }
     return false;
   } catch (error) {
-    console.error('Error al verificar el email en el evento:', error);
+    console.error('❌ Error al verificar el email en el evento:', error);
     return false;
   }
 };
@@ -247,17 +262,21 @@ const checkEmailInEventSpectators = async (email, eventId) => {
 // Función para buscar usuario existente por email en la colección spectators
 const findExistingSpectatorByEmail = async (email) => {
   try {
+    console.log('🔍 findExistingSpectatorByEmail - email:', email);
     const spectatorsRef = collection(db, 'spectators');
     const q = query(spectatorsRef, where('email', '==', email));
     const querySnapshot = await getDocs(q);
     
     if (!querySnapshot.empty) {
       const doc = querySnapshot.docs[0];
-      return { id: doc.id, ...doc.data() };
+      const result = { id: doc.id, ...doc.data() };
+      console.log('🔍 Usuario encontrado:', result);
+      return result;
     }
+    console.log('🔍 Usuario no encontrado');
     return null;
   } catch (error) {
-    console.error('Error al buscar espectador por email:', error);
+    console.error('❌ Error al buscar espectador por email:', error);
     return null;
   }
 };
@@ -294,7 +313,7 @@ const submitForm = async () => {
     
     if (existingSpectator) {
       // Usuario existe en la colección spectators pero no está inscrito en este evento
-      user = { uid: existingSpectator.uId };
+      user = { uid: existingSpectator.uId || existingSpectator.id };
       spectatorData = existingSpectator;
       isNewUser = false;
     } else {
