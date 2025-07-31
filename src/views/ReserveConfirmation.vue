@@ -19,7 +19,7 @@
           <div class="text-sm mt-1">
               <p class="mb-3">Por favor considera lo siguiente:</p>
               <div class="space-y-2">
-                <p><strong>1.</strong> Recibirás un correo <strong>el mismo día del evento</strong> con tu código de ingreso. En caso de cualquier problema, ese código será equivalente a tu ticket.</p>
+                <!-- <p><strong>1.</strong> Recibirás un correo <strong>el mismo día del evento</strong> con tu código de ingreso. En caso de cualquier problema, ese código será equivalente a tu ticket.</p> -->
                 <p><strong>2.</strong> El ingreso es por <strong>orden de llegada</strong> y debes hacer check-in digital cuando llegues a tu asiento.</p>
                 <p><strong>3.</strong> No se paga entrada, pero se deja un <strong>aporte voluntario al final</strong> (equivalente a la entrada).</p>
               </div>

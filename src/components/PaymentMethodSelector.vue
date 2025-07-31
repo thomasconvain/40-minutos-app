@@ -16,7 +16,10 @@
            @click="selectPaymentMethod('card')">
         <div class="card-body py-3 px-4">
           <h3 class="font-bold mb-0">Tarjeta de crédito/débito</h3>
-          <p class="text-xs text-gray-600">Pago seguro procesado por MercadoPago</p>
+          <!-- <p class="text-xs text-gray-600">Pago seguro procesado por MercadoPago</p> -->
+          <div v-if="getPaymentMethodInstructions('Tarjeta')" class="mt-2 text-xs text-gray-700">
+            {{ getPaymentMethodInstructions('Tarjeta') }}
+          </div>
         </div>
       </div>
       
@@ -26,7 +29,10 @@
            @click="selectPaymentMethod('transfer')">
         <div class="card-body py-3 px-4">
           <h3 class="font-bold mb-0">Transferencia bancaria</h3>
-          <p class="text-xs text-gray-600">Te mostraremos los datos de la cuenta para transferir</p>
+          <!-- <p class="text-xs text-gray-600">Te mostraremos los datos de la cuenta para transferir</p> -->
+          <div v-if="getPaymentMethodInstructions('Transferencia electrónica')" class="mt-2 text-xs text-gray-700">
+            {{ getPaymentMethodInstructions('Transferencia electrónica') }}
+          </div>
         </div>
       </div>
       
@@ -36,7 +42,10 @@
            @click="selectPaymentMethod('cash')">
         <div class="card-body py-3 px-4">
           <h3 class="font-bold mb-0">Pago en efectivo</h3>
-          <p class="text-xs text-gray-600">Paga en puntos autorizados</p>
+          <!-- <p class="text-xs text-gray-600">Paga en puntos autorizados</p> -->
+          <div v-if="getPaymentMethodInstructions('Efectivo')" class="mt-2 text-xs text-gray-700">
+            {{ getPaymentMethodInstructions('Efectivo') }}
+          </div>
         </div>
       </div>
     </div>
@@ -127,6 +136,12 @@ const fetchPaymentMethods = async () => {
 // Comprobar si existe un método de pago de un tipo específico
 const hasPaymentType = (paymentType) => {
   return paymentMethods.value.some(method => method.paymentType === paymentType);
+};
+
+// Obtener las instrucciones de un método de pago específico
+const getPaymentMethodInstructions = (paymentType) => {
+  const method = paymentMethods.value.find(method => method.paymentType === paymentType);
+  return method?.instructions || '';
 };
 
 

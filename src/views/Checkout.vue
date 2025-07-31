@@ -118,7 +118,7 @@ const paymentSummaryRef = ref(null);
 // Variables reactivas para información del pago
 const isLoading = ref(false);
 const spectator = ref(null);
-const amount = reactive([10000]);
+const amount = reactive([12000]);
 const description = ref('Tu experiencia 40 Minutos');
 const email = ref('');
 const emailError = ref('');
