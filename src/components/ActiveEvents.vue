@@ -91,6 +91,7 @@
       </dialog>
     </div>
 
+
   <dialog id="modalValidation" class="modal">
           <div class="modal-box">
               <h3 class="text-lg font-bold">¿Cuantas personas asistirán en total?</h3>
@@ -228,13 +229,30 @@ const checkIdAndRedirect = async () => {
       // Se encontró un documento
       const eventDoc = querySnapshot.docs[0]; // Obtiene el primer documento encontrado
       const eventId = eventDoc.id; // Obtiene el ID del documento
+      const eventData = eventDoc.data();
+      
       if (currentUser.value) {
-        addSubscribedEvent(eventId);
-        openModal(eventId, 'modalSuccess');
-        codeIdForPrivateEvents.value = null;
-        window.scrollTo({top: 0, behavior: "smooth"});
+        // Usuario logueado: verificar si ya está inscrito en el evento
+        const userSpectatorInEvent = eventData.zSpectator && 
+          eventData.zSpectator.find(spec => spec.spectatorId === currentUser.value.uid);
+        
+        if (userSpectatorInEvent) {
+          // Ya está inscrito, redirigir directamente a SpectatorProfile
+          router.push({ name: 'Profile', params: { idSpectator: currentUser.value.uid } });
+        } else {
+          // No está inscrito, hacer inscripción
+          addSubscribedEvent(eventId);
+          openModal(eventId, 'modalSuccess');
+          codeIdForPrivateEvents.value = null;
+          window.scrollTo({top: 0, behavior: "smooth"});
+        }
       } else {
-        router.push({ name: 'Booking', params: { idEvent: eventId } });
+        // Usuario no logueado: redirigir a página de verificación
+        router.push({ 
+          name: 'PrivateEventAccess', 
+          params: { invitationCode: codeIdForPrivateEvents.value }
+        });
+        codeIdForPrivateEvents.value = null;
       }
     } else {
       // No se encontró ningún documento
@@ -244,6 +262,7 @@ const checkIdAndRedirect = async () => {
     window.alert("Error verificando el ID de evento:", error);
   }
 };
+
 
 // Función para desplazar el carrusel
 const scrollCarousel = (direction) => {

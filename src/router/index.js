@@ -21,6 +21,7 @@ import Dashboard from '@/views/Dashboard.vue';
 import EventEditor from '@/views/EventEditor.vue';
 import EventList from '@/views/EventList.vue';
 import ReserveConfirmation from '@/views/ReserveConfirmation.vue';
+import PrivateEventAccess from '@/views/PrivateEventAccess.vue';
 
 const routes = [
   {
@@ -37,6 +38,11 @@ const routes = [
     path: '/booking/:idEvent?',
     name: 'Booking',
     component: OnlineBooking,
+  },
+  {
+    path: '/private-event/:invitationCode',
+    name: 'PrivateEventAccess',
+    component: PrivateEventAccess,
   },
   {
     path: '/password-reset/:email?',

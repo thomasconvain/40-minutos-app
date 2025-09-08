@@ -2,7 +2,7 @@
   <div class="reservation-container">
     <!-- Cabecera con título y botón volver -->
     <div class="flex justify-between items-center mt-8">
-      <h1 class="card-title">Reserva tu cupo</h1>
+      <!-- <h1 class="card-title">Reserva tu cupo</h1> -->
       <button 
         class="btn bg-white border-none" 
         @click="showForm ? showForm = false : $router.go(-1)"
@@ -13,7 +13,7 @@
     
     <!-- Selector de número de personas - siempre visible -->
     <div class="form-group mt-2 mb-6">
-      <label class="text-sm font-bold" for="numberOfPeople">¿Cuántas personas asistirán?</label>
+      <label class="text-sm font-bold" for="numberOfPeople">¿Cuántas personas te acompañan?</label>
       <input 
         v-model="numberOfPeople" 
         type="number" 
@@ -154,6 +154,11 @@ const errorMessage = ref('');
 onMounted(() => {
   password.value = route.params.idEvent;
   confirmPassword.value = route.params.idEvent;
+  
+  // Pre-llenar teléfono si viene desde verificación de evento privado
+  if (route.query.phone) {
+    phone.value = route.query.phone;
+  }
 });
 
 // Validaciones
@@ -169,7 +174,7 @@ const validatePhone = () => {
   const phonePattern = /^\+56\d{9}$/;
   phoneError.value = phonePattern.test(phone.value)
     ? ''
-    : 'Por favor ingresa un número de teléfono válido en formato +56XXXXXXXXX.';
+    : 'Por favor ingresa un número de teléfono válido en formato +56XXXXXXXXX (sin espacios).';
   return phoneError.value === '';
 };
 
@@ -202,6 +207,30 @@ const checkEventStatus = async (eventId) => {
     return false;
   } catch (error) {
     console.error('Error al verificar el estado del evento:', error);
+    return false;
+  }
+};
+
+// Función para verificar si un teléfono ya está inscrito en un evento
+const checkPhoneInEventSpectators = async (phone, eventId) => {
+  try {
+    console.log('🔍 checkPhoneInEventSpectators - phone:', phone, 'eventId:', eventId);
+    const eventDoc = await getDoc(doc(db, 'events', eventId));
+    if (eventDoc.exists()) {
+      const eventData = eventDoc.data();
+      const zSpectator = eventData.zSpectator || [];
+      
+      // Buscar directamente por teléfono en zSpectator
+      const spectatorByPhone = zSpectator.find(spec => spec.phone === phone);
+      
+      if (spectatorByPhone) {
+        console.log('🔍 Encontrado spectator por teléfono:', spectatorByPhone);
+        return spectatorByPhone;
+      }
+    }
+    return false;
+  } catch (error) {
+    console.error('Error checking phone in event spectators:', error);
     return false;
   }
 };
@@ -301,11 +330,22 @@ const submitForm = async () => {
       return;
     }
     
-    const emailAlreadyInEvent = await checkEmailInEventSpectators(email.value, eventId);
-    
-    if (emailAlreadyInEvent) {
-      errorMessage.value = 'Ya tienes una reserva activa para este evento.';
-      return;
+    // Si viene con teléfono prellenado desde PrivateEventAccess, verificar por teléfono
+    if (route.query.phone) {
+      const phoneAlreadyInEvent = await checkPhoneInEventSpectators(phone.value, eventId);
+      if (phoneAlreadyInEvent) {
+        // Redirigir directamente al perfil del espectador en lugar de mostrar error
+        router.push({ name: 'Profile', params: { idSpectator: phoneAlreadyInEvent.spectatorId } });
+        return;
+      }
+    } else {
+      // Verificación normal por email
+      const emailAlreadyInEvent = await checkEmailInEventSpectators(email.value, eventId);
+      
+      if (emailAlreadyInEvent) {
+        errorMessage.value = 'Ya tienes una reserva activa para este evento.';
+        return;
+      }
     }
     
     // Verificar si existe un espectador con este email
@@ -392,29 +432,57 @@ const submitForm = async () => {
     
     console.log('✅ Proceso completado, redirigiendo a confirmación con user.uid:', user.uid);
     
-    // Verificar si el check-in está abierto para determinar la redirección
-    const firstEventId = route.params.idEvent?.split(',')[0].trim(); // Usar el primer evento
-    const isCheckInOpen = await checkEventStatus(firstEventId);
-    
-    console.log('🔍 Check-in abierto:', isCheckInOpen);
-    
-    if (isCheckInOpen) {
-      // Si el check-in está abierto, redirigir directamente al perfil
-      console.log('📍 Redirigiendo a Profile');
-      router.push({ 
-        name: 'Profile', 
-        params: { idSpectator: user.uid }
-      });
+    // Si viene desde PrivateEventAccess (con teléfono prellenado), siempre redirigir a Profile
+    if (route.query.phone) {
+      console.log('📍 Viene desde PrivateEventAccess, redirigiendo a Profile con autenticación anónima');
+      try {
+        // Importar signInAnonymously dinámicamente
+        const { signInAnonymously } = await import('firebase/auth');
+        const { auth } = await import('@/firebase');
+        
+        await signInAnonymously(auth);
+        console.log('✅ Anonymous authentication successful');
+        
+        router.push({ 
+          name: 'Profile', 
+          params: { idSpectator: user.uid }
+        });
+      } catch (authError) {
+        console.error('❌ Error with anonymous authentication:', authError);
+        // Fallback al flujo normal si falla la autenticación
+        router.push({ 
+          name: 'Reserve', 
+          params: { idSpectator: user.uid }, 
+          query: { 
+            idEvent: route.params.idEvent || ''
+          } 
+        });
+      }
     } else {
-      // Si el check-in no está abierto, ir a la página de confirmación
-      console.log('📍 Redirigiendo a Reserve');
-      router.push({ 
-        name: 'Reserve', 
-        params: { idSpectator: user.uid }, 
-        query: { 
-          idEvent: route.params.idEvent || ''
-        } 
-      });
+      // Flujo normal: verificar si el check-in está abierto para determinar la redirección
+      const firstEventId = route.params.idEvent?.split(',')[0].trim(); // Usar el primer evento
+      const isCheckInOpen = await checkEventStatus(firstEventId);
+      
+      console.log('🔍 Check-in abierto:', isCheckInOpen);
+      
+      if (isCheckInOpen) {
+        // Si el check-in está abierto, redirigir directamente al perfil
+        console.log('📍 Redirigiendo a Profile');
+        router.push({ 
+          name: 'Profile', 
+          params: { idSpectator: user.uid }
+        });
+      } else {
+        // Si el check-in no está abierto, ir a la página de confirmación
+        console.log('📍 Redirigiendo a Reserve');
+        router.push({ 
+          name: 'Reserve', 
+          params: { idSpectator: user.uid }, 
+          query: { 
+            idEvent: route.params.idEvent || ''
+          } 
+        });
+      }
     }
   } catch (error) {
     console.error('Error en el proceso de reserva:', error);

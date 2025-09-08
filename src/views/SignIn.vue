@@ -100,7 +100,7 @@ const validatePhone = () => {
   const phonePattern = /^\+56\d{9}$/; // Formato para +56XXXXXXXXX
   phoneError.value = phonePattern.test(phone.value)
     ? ''
-    : 'Por favor ingresa un número de teléfono válido en formato +56XXXXXXXXX.';
+    : 'Por favor ingresa un número de teléfono válido en formato +56XXXXXXXXX (sin espacios)';
 };
 
 const validatePasswords = () => {
